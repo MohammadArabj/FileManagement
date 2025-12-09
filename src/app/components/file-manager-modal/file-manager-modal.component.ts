@@ -72,6 +72,7 @@ type ViewMode = 'grid' | 'list';
           <!-- Body -->
           <div class="modal-body">
             <div class="body-shell" [class.preview-open]="showPreview() && selectedFile()">
+            <div class="body-shell">
               <div
                 class="file-area"
                 [class.drag-over]="isDragOver()"
@@ -260,6 +261,7 @@ type ViewMode = 'grid' | 'list';
                                 </td>
                                 <td>
                               <div class="file-name-cell" (click)="togglePreview(file, $event)">
+                                  <div class="file-name-cell" (click)="togglePreview(file, $event)">
                                     <span class="name">{{ file.name }}</span>
                                     @if (file.isExisting) {
                                       <span class="badge bg-info">موجود</span>
@@ -514,6 +516,13 @@ type ViewMode = 'grid' | 'list';
         border-top-right-radius: 16px;
       }
 
+      .modal-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #fff;
+        border: none;
+        padding: 16px 24px;
+      }
+
       .header-right {
         display: flex;
         align-items: center;
@@ -611,6 +620,9 @@ type ViewMode = 'grid' | 'list';
 
       .body-shell.preview-open {
         grid-template-columns: 1fr 360px;
+        grid-template-columns: 1fr 360px;
+        min-height: 520px;
+        max-height: 70vh;
       }
 
       .file-area {
@@ -1029,6 +1041,10 @@ type ViewMode = 'grid' | 'list';
         width: 0;
         opacity: 0;
         pointer-events: none;
+        transition: transform 0.25s ease;
+        box-shadow: -6px 0 24px rgba(0, 0, 0, 0.06);
+        position: relative;
+        z-index: 2;
       }
 
       .preview-sidebar.visible {
@@ -1331,6 +1347,7 @@ export class FileManagerModalComponent implements OnInit, OnDestroy {
 
   selectFile(file: FileItem): void {
     this.selectedFile.set(file);
+    this.showPreview.set(true);
     this.currentPreviewIndex.set(this.service.files().indexOf(file));
   }
 
@@ -1346,6 +1363,15 @@ export class FileManagerModalComponent implements OnInit, OnDestroy {
   }
 
   closePreviewSidebar(): void {
+    if (this.selectedFile()?.id === file.id && this.showPreview()) {
+      this.closePreviewSidebar();
+    } else {
+      this.selectFile(file);
+    }
+  }
+
+  closePreviewSidebar(): void {
+    this.selectedFile.set(null);
     this.showPreview.set(false);
   }
 
