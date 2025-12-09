@@ -1,7 +1,6 @@
 import { Injectable, inject, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Subject, firstValueFrom, of } from 'rxjs';
-import { Subject, firstValueFrom, forkJoin, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import * as tus from 'tus-js-client';
 import { environment } from '../../../environments/environment';
@@ -199,13 +198,6 @@ export class TusUploadService {
 
             fileInfoCache.set(existing.guid, existing);
             this.addExistingFileToState(existing);
-      // لود موازی فایل‌های جدید
-      if (toLoad.length > 0) {
-        const results = await this.batchLoadFileInfo(toLoad);
-        for (const file of results) {
-          if (file) {
-            fileInfoCache.set(file.guid, file);
-            this.addExistingFileToState(file);
           }
         }
       }
@@ -228,14 +220,6 @@ export class TusUploadService {
           catchError(() => of(guids.map(() => null)))
         )
     );
-  private async batchLoadFileInfo(guids: string[]): Promise<(ExistingFile | null)[]> {
-    const requests = guids.map(guid =>
-      this.http.get<ExistingFile>(`${this.attachmentUrl}/GetFile/${guid}`).pipe(
-        map(file => ({ ...file, guid })),
-        catchError(() => of(null))
-      )
-    );
-    return firstValueFrom(forkJoin(requests));
   }
 
   private addExistingFileToState(file: ExistingFile): void {
@@ -611,7 +595,6 @@ export class TusUploadService {
   }
 
   getPreviewUrl(guid: string): string {
-    return this.getDownloadUrl(guid);
     return `${this.attachmentUrl}/Preview/${guid}`;
   }
 
