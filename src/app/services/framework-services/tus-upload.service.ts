@@ -1,5 +1,6 @@
 import { Injectable, inject, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Subject, firstValueFrom, of } from 'rxjs';
 import { Subject, firstValueFrom, forkJoin, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import * as tus from 'tus-js-client';
@@ -50,6 +51,15 @@ export interface ExistingFile {
   contentType: string;
   fileSize: number;
   path?: string;
+}
+
+interface AttachmentMetaDto {
+  guid: string;
+  fileName: string;
+  originalFileName?: string;
+  contentType: string;
+  fileSize: number;
+  storagePath?: string;
 }
 
 export interface UploadOptions {
@@ -174,6 +184,21 @@ export class TusUploadService {
         this.addExistingFileToState(file);
       }
 
+      if (toLoad.length > 0) {
+        const results = await this.batchLoadFileInfo(toLoad);
+        for (const meta of results) {
+          if (meta) {
+            const existing: ExistingFile = {
+              guid: meta.guid,
+              fileName: meta.originalFileName || meta.fileName,
+              originalFileName: meta.originalFileName,
+              contentType: meta.contentType,
+              fileSize: meta.fileSize,
+              path: meta.storagePath,
+            };
+
+            fileInfoCache.set(existing.guid, existing);
+            this.addExistingFileToState(existing);
       // لود موازی فایل‌های جدید
       if (toLoad.length > 0) {
         const results = await this.batchLoadFileInfo(toLoad);
@@ -191,6 +216,18 @@ export class TusUploadService {
     }
   }
 
+  private async batchLoadFileInfo(guids: string[]): Promise<(AttachmentMetaDto | null)[]> {
+    return firstValueFrom(
+      this.http
+        .post<AttachmentMetaDto[]>(`${this.attachmentUrl}/GetMetas`, guids)
+        .pipe(
+          map(result => result || []),
+          map(items =>
+            guids.map(guid => items.find(i => i.guid === guid) || null)
+          ),
+          catchError(() => of(guids.map(() => null)))
+        )
+    );
   private async batchLoadFileInfo(guids: string[]): Promise<(ExistingFile | null)[]> {
     const requests = guids.map(guid =>
       this.http.get<ExistingFile>(`${this.attachmentUrl}/GetFile/${guid}`).pipe(
@@ -574,6 +611,7 @@ export class TusUploadService {
   }
 
   getPreviewUrl(guid: string): string {
+    return this.getDownloadUrl(guid);
     return `${this.attachmentUrl}/Preview/${guid}`;
   }
 

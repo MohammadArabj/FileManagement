@@ -71,6 +71,7 @@ type ViewMode = 'grid' | 'list';
 
           <!-- Body -->
           <div class="modal-body">
+            <div class="body-shell" [class.preview-open]="showPreview() && selectedFile()">
             <div class="body-shell">
               <div
                 class="file-area"
@@ -259,6 +260,7 @@ type ViewMode = 'grid' | 'list';
                                   </div>
                                 </td>
                                 <td>
+                              <div class="file-name-cell" (click)="togglePreview(file, $event)">
                                   <div class="file-name-cell" (click)="togglePreview(file, $event)">
                                     <span class="name">{{ file.name }}</span>
                                     @if (file.isExisting) {
@@ -502,6 +504,16 @@ type ViewMode = 'grid' | 'list';
       :host {
         direction: rtl;
         font-family: 'Vazirmatn', Tahoma, sans-serif;
+        background: radial-gradient(circle at 10% 10%, #eef2ff, #ffffff 45%);
+      }
+
+      .modal-header {
+        background: linear-gradient(120deg, #5b67ec 0%, #7c5cd6 45%, #9f7aea 100%);
+        color: #fff;
+        border: none;
+        padding: 16px 24px;
+        border-top-left-radius: 16px;
+        border-top-right-radius: 16px;
       }
 
       .modal-header {
@@ -595,10 +607,19 @@ type ViewMode = 'grid' | 'list';
 
       .modal-body {
         padding: 0;
+        background: linear-gradient(180deg, #f7f9fc 0%, #ffffff 80%);
       }
 
       .body-shell {
         display: grid;
+        grid-template-columns: 1fr;
+        min-height: 520px;
+        max-height: 70vh;
+        transition: grid-template-columns 0.25s ease;
+      }
+
+      .body-shell.preview-open {
+        grid-template-columns: 1fr 360px;
         grid-template-columns: 1fr 360px;
         min-height: 520px;
         max-height: 70vh;
@@ -1013,6 +1034,13 @@ type ViewMode = 'grid' | 'list';
         display: flex;
         flex-direction: column;
         transform: translateX(100%);
+        transition: transform 0.25s ease, width 0.25s ease, opacity 0.2s ease;
+        box-shadow: -6px 0 24px rgba(0, 0, 0, 0.06);
+        position: relative;
+        z-index: 2;
+        width: 0;
+        opacity: 0;
+        pointer-events: none;
         transition: transform 0.25s ease;
         box-shadow: -6px 0 24px rgba(0, 0, 0, 0.06);
         position: relative;
@@ -1021,6 +1049,9 @@ type ViewMode = 'grid' | 'list';
 
       .preview-sidebar.visible {
         transform: translateX(0);
+        width: 360px;
+        opacity: 1;
+        pointer-events: auto;
       }
 
       .preview-sidebar.floating {
@@ -1322,6 +1353,16 @@ export class FileManagerModalComponent implements OnInit, OnDestroy {
 
   togglePreview(file: FileItem, event?: Event): void {
     event?.stopPropagation();
+    if (this.selectedFile()?.id !== file.id) {
+      this.selectFile(file);
+      this.showPreview.set(true);
+      return;
+    }
+
+    this.showPreview.set(!this.showPreview());
+  }
+
+  closePreviewSidebar(): void {
     if (this.selectedFile()?.id === file.id && this.showPreview()) {
       this.closePreviewSidebar();
     } else {
