@@ -1,0 +1,179 @@
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">لیست اعضای هیئت مدیره</h5>
+                <div class="header-actions">
+                    @if (isLoading()) {
+                    <div class="spinner-border spinner-border-sm text-primary me-2" role="status">
+                        <span class="visually-hidden">در حال بارگذاری...</span>
+                    </div>
+                    }
+                    <app-label-button identifier="addBtn" label="افزودن" variant="success" (clicked)="openOpsModal()"
+                        permission="MT_BoardMembers_Add">
+                    </app-label-button>
+                </div>
+            </div>
+
+            <div class="card-body">
+                @if (isLoading()) {
+                <div class="text-center py-4">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">در حال بارگذاری...</span>
+                    </div>
+                    <p class="mt-2 text-muted">در حال بارگذاری داده‌ها...</p>
+                </div>
+                } @else if (!hasRecords()) {
+                <div class="text-center py-5">
+                    <h5 class="text-muted">هیچ عضوی یافت نشد</h5>
+                    <p class="text-muted">برای شروع، یک عضو جدید اضافه کنید.</p>
+                    <app-label-button identifier="addFirstBtn" label="افزودن اولین عضو" variant="primary"
+                        (clicked)="openOpsModal()" permission="MT_BoardMembers_Add">
+                    </app-label-button>
+                </div>
+                } @else {
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover align-middle">
+                        <thead class="table-warning">
+                            <tr>
+                                <th scope="col">تصویر</th>
+                                <th scope="col">نام</th>
+                                <th scope="col">نام خانوادگی</th>
+                                <th scope="col">سمت</th>
+                                <th scope="col">شرکت</th>
+                                <th scope="col">تاریخ شروع سمت</th>
+                                <th scope="col">تاریخ پایان سمت</th>
+                                <th scope="col">موبایل</th>
+                                <th scope="col">تاریخ ایجاد</th>
+                                <th scope="col" class="text-center">وضعیت</th>
+                                <th scope="col" class="text-center">عملیات</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @for (item of records(); track item.guid) {
+                            <tr [class.table-warning]="item.isActive !== 1">
+                                <td>
+                                    <div class="image-container" style="width: 80px; height: 80px; position: relative;">
+                                        @if (item.profileImageGuid) {
+                                        <img [src]="item.profileImageGuid | imageLoader | async" alt="تصویر پروفایل"
+                                            class="img-thumbnail" width="80" height="80">
+                                        } @else {
+                                        <div class="d-flex align-items-center justify-content-center bg-light"
+                                            style="width: 80px; height: 80px;">
+                                        </div>
+                                        }
+                                    </div>
+                                </td>
+                                <td>{{ item.firstName }}</td>
+                                <td>{{ item.lastName }}</td>
+                                <td>{{ item.position }}</td>
+                                <td>{{ item.company }}</td>
+                                <td>{{ item.startDate }}</td>
+                                <td>{{ item.endDate }}</td>
+                                <td>{{ item.mobile }}</td>
+                                <td>
+                                    <small class="text-muted">{{ item.createdDate }}</small>
+                                </td>
+                                <td class="text-center">
+                                    @if (item.isActive === 1) {
+                                    <span class="badge bg-success">
+                                       فعال
+                                    </span>
+                                    } @else {
+                                    <span class="badge bg-danger">
+                                        غیرفعال
+                                    </span>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        @if (item.isActive === 1) {
+                                        <app-icon-button identifier="editBtn{{ $index }}" label="ویرایش"
+                                            icon="fa fa-edit" variant="primary" (clicked)="openOpsModal(item.guid)"
+                                            permission="MT_BoardMembers_Edit">
+                                        </app-icon-button>
+
+                                        <app-icon-button identifier="deactivateBtn{{ $index }}" label="غیرفعال"
+                                            icon="fa fa-pause" variant="warning" (clicked)="deactivate(item.guid)"
+                                            permission="MT_BoardMembers_ToggleActive">
+                                        </app-icon-button>
+                                        } @else {
+                                        <app-icon-button identifier="activateBtn{{ $index }}" label="فعال‌سازی"
+                                            icon="fa fa-play" variant="success" (clicked)="activate(item.guid)"
+                                            permission="MT_BoardMembers_ToggleActive">
+                                        </app-icon-button>
+                                        }
+
+                                        <app-icon-button identifier="deleteBtn{{ $index }}" label="حذف"
+                                            icon="fa fa-trash" variant="danger" (clicked)="delete(item.guid)"
+                                            permission="MT_BoardMembers_Delete">
+                                        </app-icon-button>
+                                    </div>
+                                </td>
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main Modal for CRUD operations -->
+<app-modal #opsModal [config]="modalConfig()" (submited)="submit($event,true)" (onModalHide)="modalClosed()">
+
+    @if (form(); as currentForm) {
+    <form [formGroup]="currentForm" id="submitForm" class="row g-3" novalidate>
+        <!-- First Name Field -->
+        <custom-input label="نام" formControlName="firstName" identity="firstName" size="col-6" [required]="true"
+            styleType="simple">
+        </custom-input>
+
+        <custom-input label="نام خانوادگی" formControlName="lastName" identity="lastName" size="col-6" [required]="true"
+            styleType="simple">
+        </custom-input>
+
+        <custom-input label="موبایل" formControlName="mobile" identity="mobile" size="col-6" styleType="simple">
+        </custom-input>
+
+        <custom-input label="تاریخ شروع سمت" formControlName="startDate" identity="startDate" size="col-6"
+            styleType="simple" type="date">
+        </custom-input>
+        <custom-input label="تاریخ پایان سمت" formControlName="endDate" identity="endDate" size="col-6"
+            styleType="simple" type="date">
+        </custom-input>
+        <custom-input label="سمت" formControlName="position" identity="position" size="col-6" [required]="true"
+            styleType="simple">
+        </custom-input>
+        <custom-input label="شرکت" formControlName="company" identity="company" size="col-6" styleType="simple">
+        </custom-input>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="profileImage" class="form-label">تصویر پروفایل</label>
+                <input type="file" id="profileImage" class="form-control" accept="image/*"
+                    (change)="onImageSelected($event)">
+            </div>
+        </div>
+
+        <!-- Image Preview -->
+        @if (previewUrl()) {
+        <div class="col-12 text-center">
+            <img [src]="previewUrl()" alt="پیش‌نمایش تصویر" class="img-thumbnail mt-2"
+                style="max-width: 150px; max-height: 150px;">
+        </div>
+        }
+
+        <!-- Form Status Indicator -->
+        <div class="col-12">
+            @if (!isFormValid()) {
+            <div class="alert alert-warning alert-sm d-flex align-items-center">
+                لطفاً تمام فیلدهای الزامی را تکمیل کنید
+            </div>
+            }
+        </div>
+    </form>
+    }
+</app-modal>

@@ -1,0 +1,47 @@
+<div class="modal-header">
+  <h5 class="modal-title" id="editModalTitle">فایل ها</h5>
+  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="closeModal()"></button>
+</div>
+<div class="modal-body">
+  <div class="row justify-content-center">
+    <div class="container">
+      @if(attachments().length>0){
+      <div class="mt-3">
+        <h6>فایل‌های آپلود شده:</h6>
+        <ul class="list-group">
+          @for(f of attachments(); track $index) {
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <div>
+              <i class="fa fa-file text-muted me-2"></i>
+              {{ f.fileName }}
+            </div>
+            <div>
+              <button class="btn btn-sm btn-outline-primary" (click)="viewFile(f.guid, $event)">
+                مشاهده
+              </button>
+              <button class="btn btn-sm btn-outline-info" (click)="downloadFile(f.guid)">
+                دانلود
+              </button>
+              @if((roleId() === 1 || roleId() === 2 || roleId() === 3) && statusId() != 4) {
+              <button class="btn btn-sm btn-outline-danger" (click)="confirmDeleteFile(f.id)">
+                <i class="fa fa-trash"></i> حذف
+              </button>
+              }
+            </div>
+          </li>
+          }
+        </ul>
+      </div>
+      }
+      @else {
+      <div class="text-center text-muted py-4">
+        <i class="fas fa-folder-open fa-2x mb-2"></i><br>
+        هیچ فایلی پیوست نشده است.
+      </div>
+      }
+    </div>
+  </div>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-warning" data-bs-dismiss="modal" (click)="closeModal()">بستن</button>
+</div>

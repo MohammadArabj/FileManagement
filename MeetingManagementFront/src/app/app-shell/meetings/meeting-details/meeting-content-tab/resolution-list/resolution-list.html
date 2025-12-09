@@ -1,0 +1,214 @@
+<div class="card flex-fill">
+  <div class="card-header text-white d-flex justify-content-between align-items-center">
+    <h5 class="mb-0">مصوبات</h5>
+    <div class="header-buttons">
+      @if(resolutions().length > 0) {
+      <button class="btn btn-info btn-sm me-2" (click)="printAllResolutionsClicked()">
+        <i class="fas fa-print"></i>
+        چاپ همه
+      </button>
+      }
+      @if(canAddAssignment()) {
+      @if(resolutions().length !== 0) {
+      <button class="btn btn-success btn-sm" (click)="openAddResolutionModal()">
+        <i class="fas fa-plus"></i>
+        افزودن مصوبه
+      </button>
+      }
+      }
+    </div>
+  </div>
+  <div class="card-body" style="height: 550px; overflow-y: auto; background-color: #a1acb866;">
+    @if(resolutions().length === 0) {
+    <div class="alert alert-info text-center w-100 d-flex justify-content-center align-items-center flex-column"
+      style="margin-top: 10px;">
+      <strong>موردی ثبت نشده است</strong>
+      <br />
+      @if(canAddResolution()) {
+      <button (click)="openAddResolutionModal()" class="btn btn-success">افزودن مصوبه</button>
+      }
+    </div>
+    }
+    @if(canDrag()){
+    <div cdkDropList (cdkDropListDropped)="onDrop($event)" class="list-container">
+      @if(resolutions().length > 0) {
+      <div class="alert alert-warning text-center mb-3 mt-3" role="alert">
+        <i class="fa fa-info-circle me-2"></i>
+        جهت تغییر ترتیب مصوبات، آیتم مورد نظر را گرفته و به مکان دلخواه بکشید و رها کنید
+      </div>
+      }
+      @for(resolution of resolutions(); let i = $index; track trackByFn(i,resolution)) {
+      <div class="card mb-3 shadow-sm border-0 rounded-3" cdkDrag [ngClass]="{'mt-3': i === 0}">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">مصوبه شماره {{i + 1}}</h5>
+          <div>
+            @if(canEditResolution()) {
+            <button class="btn btn-sm btn-primary me-2" (click)="openEditResolutionModal(resolution)">ویرایش</button>
+            }
+            @if(canDeleteResolution()) {
+            <button class="btn btn-sm btn-danger me-2" (click)="deleteResolutionClicked(resolution)">حذف</button>
+            }
+            <!-- @if(canAddAssignment()) {
+            <button class="btn btn-sm btn-warning" (click)="assignResolutionClicked(resolution)">تخصیص به</button>
+            } -->
+            <button class="btn btn-info btn-sm" (click)="showFilesClicked(resolution.id)">نمایش فایل‌ها</button>
+            <button class="btn btn-warning btn-sm" (click)="printResolutionClicked(resolution, i)"
+              title="چاپ مصوبه">چاپ</button>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="mt-3">
+            <p class="text-justify mb-3 space-preline" [innerHTML]="resolution.text" style="text-align: justify">
+            </p>
+          </div>
+        </div>
+        @if(resolution.assignments.length > 0) {
+        <div class="card-footer bg-light">
+          <button class="btn btn-outline-primary w-100 text-start" type="button"
+            (click)="toggleCollapse(resolution.id)">
+            تخصیص‌ها <i class="fa fa-chevron-down"></i>
+          </button>
+          <div [id]="'assignments-' + resolution.id" class="collapse table-responsive mt-3">
+            <table class="table table-hover rounded-3 overflow-hidden">
+              <thead class="bg-info text-white">
+                <tr>
+                  <th>اقدام کننده</th>
+                  <th>پیگیری کننده</th>
+                  <th>تاریخ سررسید</th>
+                  <th>نوع</th>
+                  @if(canAddAssignment()) {
+                  <th>عملیات</th>
+                  }
+                </tr>
+              </thead>
+              <tbody>
+                @for(assign of resolution.assignments;track $index) {
+                <tr class="align-middle">
+                  <td>{{ assign.actorName }}</td>
+                  <td>{{ assign.followerName }}</td>
+                  <td>{{ assign.dueDate }}</td>
+                  <td>
+                    <span class="badge bg-info text-white px-2 py-1">{{ assign.type }}</span>
+                  </td>
+                  @if(canAddAssignment()) {
+                  <td>
+                    <div class="dropdown" ngbDropdown>
+                      <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" ngbDropdownToggle>
+                        عملیات
+                      </button>
+                      <ul class="dropdown-menu" ngbDropdownMenu>
+                        <!-- <li ngbDropdownItem>
+                          <a class="dropdown-item" href="javascript:void(0)" (click)="editAssignmentClicked(assign.id)">
+                            <i class="fa fa-edit text-warning"></i> ویرایش
+                          </a>
+                        </li> -->
+                        <li ngbDropdownItem>
+                          <a class="dropdown-item" href="javascript:void(0)" (click)="deleteAssignmentClicked(assign)">
+                            <i class="fa fa-trash text-danger"></i> حذف
+                          </a>
+                        </li>
+                      </ul>
+                    </div>
+                  </td>
+                  }
+                </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+        }
+      </div>
+      }
+    </div>
+    }
+
+    @if(!canDrag()) {
+    <div class="list-container">
+      @for(resolution of resolutions(); let i = $index; track trackByFn(i, resolution)) {
+      <div class="card mb-3 shadow-sm border-0 rounded-3" [ngClass]="{'mt-3': i === 0}">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">مصوبه شماره {{i + 1}}</h5>
+          <div>
+            @if(canEditResolution()) {
+            <button class="btn btn-sm btn-primary me-2" (click)="openEditResolutionModal(resolution)">ویرایش</button>
+            }
+            @if(canDeleteResolution()) {
+            <button class="btn btn-sm btn-danger me-2" (click)="deleteResolutionClicked(resolution)">حذف</button>
+            }
+            @if(canAddAssignment()) {
+            <button class="btn btn-sm btn-warning" (click)="assignResolutionClicked(resolution)">تخصیص به</button>
+            }
+            <button class="btn btn-info btn-sm" (click)="showFilesClicked(resolution.id)">نمایش فایل‌ها</button>
+            <button class="btn btn-secondary btn-sm" (click)="printResolutionClicked(resolution, i)"
+              title="چاپ مصوبه">چاپ</button>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="mt-3">
+            <p class="text-justify mb-3 space-preline" style="text-align: justify" [innerHTML]="resolution.text">
+            </p>
+          </div>
+        </div>
+        @if(resolution.assignments.length > 0) {
+        <div class="card-footer bg-light">
+          <button class="btn btn-outline-primary w-100 text-start" type="button"
+            (click)="toggleCollapse(resolution.id)">
+            تخصیص‌ها <i class="fa fa-chevron-down"></i>
+          </button>
+          <div [id]="'assignments-' + resolution.id" class="collapse table-responsive mt-3">
+            <table class="table table-hover rounded-3 overflow-hidden">
+              <thead class="bg-info text-white">
+                <tr>
+                  <th>اقدام کننده</th>
+                  <th>پیگیری کننده</th>
+                  <th>تاریخ سررسید</th>
+                  <th>نوع</th>
+                  @if(canAddAssignment()) {
+                  <th>عملیات</th>
+                  }
+                </tr>
+              </thead>
+              <tbody>
+                @for(assign of resolution.assignments;track $index) {
+                <tr class="align-middle">
+                  <td>{{ assign.actorName }}</td>
+                  <td>{{ assign.followerName }}</td>
+                  <td>{{ assign.dueDate }}</td>
+                  <td>
+                    <span class="badge rounded-pill bg-label-dark">{{ assign.type }}</span>
+                  </td>
+                  @if(canAddAssignment()) {
+                  <td>
+                    <div class="dropdown" ngbDropdown>
+                      <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" ngbDropdownToggle>
+                        عملیات
+                      </button>
+                      <ul class="dropdown-menu" ngbDropdownMenu>
+                        <li ngbDropdownItem>
+                          <a class="dropdown-item" href="javascript:void(0)" (click)="editAssignmentClicked(assign.id)">
+                            <i class="fa fa-edit text-warning"></i> ویرایش
+                          </a>
+                        </li>
+                        <li ngbDropdownItem>
+                          <a class="dropdown-item" href="javascript:void(0)" (click)="deleteAssignmentClicked(assign)">
+                            <i class="fa fa-trash text-danger"></i> حذف
+                          </a>
+                        </li>
+                      </ul>
+                    </div>
+                  </td>
+                  }
+                </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+        }
+      </div>
+      }
+    </div>
+    }
+  </div>
+</div>

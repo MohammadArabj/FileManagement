@@ -1,0 +1,109 @@
+<div
+  class="modal fade"
+  [id]="modalConfig().id"
+  tabindex="-1"
+  aria-modal="true"
+  role="dialog"
+  data-bs-backdrop="static"
+  data-bs-keyboard="false"
+  [attr.aria-labelledby]="modalConfig().id + '-title'">
+
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable {{ modalConfig().size }}">
+    <div class="modal-content">
+      <!-- Modal Header -->
+      @if (!modalConfig().hideHeader) {
+        <div class="modal-header border-bottom">
+          <h4 class="modal-title" [id]="modalConfig().id + '-title'">
+            <!-- @if (modalConfig().icon) {
+              <i class="{{ modalConfig().icon }} me-2"></i>
+            } -->
+            {{ modalConfig().modalTitle }}
+          </h4>
+
+          @if (!modalConfig().hideCloseButton) {
+            <button
+              type="button"
+              class="btn-close"
+              (click)="close()"
+              aria-label="بستن"
+              [disabled]="modalConfig().disableCloseButton">
+            </button>
+          }
+        </div>
+      }
+
+      <!-- Modal Body -->
+      <div class="modal-body">
+        <!-- @if (modalConfig().description) {
+          <p class="text-muted mb-4">{{ modalConfig().description }}</p>
+        } -->
+
+        <ng-content></ng-content>
+      </div>
+
+      <!-- Modal Footer -->
+      @if (!modalConfig().hideFooter) {
+        <div class="modal-footer border-top">
+          <div class="w-100 d-flex justify-content-end gap-2">
+            <!-- Dual Save Buttons -->
+            @if (modalConfig().dualSave && !modalConfig().hideSubmitButton) {
+              <button
+                type="button"
+                class="btn btn-success"
+                (click)="submit('exit')"
+                [disabled]="modalConfig().disableSubmitButton">
+                {{ modalConfig().submitButtonLabel }} و خروج
+              </button>
+
+              <button
+                type="button"
+                class="btn btn-primary"
+                (click)="submit('new')"
+                [disabled]="modalConfig().disableSubmitButton">
+                {{ modalConfig().submitButtonLabel }} و جدید
+              </button>
+            }
+
+            <!-- Single Save Button -->
+            @if (!modalConfig().dualSave && !modalConfig().hideSubmitButton) {
+              <button
+                type="button"
+                class="btn btn-success"
+                (click)="submit('exit')"
+                [disabled]="modalConfig().disableSubmitButton">
+                {{ modalConfig().submitButtonLabel }}
+              </button>
+            }
+
+            <!-- Close Button -->
+            @if (!modalConfig().hideCloseButton) {
+              <button
+                type="button"
+                class="btn btn-secondary"
+                (click)="close()"
+                [disabled]="modalConfig().disableCloseButton">
+                {{ modalConfig().closeButtonLabel }}
+              </button>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</div>
+
+<!-- Loading and No Data Overlays for AG Grid -->
+<ng-template #customLoadingOverlay>
+  <div class="ag-overlay-wrapper text-center">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">در حال بارگذاری...</span>
+    </div>
+    <p class="mt-2 text-muted">در حال بارگذاری داده‌ها...</p>
+  </div>
+</ng-template>
+
+<ng-template #customNoRowsOverlay>
+  <div class="ag-overlay-wrapper text-center">
+    <p class="text-muted">هیچ داده‌ای برای نمایش وجود ندارد</p>
+  </div>
+</ng-template>

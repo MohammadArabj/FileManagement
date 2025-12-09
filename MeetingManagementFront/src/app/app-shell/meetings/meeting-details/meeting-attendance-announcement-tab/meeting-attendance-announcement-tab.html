@@ -1,0 +1,50 @@
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0">اعلام حضور برای جلسه</h5>
+    </div>
+    <div class="card-body">
+        @if (!isSubstitute()) {
+        <form [formGroup]="replacementForm" class="row align-items-center mt-2">
+            <!-- حضور پیدا می‌کنم -->
+            <div class="col-auto d-flex align-items-center">
+                <div class="form-check mr-3">
+                    <input class="form-check-input" type="radio" formControlName="attendance" value="attending"
+                        (change)="onAttendanceChange($event)" id="attending">
+                    <label class="form-check-label" for="attending">حضور پیدا می‌کنم</label>
+                </div>
+            </div>
+
+            <!-- حضور پیدا نمی‌کنم -->
+            <div class="col-auto d-flex align-items-center">
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" formControlName="attendance" value="notAttending"
+                        (change)="onAttendanceChange($event)" id="notAttending">
+                    <label class="form-check-label" for="notAttending">حضور پیدا نمی‌کنم</label>
+                </div>
+            </div>
+
+            @if (replacementForm.get('attendance')?.value === 'notAttending' && !meeting().notAllowReplacement) {
+            <div class="col-5 d-flex align-items-center">
+                <!-- ❌ [disabled] حذف شد -->
+                <custom-select [options]="users()" identity="replacementUserGuid" formControlName="replacementUserGuid"
+                    label="جانشین" size="col-12">
+                </custom-select>
+            </div>
+            }
+
+            @if (meeting().statusId === 2) {
+            <div class="col-auto">
+                <button type="submit" class="btn btn-primary" (click)="submitAttendance()">ثبت</button>
+            </div>
+            }
+
+        </form>
+        }
+        @else {
+        <div class="alert alert-info mt-3" role="alert">
+            <strong>شما به عنوان جانشین <span class="text-danger">{{ substituteName() }}</span> انتخاب شده‌اید.</strong>
+            <p>حضور شما در جلسه الزامی می باشد</p>
+        </div>
+        }
+    </div>
+</div>

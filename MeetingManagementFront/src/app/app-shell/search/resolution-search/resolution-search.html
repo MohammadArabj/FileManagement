@@ -1,0 +1,332 @@
+<div class="search-container">
+
+    <!-- Enhanced Search Card with Modern Design -->
+    <div class="search-card" [class.collapsed]="isCollapsed()">
+        <div class="search-header" (click)="toggleCollapse()">
+            <div class="header-content">
+                <i class="bx bx-search-alt search-icon"></i>
+                <h5 class="header-title">جستجوی پیشرفته مصوبات</h5>
+            </div>
+            <button class="collapse-btn" type="button">
+                <i class="bx" [class.bx-chevron-down]="!isCollapsed()" [class.bx-chevron-up]="isCollapsed()"></i>
+            </button>
+        </div>
+
+        <div class="search-body" [class.show]="!isCollapsed()">
+            <form [formGroup]="form()" (ngSubmit)="search()">
+                <div class="search-grid">
+                    <!-- Row 1 -->
+                    <div class="input-group-modern">
+                        <custom-input type="text" identity="meetingNumber" formControlName="meetingNumber"
+                            label="شماره جلسه" size="col-12" styleType="simple"></custom-input>
+                    </div>
+                    <div class="input-group-modern">
+                        <custom-input type="text" identity="meetingTitle" formControlName="meetingTitle"
+                            label="عنوان جلسه" size="col-12" styleType="simple"></custom-input>
+                    </div>
+                    <div class="input-group-modern">
+                        <custom-input type="date" identity="meetingDate" formControlName="meetingDate"
+                            label="تاریخ جلسه" size="col-12" styleType="simple"></custom-input>
+                    </div>
+                    <div class="input-group-modern">
+                        <custom-input type="text" identity="resolutionNumber" formControlName="resolutionNumber"
+                            label="شماره مصوبه" size="col-12" styleType="simple"></custom-input>
+                    </div>
+
+                    <!-- Row 2 -->
+                    <div class="input-group-modern">
+                        <custom-input type="text" identity="title" formControlName="title" label="عنوان مصوبه"
+                            size="col-12" styleType="simple"></custom-input>
+                    </div>
+                    <div class="input-group-modern">
+                        <custom-input type="text" identity="text" formControlName="text" label="متن مصوبه" size="col-12"
+                            styleType="simple"></custom-input>
+                    </div>
+                    <div class="input-group-modern">
+                        <custom-input type="date" identity="resolutionDate" formControlName="resolutionDate"
+                            label="تاریخ سررسید" size="col-12" styleType="simple"></custom-input>
+                    </div>
+                    <div class="input-group-modern">
+                        <custom-select [options]="userList()" formControlName="actorGuid" label="اقدام کننده"
+                            size="col-12" styleType="floating"></custom-select>
+                    </div>
+
+                    <!-- Row 3 -->
+                    <div class="input-group-modern">
+                        <custom-input type="text" identity="decisions" formControlName="decisions" label="تصمیمات متخذه"
+                            size="col-12" styleType="simple"></custom-input>
+                    </div>
+                    <div class="input-group-modern">
+                        <custom-input type="text" identity="description" formControlName="description" label="توضیحات"
+                            size="col-12" styleType="simple"></custom-input>
+                    </div>
+                    <div class="input-group-modern">
+                        <custom-input type="text" identity="documents" formControlName="documents"
+                            label="سوابق و مستندات" size="col-12" styleType="simple"></custom-input>
+                    </div>
+                    <div class="input-group-modern">
+                        <custom-select identity="assignmentType" formControlName="assignmentType" label="نوع تخصیص"
+                            size="col-12" styleType="simple" [options]="[
+                            { guid: '', title: 'همه' },
+                            { guid: 'Follow', title: 'پیگیری‌کننده' },
+                            { guid: 'Action', title: 'اقدام‌کننده' }
+                        ]"></custom-select>
+                    </div>
+
+                    <!-- Conditional Status Fields -->
+                    @if (form().get('assignmentType')?.value === 'Follow') {
+                    <div class="input-group-modern">
+                        <custom-select identity="approvalStatus" formControlName="approvalStatus" label="وضعیت پیگیری"
+                            size="col-12" styleType="simple" [options]="[
+                                { guid: '', title: 'همه' },
+                                { guid: 'FollowingUp', title: 'درحال پیگیری' },
+                                { guid: 'NotFollowedUp', title: 'پیگیری نشده' },
+                                { guid: 'FollowUpEnd', title: 'پایان پیگیری' }
+                            ]"></custom-select>
+                    </div>
+                    }
+
+                    @if (form().get('assignmentType')?.value === 'Action') {
+                    <div class="input-group-modern">
+                        <custom-select identity="actionStatus" formControlName="actionStatus" label="وضعیت اقدام"
+                            size="col-12" styleType="simple" [options]="[
+                                { guid: '', title: 'همه' },
+                                { guid: 'Done', title: 'انجام‌شده' },
+                                { guid: 'InProgress', title: 'در حال انجام' },
+                                { guid: 'NotDone', title: 'انجام‌نشده' },
+                                { guid: 'End', title: 'پایان یافته' }
+                            ]"></custom-select>
+                    </div>
+                    }
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn-modern btn-clear" type="button" (click)="clearForm()" [disabled]="loading()">
+                        <i class="bx bx-x"></i>
+                        <span>پاک کردن</span>
+                    </button>
+                    <button class="btn-modern btn-search" type="submit" [disabled]="loading()">
+                        @if (!loading()) {
+                        <i class="bx bx-search"></i>
+                        <span>جستجو</span>
+                        }
+                        @if (loading()) {
+                        <span class="spinner"></span>
+                        <span>در حال جستجو...</span>
+                        }
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Results Grid -->
+    @if (records().length > 0) {
+    <div class="results-card">
+        <div class="results-header">
+            <div class="results-header-left">
+                <h5>نتایج جستجو</h5>
+                <span class="results-count">{{ records().length }} مورد</span>
+            </div>
+            <!-- <div class="results-actions">
+                <div class="quick-filter">
+                    <i class="bx bx-filter"></i>
+                    <input type="text" placeholder="فیلتر سریع..." (input)="onQuickFilter($event)"
+                        class="quick-filter-input" />
+                </div>
+                <button class="btn-icon" (click)="exportToExcel()" title="خروجی اکسل">
+                    <i class="bx bx-download"></i>
+                </button>
+            </div> -->
+        </div>
+        <ag-grid-angular #agGrid id="resolutionGrid" [components]="components"
+            class="ag-theme-material font-sahel modern-grid" [rowData]="records()" [gridOptions]="gridOptions()"
+            [modules]="modules()" (gridReady)="onGridReady($event)" (rowClicked)="onRowClicked($event)">
+        </ag-grid-angular>
+    </div>
+    }
+
+    <!-- Empty State -->
+    @if (isSearchEmpty()) {
+    <div class="empty-state">
+        <div class="empty-icon">
+            <i class="bx bx-search-alt-2"></i>
+        </div>
+        <h4>نتیجه‌ای یافت نشد</h4>
+        <p>لطفاً معیارهای جستجوی خود را تغییر دهید</p>
+        <button class="btn-modern btn-search" (click)="clearForm()">
+            <i class="bx bx-refresh"></i>
+            <span>جستجوی جدید</span>
+        </button>
+    </div>
+    }
+</div>
+
+<!-- Quick Preview Tooltip -->
+<div class="quick-preview-tooltip" [class.visible]="showQuickPreview()" [style.top.px]="tooltipPosition().top"
+    [style.left.px]="tooltipPosition().left">
+    @if (previewResolution()) {
+    <div class="preview-header">
+        <span class="preview-badge">پیش‌نمایش سریع</span>
+    </div>
+    <div class="preview-body">
+        <div class="preview-item">
+            <strong>شماره مصوبه:</strong>
+            <span>{{ previewResolution().resolutionNumber }}</span>
+        </div>
+        <div class="preview-item">
+            <strong>عنوان:</strong>
+            <span>{{ previewResolution().title }}</span>
+        </div>
+        <div class="preview-item">
+            <strong>جلسه:</strong>
+            <span>{{ previewResolution().meetingTitle }}</span>
+        </div>
+        @if (previewResolution().decisions) {
+        <div class="preview-item">
+            <strong>تصمیمات:</strong>
+            <span>{{ previewResolution().decisions.substring(0, 80) }}...</span>
+        </div>
+        }
+    </div>
+    <div class="preview-footer">
+        <small>کلیک کنید برای مشاهده کامل</small>
+    </div>
+    }
+</div>
+
+<!-- Enhanced Slider Modal -->
+<div class="resolution-slider-modal" [class.active]="showSlider()" (click)="closeSliderOnBackdrop($event)">
+    <div class="slider-content" (click)="$event.stopPropagation()">
+        <button class="close-slider" (click)="closeSlider()">
+            <i class="bx bx-x"></i>
+        </button>
+
+        @if (currentResolution()) {
+        <div class="slider-header">
+            <div class="resolution-badge">مصوبه شماره {{ currentResolution().resolutionNumber }}</div>
+            <h3 class="resolution-title">{{ currentResolution().title }}</h3>
+        </div>
+
+        <div class="slider-body">
+            <!-- Meeting Info Card -->
+            <div class="info-card">
+                <div class="info-card-header">
+                    <i class="bx bx-calendar"></i>
+                    <span>اطلاعات جلسه</span>
+                </div>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span class="info-label">عنوان جلسه:</span>
+                        <span class="info-value">{{ currentResolution().meetingTitle }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">شماره جلسه:</span>
+                        <span class="info-value">{{ currentResolution().meetingNumber }}</span>
+                    </div>
+                    @if (currentResolution().meetingDate) {
+                    <div class="info-item">
+                        <span class="info-label">تاریخ جلسه:</span>
+                        <span class="info-value">{{ currentResolution().meetingDate }}</span>
+                    </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Resolution Details Card -->
+            <div class="info-card">
+                <div class="info-card-header">
+                    <i class="bx bx-file"></i>
+                    <span>جزئیات مصوبه</span>
+                </div>
+
+                @if (currentResolution().text) {
+                <div class="detail-section">
+                    <div class="detail-label">متن مصوبه:</div>
+                    <div class="detail-text">{{ currentResolution().text }}</div>
+                </div>
+                }
+
+                @if (currentResolution().decisions) {
+                <div class="detail-section">
+                    <div class="detail-label">تصمیمات متخذه:</div>
+                    <div class="detail-text">{{ currentResolution().decisions }}</div>
+                </div>
+                }
+
+                @if (currentResolution().description) {
+                <div class="detail-section">
+                    <div class="detail-label">توضیحات:</div>
+                    <div class="detail-text">{{ currentResolution().description }}</div>
+                </div>
+                }
+
+                @if (currentResolution().documents) {
+                <div class="detail-section">
+                    <div class="detail-label">سوابق و مستندات:</div>
+                    <div class="detail-text">{{ currentResolution().documents }}</div>
+                </div>
+                }
+
+                @if (currentResolution().resolutionDate) {
+                <div class="info-item">
+                    <span class="info-label">تاریخ سررسید:</span>
+                    <span class="info-value">{{ currentResolution().resolutionDate }}</span>
+                </div>
+                }
+            </div>
+
+            <!-- Actions Card -->
+            <div class="actions-card">
+                <button class="btn-action btn-primary" (click)="viewMeeting(currentResolution().meetingGuid)">
+                    <i class="bx bx-show"></i>
+                    <span>مشاهده جلسه</span>
+                </button>
+                <button class="btn-action btn-secondary" (click)="viewResolution(currentResolution().id)"
+                    [disabled]="_loadingFiles().has(currentResolution().id)">
+                    @if (!_loadingFiles().has(currentResolution().id)) {
+                    <i class="bx bx-printer"></i>
+                    <span>چاپ مصوبه</span>
+                    }
+                    @if (_loadingFiles().has(currentResolution().id)) {
+                    <span class="spinner-border spinner-border-sm me-2"></span>
+                    <span>در حال بارگذاری PDF...</span>
+                    }
+                </button>
+            </div>
+        </div>
+
+        <!-- Navigation Controls -->
+        <div class="slider-navigation">
+            <button class="nav-btn prev" (click)="previousResolution()" [disabled]="currentIndex() === 0">
+                <i class="bx bx-chevron-right"></i>
+                <span>قبلی</span>
+            </button>
+            <div class="nav-center">
+                <div class="nav-indicator">
+                    {{ currentIndex() + 1 }} از {{ records().length }}
+                </div>
+                <div class="keyboard-hints">
+                    <span class="hint-item">
+                        <kbd>←</kbd>
+                        <small>بعدی</small>
+                    </span>
+                    <span class="hint-item">
+                        <kbd>→</kbd>
+                        <small>قبلی</small>
+                    </span>
+                    <span class="hint-item">
+                        <kbd>Esc</kbd>
+                        <small>بستن</small>
+                    </span>
+                </div>
+            </div>
+            <button class="nav-btn next" (click)="nextResolution()"
+                [disabled]="currentIndex() === records().length - 1">
+                <span>بعدی</span>
+                <i class="bx bx-chevron-left"></i>
+            </button>
+        </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,737 @@
+  .meeting-number-badge {
+      background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.8em;
+      font-weight: 600;
+      margin-right: 10px;
+      box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+  }
+
+  .agenda-file {
+      border-left: 4px solid #17a2b8 !important;
+      background: linear-gradient(to right, #f8f9fa, #e9ecef);
+  }
+
+  .agenda-badge {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background: #17a2b8;
+      color: white;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .agenda-label {
+      color: #17a2b8;
+      font-weight: 600;
+  }
+
+  .file-icon {
+      position: relative;
+  }
+
+  .file-card.agenda-file .file-actions .btn-delete {
+      display: none;
+  }
+
+  .file-card.agenda-file:hover {
+      border-left-color: #138496;
+      box-shadow: 0 4px 15px rgba(23, 162, 184, 0.2);
+  }
+
+  .assignment-card-regular {
+      background: #f8f9fa;
+      border: 2px solid #e9ecef;
+      border-radius: 12px;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .assignment-card-regular:hover {
+      border-color: #007bff;
+      box-shadow: 0 4px 15px rgba(0, 123, 255, 0.2);
+  }
+
+  /* استایل‌های مشترک برای هر دو نوع تخصیص */
+  .form-section {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .section-title {
+      color: #495057;
+      font-weight: 600;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+  }
+
+  .assignments-section-new {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .assignments-header-new {
+      border-bottom: 2px solid #e9ecef;
+      padding-bottom: 15px;
+      margin-bottom: 20px;
+  }
+
+  .header-content-new {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+  }
+
+  .section-title-modern {
+      color: #495057;
+      font-weight: 600;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+  }
+
+  .header-stats-new {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+  }
+
+  .assignment-counter-new {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #6c757d;
+      font-weight: 500;
+      background: #f8f9fa;
+      padding: 6px 12px;
+      border-radius: 20px;
+      border: 1px solid #e9ecef;
+  }
+
+  .add-assignment-btn-new {
+      background: linear-gradient(45deg, #28a745, #20c997);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-weight: 500;
+      font-size: 14px;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+  }
+
+  .add-assignment-btn-new:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+  }
+
+  .assignments-container-modern {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      /* max-height: 400px;
+      overflow-y: auto; */
+      padding-right: 10px;
+  }
+
+  .assignment-card-modern {
+      background: #f8f9fa;
+      border: 2px solid #e9ecef;
+      border-radius: 12px;
+      padding: 20px;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .assignment-card-modern:hover {
+      border-color: #007bff;
+      box-shadow: 0 4px 15px rgba(0, 123, 255, 0.2);
+  }
+
+  .card-header-new {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+  }
+
+  .assignment-number-new {
+      background: linear-gradient(45deg, #007bff, #0056b3);
+      color: white;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 14px;
+  }
+
+  .delete-btn-new {
+      background: linear-gradient(45deg, #dc3545, #c82333);
+      color: white;
+      border: none;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      cursor: pointer;
+  }
+
+  .delete-btn-new:hover {
+      transform: scale(1.1);
+      box-shadow: 0 2px 8px rgba(220, 53, 69, 0.4);
+  }
+
+  .status-badge-container-new {
+      margin-top: 10px;
+  }
+
+  .status-badge-new {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+  }
+
+  .status-completed-new {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+  }
+
+  .status-not-completed-new {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+  }
+
+  .status-no-response-new {
+      background: #fff3cd;
+      color: #856404;
+      border: 1px solid #ffeaa7;
+  }
+
+  .empty-state-new {
+      text-align: center;
+      padding: 40px 20px;
+      color: #6c757d;
+  }
+
+  .empty-state-icon-new {
+      font-size: 3rem;
+      margin-bottom: 15px;
+      opacity: 0.5;
+  }
+
+  .empty-state-title-new {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+  }
+
+  .empty-state-text-new {
+      font-size: 0.9rem;
+  }
+
+  /* File management styles */
+  .main-container {
+      display: grid;
+      grid-template-columns: 350px 1fr 35%;
+      height: 70vh;
+      gap: 0;
+      transition: grid-template-columns 0.3s ease;
+  }
+
+  .main-container.no-pdf {
+      grid-template-columns: 350px 1fr 0;
+  }
+
+  .file-panel {
+      background: #dfe6ed;
+      border-right: 1px solid #e9ecef;
+      overflow-y: auto;
+      padding: 20px;
+  }
+
+  .form-panel {
+      overflow-y: auto;
+      padding: 20px;
+      background: #ededed;
+  }
+
+  .pdf-panel {
+      background: rgba(255, 255, 255, 0.98);
+      border-radius: 20px;
+      box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
+      backdrop-filter: blur(4px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transition: all 0.3s ease;
+  }
+
+  .pdf-panel.hidden {
+      width: 0;
+      opacity: 0;
+      pointer-events: none;
+  }
+
+  .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid #e9ecef;
+  }
+
+  .panel-title {
+      color: #495057;
+      font-weight: 600;
+      margin: 0;
+      display: flex;
+      align-items: center;
+  }
+
+  .file-count-badge {
+      background: linear-gradient(45deg, #007bff, #0056b3);
+      color: white;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.8em;
+      font-weight: 600;
+  }
+
+  .file-upload-zone {
+      border: 2px dashed #ced4da;
+      border-radius: 12px;
+      padding: 30px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background: white;
+      margin-bottom: 20px;
+  }
+
+  .file-upload-zone:hover {
+      border-color: #007bff;
+      background: #f8f9fa;
+  }
+
+  .file-upload-zone.dragover {
+      border-color: #28a745;
+      background: #f8fff9;
+  }
+
+  .upload-icon {
+      font-size: 3rem;
+      color: #6c757d;
+      margin-bottom: 15px;
+  }
+
+  .upload-text {
+      font-weight: 600;
+      color: #495057;
+      margin-bottom: 5px;
+  }
+
+  .upload-hint {
+      font-size: 0.9rem;
+      color: #6c757d;
+      margin-bottom: 15px;
+  }
+
+  .btn-upload {
+      background: linear-gradient(45deg, #007bff, #0056b3);
+      color: white;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 20px;
+      font-weight: 500;
+  }
+
+  .files-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 300px;
+      overflow-y: auto;
+  }
+
+  .file-card {
+      background: white;
+      border: 2px solid #e9ecef;
+      border-radius: 8px;
+      padding: 12px;
+      cursor: pointer;
+      display: flex;
+      transition: all 0.3s ease;
+  }
+
+  .file-card:hover {
+      border-color: #007bff;
+      box-shadow: 0 2px 8px rgba(0, 123, 255, 0.2);
+  }
+
+  .file-card.selected {
+      border-color: #007bff;
+      background: #e7f3ff;
+  }
+
+  .file-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+  }
+
+  .file-icon {
+      font-size: 1.5rem;
+      color: #dc3545;
+      position: relative;
+  }
+
+  .file-details {
+      flex: 1;
+      min-width: 0;
+  }
+
+  .file-name {
+      font-weight: 600;
+      color: #495057;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+  }
+
+  .file-meta {
+      font-size: 0.8rem;
+      color: #6c757d;
+  }
+
+  .file-actions {
+      display: flex;
+      gap: 5px;
+  }
+
+  .action-btn {
+      width: 30px;
+      height: 30px;
+      border: none;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+  }
+
+  .btn-view {
+      background: #007bff;
+      color: white;
+  }
+
+  .btn-delete {
+      background: #dc3545;
+      color: white;
+  }
+
+  .action-btn:hover {
+      transform: scale(1.1);
+  }
+
+  .pdf-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 20px;
+      border-bottom: 1px solid #e9ecef;
+      background: #f8f9fa;
+  }
+
+  .pdf-title {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #495057;
+  }
+
+  .pdf-close {
+      background: #dc3545;
+      color: white;
+      border: none;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+  }
+
+  .pdf-viewer {
+      flex: 1;
+      width: 100%;
+      border: none;
+  }
+
+  .upload-progress {
+      background: white;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 15px;
+      border: 1px solid #e9ecef;
+  }
+
+  .progress {
+      height: 8px;
+      border-radius: 10px;
+      background: #e9ecef;
+  }
+
+  .progress-bar {
+      background: linear-gradient(45deg, #28a745, #20c997);
+      border-radius: 10px;
+      transition: width 0.3s ease;
+  }
+
+  .spinner {
+      width: 20px;
+      height: 20px;
+      border: 2px solid #e9ecef;
+      border-top: 2px solid #007bff;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+      0% {
+          transform: rotate(0deg);
+      }
+
+      100% {
+          transform: rotate(360deg);
+      }
+  }
+
+  /* استایل‌های آواتار برای ng-select */
+  .user-option {
+      display: flex;
+      align-items: center;
+      padding: 8px 12px;
+      gap: 12px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+  }
+
+  .user-option:hover {
+      background-color: #f8f9fa;
+  }
+
+  .user-avatar,
+  .selected-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      object-fit: contain;
+      border: 2px solid #e0e0e0;
+      flex-shrink: 0;
+      transition: border-color 0.2s ease;
+  }
+
+  .selected-avatar {
+      width: 20px;
+      height: 20px;
+      border-width: 1px;
+  }
+
+  .avatar-placeholder,
+  .selected-avatar-placeholder {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(45deg, #007bff, #0056b3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      font-size: 14px;
+      flex-shrink: 0;
+      box-shadow: 0 2px 4px rgba(0, 123, 255, 0.2);
+  }
+
+  .selected-avatar-placeholder {
+      width: 20px;
+      height: 20px;
+      font-size: 10px;
+  }
+
+  .user-info {
+      flex: 1;
+      min-width: 0;
+  }
+
+  .user-name,
+  .selected-user-name {
+      font-weight: 500;
+      color: #333;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.2;
+  }
+
+  .user-position {
+      font-size: 10px !important;
+  }
+
+  .selected-user-name {
+      font-size: 12px;
+  }
+
+  .selected-users {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      width: 100%;
+  }
+
+  .selected-user-tag {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 8px;
+      background: #f8f9fa;
+      border: 1px solid #dee2e6;
+      border-radius: 16px;
+      font-size: 12px;
+      transition: all 0.2s ease;
+  }
+
+  .selected-user-tag:hover {
+      background: #e9ecef;
+      border-color: #ced4da;
+  }
+
+  .more-count {
+      padding: 4px 8px;
+      background: #e9ecef;
+      border-radius: 12px;
+      font-size: 11px;
+      color: #6c757d;
+      font-weight: 500;
+  }
+
+  /* تنظیمات برای RTL */
+  [dir="rtl"] .user-option {
+      gap: 12px;
+  }
+
+  [dir="rtl"] .selected-users {
+      gap: 8px;
+  }
+
+  [dir="rtl"] .selected-user-tag {
+      gap: 6px;
+  }
+
+  /* رسپانسیو */
+  @media (max-width: 768px) {
+      .user-avatar {
+          width: 28px;
+          height: 28px;
+      }
+
+      .avatar-placeholder {
+          width: 28px;
+          height: 28px;
+          font-size: 12px;
+      }
+
+      .selected-avatar {
+          width: 18px;
+          height: 18px;
+      }
+
+      .selected-avatar-placeholder {
+          width: 18px;
+          height: 18px;
+          font-size: 9px;
+      }
+  }
+
+  .ng-dropdown-panel {
+      z-index: 2050 !important;
+      /* بالاتر از z-index مودال بوت‌استرپ (۱۰۵۰) */
+  }
+  /* اضافه کردن به resolution-form.css */
+  .ng-dropdown-panel {
+      z-index: 2050 !important;
+      /* بالاتر از مودال */
+      max-height: 250px !important;
+      overflow-y: auto !important;
+  }
+
+  .ng-dropdown-panel.ng-select-top {
+      bottom: 100%;
+      top: auto !important;
+      margin-bottom: 2px;
+  }
+
+  .ng-select.ng-select-opened>.ng-select-container {
+      z-index: 2051 !important;
+  }
+
+  /* استایل برای فایل‌های lazy loaded */
+  .file-card.lazy-loading {
+      opacity: 0.7;
+      cursor: pointer;
+  }
+
+  .file-card.lazy-loading:hover {
+      opacity: 1;
+      border-color: #17a2b8;
+  }
+
+  /* استایل دکمه انتخاب همه */
+  .btn-info {
+      background: linear-gradient(45deg, #17a2b8, #138496);
+      border: none;
+      transition: all 0.3s ease;
+  }
+
+  .btn-info:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(23, 162, 184, 0.3);
+  }
+  

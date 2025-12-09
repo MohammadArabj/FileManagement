@@ -1,0 +1,89 @@
+<!-- header.component.html -->
+<header class="top-bar">
+  <!-- <div class="top-bar-left">
+    <button class="mobile-menu-btn" (click)="toggle()" title="باز/بسته کردن منو">
+      <i class="fa fa-bars"></i>
+    </button>
+
+    <div class="top-bar-logo">
+      <div class="logo-badge">M</div>
+    </div>
+
+    <div class="top-bar-title">
+      <div class="top-bar-text-main">سامانه مدیریت جلسات</div>
+    </div>
+  </div> -->
+
+  <div class="top-bar-center">
+    <!-- نمایش تاریخ و زمان جاری -->
+    <div class="chip">
+      <i class="fa fa-calendar-alt" style="margin-left: 6px;"></i>
+      <span class="fw-semibold">{{ currentDay() }}</span>
+      <span style="margin: 0 4px;">{{ currentDate() }}</span>
+      <span style="margin: 0 4px;">|</span>
+      <i class="fa fa-clock" style="margin-left: 4px;"></i>
+      <span>{{ currentTime() }}</span>
+    </div>
+  </div>
+
+  <div class="top-bar-right">
+    <!-- سوییچ نقش/سمت (در صورت وجود چند حساب) -->
+    @if (hasMultipleDelegations()) {
+    <div class="role-switcher" [class.open]="isRoleSwitcherOpen()">
+      <button class="role-switcher-toggle" (click)="toggleRoleSwitcher()">
+        <div class="role-info">
+          <small>سمت فعال</small>
+          <span class="fw-semibold">{{ position() }}</span>
+        </div>
+        <i class="fa fa-chevron-down transition-icon" [class.rotate]="isRoleSwitcherOpen()"></i>
+      </button>
+
+      @if (isRoleSwitcherOpen()) {
+      <div class="role-switcher-dropdown">
+        @for (item of delegations(); track item.positionGuid) {
+        <button class="role-option" [class.active]="selectedDelegation() === item.positionGuid"
+          (click)="switchAccount(item)">
+          <div class="role-option-content">
+            <div class="fw-semibold">{{ item.userName }}</div>
+            <div class="text-muted small">{{ item.position }}</div>
+          </div>
+          @if (selectedDelegation() === item.positionGuid) {
+          <i class="fa fa-check text-success"></i>
+          }
+        </button>
+        }
+      </div>
+      }
+    </div>
+    }
+
+    <!-- اطلاعات کاربر -->
+    <div class="user-pill" [class.clickable]="false">
+      <img [src]="fileManagementUrl()" class="user-avatar" alt="User" (error)="onImageError($event)" />
+      <div class="user-info-text">
+        <strong>{{ information().fullname }}</strong>
+        <small>
+          @if (isDelegate()) {
+          <span class="text-danger">تفویض شده - </span>
+          }
+          {{ position() }}
+        </small>
+      </div>
+    </div>
+
+    <!-- دکمه‌های اقدام -->
+    <!-- <button class="btn-icon" title="اعلان‌ها">
+      <i class="fa fa-bell"></i>
+    </button> -->
+
+    <button class="btn-ghost" (click)="redirectToGrants()" title="بازگشت به سامانه‌ها">
+      <i class="fa fa-th" style="margin-left: 6px;"></i>
+      <span class="btn-text">سامانه‌ها</span>
+    </button>
+
+    <button class="btn-ghost btn-danger" (click)="logout()" title="خروج از سیستم">
+      <i class="fa fa-sign-out-alt" style="margin-left: 6px;"></i>
+      <span class="btn-text">خروج</span>
+    </button>
+  </div>
+</header>

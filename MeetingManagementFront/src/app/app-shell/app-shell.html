@@ -1,0 +1,27 @@
+<div class="layout-wrapper layout-content-navbar  ">
+    <div class="layout-container ">
+        <app-sidebar></app-sidebar>
+
+        <div class="layout-page main-content">
+            <app-header></app-header>
+
+            <div class="content-wrapper">
+                <div class="container-fluid flex-grow-1" style="padding-top: 2rem;">
+                    <app-breadcrumb></app-breadcrumb>
+                    <div>
+                        <router-outlet></router-outlet>
+
+                    </div>
+                </div>
+
+                <div class="content-backdrop fade"></div>
+            </div>
+            <footer class="content-footer footer bg-footer-theme text-center" style="color: #fff;">
+                فناوری اطلاعات وارتباطات شرکت پتروشیمی اصفهان
+            </footer>
+        </div>
+    </div>
+
+    <div class="drag-target"></div>
+
+</div>

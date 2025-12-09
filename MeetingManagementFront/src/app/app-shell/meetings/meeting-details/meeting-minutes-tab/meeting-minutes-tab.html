@@ -1,0 +1,377 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-12 text-end">
+            <div class="btn-group btn-group-sm">
+
+                <!-- دکمه امضا و ثبت نظر -->
+                @if(canSign()) {
+                <button (click)="showSignModal()" class="btn btn-success btn-sm" style="width:100px;margin-left: 0;"
+                    title="جهت ثبت نظر و امضای جلسه کلیک کنید">
+                    امضا و ثبت نظر
+                </button>
+                }
+
+                <!-- دکمه چاپ صورتجلسه نهایی -->
+                @if(canPrintFinal()) {
+                <button (click)="printMeeting()" class="btn btn-primary btn-sm" style="width:100px;"
+                    title="جهت پرینت صورتجلسه کلیک کنید">
+                    چاپ
+                </button>
+                }
+
+                <!-- دکمه چاپ پیش‌نویس -->
+                @if(canPrintDraft()) {
+                <button (click)="printDraftMeeting()" class="btn btn-primary btn-sm" style="width:100px;"
+                    title="جهت پرینت پیش‌نویس جلسه کلیک کنید">
+                    چاپ
+                </button>
+                }
+
+                <!-- دکمه فایل‌ها -->
+                @if(canAccessFiles()) {
+                <button (click)="openUploaderModal()" class="btn btn-info btn-sm" style="width:100px;"
+                    title="جهت مشاهده و آپلود فایل‌ها کلیک کنید">
+                    فایل‌ها
+                </button>
+                }
+
+            </div>
+        </div>
+    </div>
+
+    <div id="meeting-Minute">
+        <header>
+            <div class="right-side">
+                <div class="name-of-god">به نام خدا</div>
+                <div class="meeting-title">
+                    موضوع جلسه : {{meeting().title}} </div>
+            </div>
+            <div class="logo">
+                <img src="{{siteUrl()}}/img/MainLogo.png" width="140" alt="logo">
+            </div>
+        </header>
+
+        <section class="main">
+            <div class="metting-information">
+                <table>
+                    <thead>
+                        <tr class="text-center">
+                            <th>محل تشکیل جلسه</th>
+                            <th>تاریخ</th>
+                            <th>زمان</th>
+                            <th>شماره صورت جلسه</th>
+                            <th>رئیس جلسه</th>
+                            <th>دبیر جلسه</th>
+                            <th>پیوست</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr class="meeting-information">
+                            <td>{{meeting().location}}</td>
+                            <td>{{meeting().mtDate}}</td>
+                            <td>{{meeting().startTime}}</td>
+                            <td>{{meeting().number}}</td>
+                            <td>{{meeting().chairman}}</td>
+                            <td>{{meeting().secretary}}</td>
+                            <td>{{fileCount() == 0 ? "ندارد" : fileContent()}}</td>
+                        </tr>
+                        <tr>
+                            <td class="type">مهمان‌ها</td>
+                            <td colspan="6">
+                                {{guestTitles()}}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="type">غائبین</td>
+                            <td colspan="6">{{absentedTitles()}}</td>
+                        </tr>
+                        <tr>
+                            <td class="type">اعضاء</td>
+                            <td colspan="6">{{internalTitles()}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+            @if(meeting().description){
+            <div class="metting-summary space-preline">
+                <div class="right-side">
+                    <span>شرح جلسه</span>
+                </div>
+                <div class="main">
+                    {{meeting().description}}
+                </div>
+            </div>
+            }
+
+            @if(resolutions().length > 0){
+            <div class="metting-directives">
+                <div class="main">
+                    <div class="label">مصوبات</div>
+                    <table>
+                        <thead>
+                            <tr class="text-center">
+                                <th>ردیف</th>
+                                <th>شرح مصوبه</th>
+                                <th>مسئول اقدام</th>
+                                <th>نوع تخصیص</th>
+                                <th>مسئول پیگیری</th>
+                                <th>مهلت اقدام</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (resolution of resolutions(); let i = $index; track $index) {
+                            @let groups = formattedAssignments()[i];
+
+                            @if (groups && groups.length > 0) {
+                            @for (group of groups; let j = $index; track $index) {
+                            <tr>
+                                @if (j === 0) {
+                                <!-- شماره ردیف فقط یک‌بار، با rowspan -->
+                                <td [attr.rowspan]="groups.length">
+                                    {{ i + 1 }}
+                                </td>
+
+                                <!-- شرح مصوبه فقط یک‌بار، با rowspan -->
+                                <td class="space-preline" [innerHTML]="resolution.text" [attr.rowspan]="groups.length">
+                                </td>
+                                }
+
+                                <!-- این سطر، فقط یک گروه را نشان می‌دهد -->
+                                <td style="width: 8%;" [innerHTML]="group.actionerNames"></td>
+                                <td [innerHTML]="group.type"></td>
+                                <td style="width: 8%;" [innerHTML]="group.followerName"></td>
+                                <td [innerHTML]="group.dueDate"></td>
+                            </tr>
+                            }
+                            } @else {
+                            <!-- اگر مصوبه‌ای assignment نداشت -->
+                            <tr>
+                                <td>{{ i + 1 }}</td>
+                                <td class="space-preline" [innerHTML]="resolution.text"></td>
+                                <td colspan="4"></td>
+                            </tr>
+                            }
+                            }
+                        </tbody>
+
+                    </table>
+                </div>
+            </div>
+            }
+
+            @if(memberDescriptions().length > 0){
+            <div class="metting-directives metting-description">
+                <div class="main">
+                    <div class="label">توضیحات</div>
+                    <table>
+                        <thead>
+                            <tr class="text-center">
+                                <th>نام عضو جلسه</th>
+                                <th>توضیح ارائه شده</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for(member of memberDescriptions(); track $index) {
+                            <tr>
+                                <td>{{member.name}}</td>
+                                <td>{{member.comment}}</td>
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            }
+
+            @if(meeting().rider){
+            <div class="metting-summary">
+                <div class="right-side">
+                    <span>الحاقیه</span>
+                </div>
+                <div class="main">
+                    {{meeting().rider}}
+                </div>
+            </div>
+            }
+
+
+            <div class="meeting-signatures">
+                <div class="top">امضا</div>
+                <div class="main row mb-2">
+                    @for(item of signedMembers(); track $index) {
+                    <div class="col-md-2 col-sm-2">
+                        <img src="{{item.signature}}" alt="signature" width="90px">
+                        <span>{{item.name}}</span>
+                    </div>
+                    }
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+
+<div #printSection class="print-area d-none">
+    <header>
+        <div class="right-side w-100">
+            <div class="name-of-god">به نام خدا</div>
+            <div class="meeting-title text-center">
+                پیش نویس جلسه : {{meeting().title}} </div>
+        </div>
+    </header>
+
+    <section class="main">
+        <div class="metting-information">
+            <table>
+                <thead>
+                    <tr class="text-center">
+                        <th>محل تشکیل جلسه</th>
+                        <th>تاریخ</th>
+                        <th>زمان</th>
+                        <th>شماره صورت جلسه</th>
+                        <th>رئیس جلسه</th>
+                        <th>دبیر جلسه</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr class="meeting-information">
+                        <td>{{meeting().location}}</td>
+                        <td>{{meeting().mtDate}}</td>
+                        <td>{{meeting().startTime}}</td>
+                        <td>{{meeting().number}}</td>
+                        <td>{{meeting().chairman}}</td>
+                        <td>{{meeting().secretary}}</td>
+                    </tr>
+                    <tr>
+                        <td class="type">مهمان‌ها</td>
+                        <td colspan="6">
+                            {{guestTitles()}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="type">اعضاء</td>
+                        <td colspan="6">{{internalTitles()}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        @if(meeting().description){
+        <div class="metting-summary">
+            <div class="right-side">
+                <span>شرح جلسه</span>
+            </div>
+            <div class="main">
+                {{meeting().description}}
+            </div>
+        </div>
+        }
+
+        @if(resolutions().length>0){
+        <div class="metting-directives">
+            <div class="main">
+                <div class="label">مصوبات</div>
+                <table>
+                    <thead>
+                        <tr class="text-center">
+                            <th>ردیف</th>
+                            <th>شرح مصوبه</th>
+                            <th>مسئول اقدام</th>
+                            <th>نوع تخصیص</th>
+                            <th>مسئول پیگیری</th>
+                            <th>مهلت اقدام</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (resolution of resolutions(); let i = $index; track $index) {
+                        @let groups = formattedAssignments()[i];
+
+                        @if (groups && groups.length > 0) {
+                        @for (group of groups; let j = $index; track $index) {
+                        <tr>
+                            @if (j === 0) {
+                            <!-- شماره ردیف فقط یک‌بار، با rowspan -->
+                            <td [attr.rowspan]="groups.length">
+                                {{ i + 1 }}
+                            </td>
+
+                            <!-- شرح مصوبه فقط یک‌بار، با rowspan -->
+                            <td class="space-preline" [innerHTML]="resolution.text" [attr.rowspan]="groups.length">
+                            </td>
+                            }
+
+                            <!-- این سطر، فقط یک گروه را نشان می‌دهد -->
+                            <td style="width: 8%;" [innerHTML]="group.actionerNames"></td>
+                            <td [innerHTML]="group.type"></td>
+                            <td style="width: 8%;" [innerHTML]="group.followerName"></td>
+                            <td [innerHTML]="group.dueDate"></td>
+                        </tr>
+                        }
+                        } @else {
+                        <!-- اگر مصوبه‌ای assignment نداشت -->
+                        <tr>
+                            <td>{{ i + 1 }}</td>
+                            <td class="space-preline" [innerHTML]="resolution.text"></td>
+                            <td colspan="4"></td>
+                        </tr>
+                        }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        }
+
+    </section>
+</div>
+
+<app-file-uploader [fileDetailsList]="attachments()" [uploadFiles]="canUploadFile()" [isConfirmDelete]="true"
+    (filesUploaded)="onFileChange($event)" modalId="uploaderModal1" previewModalId="fileViewerModalMinute"
+    (uploadFilesRequest)="saveFiles()" (confirmDeleteFiles)="confirmDeleteFile($event)"
+    (filesRemoved)="removeFile($event)" [showUploadButton]="true" [type]="'multiple'">
+</app-file-uploader>
+
+<!-- مدال نمایش فایل -->
+<div #signModal class="modal fade" id="signModal" tabindex="-1" data-bs-backdrop="static"
+    aria-labelledby="signModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="signModalLabel">امضا ونظر</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="signForm()" class="row g-3">
+                    <div class="col-9">
+                        <custom-input rows="5" type="textarea" label="توضیحات" identity="comment" styleType="simple"
+                            formControlName="comment" [required]="false" size="col-12">
+                        </custom-input>
+                    </div>
+                    <div class="col-3">
+                        <div class="position-relative d-inline-block border border-secondary rounded text-center w-100"
+                            style="padding: 20px;margin-top: 32px; cursor: pointer; min-height: 129px;"
+                            (click)="toggleSign()">
+                            <!-- وقتی امضا وجود داره -->
+                            @if(signatureImage() && signForm().get('sign')?.value) {
+                            <img [src]="signatureImage()" alt="امضا" class="img-thumbnail w-100">
+                            } @else {
+                            <div class="text-muted">جهت امضا کلیک کنید</div>
+                            }
+
+                            <!-- آیکن حذف (تیک یا چیزی مشابه) -->
+                            @if(signForm().get('sign')?.value) {
+                            <i class="fa fa-times-circle text-danger position-absolute top-0 end-0"
+                                style="font-size: 1.2rem; background: white; border-radius: 50%; margin: 2px;"></i>
+                            }
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-success me-2" (click)="saveComment()">ذخیره </button>
+                <button class="btn btn-warning" data-bs-dismiss="modal">انصراف </button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,317 @@
+body {
+    direction: rtl;
+    padding: 0;
+}
+
+.container {
+    max-width: 26cm;
+    margin: 0 auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 15px;
+}
+
+header {
+    display: flex;
+}
+
+header .right-side {
+    width: 85%;
+    margin-left: 5px;
+}
+
+.name-of-god {
+    text-align: center;
+    margin-right: 25px;
+    font-size: 18px;
+}
+
+.meeting-title {
+    border: 2px solid #6d8dab;
+    padding: 10px;
+    margin-top: 5px;
+    border-radius: 20px;
+    height: 70px;
+    font-weight: 700 !important;
+    font-size: 17px;
+    background: linear-gradient(to left, #e1d4cd, #f7ddd0, #e0e9f3);
+}
+
+.main {
+    margin-top: 10px;
+}
+
+.metting-information table {
+    border-collapse: collapse;
+    min-height: 300px;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+.metting-information th {
+    width: 10%;
+    border: 1px solid black;
+    border-top: 1px solid white;
+    padding: 5px;
+    font-size: 15px;
+    font-weight: 800;
+}
+
+th:first-child {
+    border-right: none !important;
+    border-top: none !important
+}
+
+th:last-child {
+    border-left: none !important;
+    border-top: none !important
+}
+
+td:first-child {
+    border-right: none !important;
+}
+
+td:last-child {
+    border-left: none !important;
+}
+
+.metting-information {
+    border-style: double;
+    border-radius: 15px;
+}
+
+.metting-information td {
+    border: 1px solid black;
+}
+
+.metting-information tbody tr {
+    height: 20%;
+    border-top: 2px solid black;
+    border-bottom: 1px solid black;
+}
+
+
+.metting-information tbody tr:last-child {
+    border-bottom: none !important;
+}
+
+.metting-information tbody tr:last-child td {
+    border-bottom: none !important;
+}
+
+.type {
+    text-align: center;
+    font-weight: 700;
+}
+
+.metting-summary {
+    margin: 15px 0;
+    border: 2px solid #6e6e6e;
+    display: flex;
+}
+
+.metting-summary .right-side {
+    border-left: 1px solid black;
+    background: #d9d9d9;
+}
+
+.label {
+    border-top: 1px solid #0000004f;
+}
+
+.metting-summary .right-side span {
+    transform: rotate(270deg);
+    display: table-caption;
+    padding: 0;
+    width: 74px;
+    font-size: 15px;
+    text-align: center;
+    margin: 31px 0;
+    padding: 12px 0px;
+    font-weight: 700 !important;
+}
+
+.metting-summary .main {
+    width: 90%;
+    margin: 13px;
+    font-size: 13px;
+    text-align: justify;
+}
+
+
+.metting-directives .main {
+    border: 2px solid black;
+    border-bottom: 1px solid black;
+}
+
+
+.metting-directives .main .label {
+    text-align: center;
+    background: #fbe5d5;
+    padding: 8px 0;
+}
+
+.metting-directives table {
+    border: 1px solid black;
+}
+
+.metting-directives table th {
+    width: 7%;
+    border: 1px solid black;
+    padding: 7px;
+    font-size: 14px;
+}
+
+.metting-directives table th:first-child {
+    border-right: 1px solid white;
+    font-size: 15px;
+    font-weight: 900;
+}
+
+
+.metting-directives table th:last-child {
+    border-left: 1px solid white;
+    font-size: 15px;
+    font-weight: 900;
+}
+
+.metting-directives table th:nth-child(1) {
+    width: 3%;
+    font-size: 15px;
+    font-weight: 900;
+}
+
+.metting-directives table th:nth-child(2) {
+    width: 30%;
+    font-size: 15px;
+    font-weight: 900;
+}
+
+.metting-directives table th:nth-child(3) {
+    width: 4%;
+    font-size: 15px;
+    font-weight: 900;
+}
+
+.metting-directives table th:nth-child(4) {
+  width: 4%;
+  font-size: 15px;
+  font-weight: 900;
+}
+.metting-directives table th:nth-child(5) {
+    width: 4%;
+    font-size: 15px;
+    font-weight: 900;
+}
+.metting-description table th:nth-child(1) {
+    width: 1%;
+    font-size: 15px;
+    font-weight: 900;
+}
+
+.metting-description table th:nth-child(2) {
+    width: 4%;
+    font-size: 15px;
+    font-weight: 900;
+}
+
+.metting-description table th:nth-child(3) {
+    width: 27%;
+    font-size: 15px;
+    font-weight: 900;
+}
+
+.metting-directives table tbody td {
+    border: 1px solid black;
+    text-align: center;
+    padding: 7px 10px;
+    font-size: 13px;
+}
+
+.metting-directives table tbody td:first-child {
+    border-right: 1px solid white !important;
+}
+
+.metting-directives table tbody td:last-child {
+    border-left: 1px solid white !important;
+}
+
+.metting-directives table tbody tr:last-child td {
+    border-bottom: 1px solid white !important;
+}
+
+.metting-description .main .label {
+    background: #d9d9d9;
+}
+
+.metting-directives {
+    margin-bottom: 20px;
+}
+
+.meeting-signatures {
+    margin: 15px 0;
+    border: 1px solid black;
+    min-height: 85px;
+}
+
+.meeting-signatures .top {
+    background: #d9d9d9;
+    text-align: center;
+    padding: 8px;
+    border-bottom: 1px solid black;
+}
+
+.meeting-signatures {
+    min-height: 130px;
+    page-break-before: auto;
+    page-break-after: auto;
+    page-break-inside: avoid;
+}
+
+.meeting-signatures .top {
+    background: #fbe5d5;
+}
+
+.top,
+.label {
+    font-weight: 700;
+}
+
+td {
+    font-size: 14px;
+    padding-right: 5px;
+}
+
+.meeting-information td {
+    text-align: center;
+}
+
+* {
+    -webkit-print-color-adjust: exact !important;
+    /* Chrome, Safari, Edge */
+    color-adjust: exact !important;
+    /*Firefox*/
+}
+
+.meeting-signatures .main img {
+    margin: 0 5px;
+    width: 125px;
+    height:65px;
+}
+
+.meeting-signatures .main {
+    display: flex;
+}
+
+.meeting-signatures .main div {
+    display: flex;
+    flex-direction: column;
+}
+
+.meeting-signatures .main div span {
+    font-size: 9px;
+    margin: 0 5px;
+    background: #fbe5d5;
+}

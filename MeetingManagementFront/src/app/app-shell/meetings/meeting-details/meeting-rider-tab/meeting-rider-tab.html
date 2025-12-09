@@ -1,0 +1,153 @@
+<div class="row">
+    <div class="col-md-12 d-flex">
+        <div class="card flex-fill">
+            <div class="card-header">
+                الحاقیه
+                @if ([1,2,3].includes(roleId()) && !currentMember().isDelegate && statusId() != 6) {
+                @if (!isEditingRider() && rider()) {
+                <button class="btn btn-primary btn-sm float-end" (click)="editMeetingRider()">ویرایش</button>
+                }
+                }
+            </div>
+            <div class="card-body" style="height: 400px; overflow-y: auto;">
+                <!-- نمایش متن فقط اگر در حالت ویرایش نباشیم و مقدار داشته باشد -->
+                @if (!isEditingRider() && rider()) {
+                <div class="mt-3">
+                    <p class="text-justify mb-3" style="text-align: justify">{{ rider() }}</p>
+                    @if (file()) {
+                    <div class="d-flex align-items-center">
+                        <i class="fa fa-paperclip text-secondary me-2"></i>
+                        <div class="btn-group btn-group-sm">
+                            <button class="btn btn-outline-primary" style="margin-left: 0px;"
+                                (click)="viewFile(file(),$event)">
+                                <i class="fa fa-eye"></i> مشاهده
+                            </button>
+                            @if ([1,2,3].includes(roleId()) && meeting().statusId != 6) {
+                            <button class="btn btn-outline-info" (click)="download(file())">
+                                <i class="fa fa-download"></i> دانلود
+                            </button>
+                            }
+                            @if ([1,2,3].includes(roleId()) && meeting().statusId != 6) {
+                            <button class="btn btn-outline-danger" (click)="deleteFile(file)">
+                                <i class="fa fa-trash"></i> حذف
+                            </button>
+                            }
+                        </div>
+                    </div>
+                    }
+                </div>
+                }
+
+                <!-- نمایش textarea اگر در حالت ویرایش باشیم یا مقدار خالی باشد -->
+                @if ([1,2,3].includes(roleId()) && !currentMember().isDelegate && (isEditingRider() || !rider())) {
+                <div class="mt-3">
+                    <div class="row">
+                        <div class="col-md-7">
+                            <div class="form-group">
+                                <label for="" class="form-label">متن</label>
+                                <textarea rows="10" class="form-control" [(ngModel)]="editableRider"></textarea>
+                                <small class="text-muted d-block mt-1">
+                                    {{ editableRider.length || 0 }}/1000 کاراکتر
+                                </small>
+                                @if ((editableRider.length) > 1000) {
+                                <div class="text-danger mt-1">
+                                    حداکثر تعداد مجاز ۱۰۰۰ کاراکتر است.
+                                </div>
+                                }
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <label for="" class="form-label">فایل</label>
+                            <input type="file" id="file" class="form-control" (change)="onFileChange($event)"
+                                autocomplete="off" />
+                        </div>
+                    </div>
+
+                    <div class="row" style="border-top:1px">
+                        <div class="col-md-12 text-end">
+                            <button class="btn btn-success mt-2 ml-2" (click)="saveMeetingRider()">ثبت</button>
+                            <button class="btn btn-label-secondary mt-2" (click)="cancelEditMeetingRider()">لغو</button>
+                        </div>
+                    </div>
+                </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" #fileModal id="fileModal" data-bs-backdrop="static" tabindex="-1" aria-modal="true" role="dialog">
+    <div class="modal-dialog" style="max-width: 40rem;">
+        <form class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalTitle">فایل ها</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row justify-content-center">
+                    <div class="col-md-12">
+                        <div class="container">
+                            @for (file of attachments(); track $index; let i = $index) {
+                            <div class="d-flex align-items-center">
+                                <i class="fa fa-paperclip text-secondary me-2"></i>
+                                <div class="btn-group btn-group-sm">
+                                    <button class="btn btn-outline-primary" style="margin-left: 0px;"
+                                        (click)="viewFile(file,$event)">
+                                        <i class="fa fa-eye"></i> مشاهده
+                                    </button>
+                                    @if ([1,2,3].includes(roleId()) && statusId() !== 6) {
+                                    <button class="btn btn-outline-info" (click)="download(file)">
+                                        <i class="fa fa-download"></i> دانلود
+                                    </button>
+                                    }
+                                    @if ([1,2,3].includes(roleId()) && statusId() != 6) {
+                                    <button class="btn btn-outline-danger" (click)="deleteFile(file)">
+                                        <i class="fa fa-trash"></i> حذف
+                                    </button>
+                                    }
+                                </div>
+                            </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-warning" data-bs-dismiss="modal">بستن</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="modal fade" #fileViewerModal id="fileViewerModal" tabindex="-1" aria-labelledby="fileViewerModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">{{ fileName() }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                @switch (fileType()) {
+                @case ('image') {
+                <img [src]="fileUrl()" class="img-fluid" alt="فایل پیوست">
+
+                }
+                @case ('text') {
+                <pre class="p-3 bg-light border rounded">{{ fileContent() }}</pre>
+
+                }
+                @case ('other') {
+                <p class="text-muted">
+                    فرمت فایل پشتیبانی نمی‌شود. لطفاً از دکمه دانلود استفاده کنید.
+                </p>
+                }
+                }
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-success" (click)="download(selectedFile())">دانلود فایل</button>
+                <button type="button" class="btn btn-warning" data-bs-dismiss="modal">بستن</button>
+            </div>
+        </div>
+    </div>
+</div>

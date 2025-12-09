@@ -1,0 +1,262 @@
+<div class="modal" [id]="modalId()" data-bs-backdrop="static" tabindex="-1" aria-modal="true" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <form class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalTitle">فایل ها</h5>
+                <button type="button" class="btn-close" (click)="closeUploaderModal()"></button>
+            </div>
+            <div class="modal-body">
+                <div class="elegant-file-uploader">
+                    @if (uploadFiles()) {
+                    <div class="upload-container" id="fileUploader" [class.drag-over]="isDragging()"
+                        (dragover)="onDragOver($event)" (dragleave)="onDragLeave($event)" (drop)="onDrop($event)">
+
+                        <div class="upload-content">
+                            <div class="upload-icon-wrapper">
+                                <svg class="upload-icon" viewBox="0 0 24 24">
+                                    <path fill="currentColor"
+                                        d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M13.5,16V19H10.5V16H8L12,12L16,16H13.5M13,9V3.5L18.5,9H13Z" />
+                                </svg>
+                            </div>
+                            <div class="upload-text">
+                                <p class="main-text">فایل‌های خود را اینجا رها کنید</p>
+                                <p class="sub-text">یا
+                                    <span class="browse-link" (click)="fileInput.click()">
+                                        از دستگاه خود انتخاب کنید
+                                    </span>
+                                </p>
+                                <p class="sub-text">فرمت های قابل قبول: {{ allowedFileTypesDisplay() }}</p>
+                                <!-- <p class="sub-text">حداکثر حجم: {{ maxFileSize() }} مگابایت</p> -->
+                            </div>
+                        </div>
+                        <input type="file" #fileInput (change)="onFileSelected($event)" class="file-input"
+                            [attr.multiple]="type() === 'multiple' ? '' : null" [accept]="allowedFileTypes().join(',')">
+                    </div>
+                    }
+
+                    @if (showErrors()) {
+                    <div class="alert alert-danger alert-dismissible fade show">
+                        <i class="fa fa-exclamation-triangle-fill me-2"></i>
+                        {{ errorMessage() }}
+                        <button type="button" class="btn-close" aria-label="Close" (click)="closeError()"></button>
+                    </div>
+                    }
+
+                    @if (files().length > 0) {
+                    <div class="files-grid">
+                        @for (file of files(); track trackByGuid($index, file)) {
+                        <div class="file-card" [class.uploading]="file.progress < 100">
+                            @if (file.isNew) {
+                            <div class="new-badge">جدید</div>
+                            }
+
+                            @if (file.progress < 100) { <div class="card-overlay">
+                                <div class="progress-circle">
+                                    <svg viewBox="0 0 36 36">
+                                        <path
+                                            d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                                            [attr.stroke-dasharray]="file.progress + ', 100'" stroke="currentColor" />
+                                    </svg>
+                                    <span>{{ file.progress }}%</span>
+                                </div>
+                        </div>
+                        }
+
+                        <div class="file-preview" (click)="canPreview(file) && openPreview(file, $event)">
+                            @if (isImage(file)) {
+                            <img [src]="file.url" alt="Preview" />
+                            }
+                            @else {
+                            <div class="file-icon">
+                                <span class="extension" [class]="getFileIconColor(file.type)">
+                                    @switch (getFileIcon(file.type)) {
+                                    @case ('image') {
+                                    <svg class="file-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                        <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                        <polyline points="21 15 16 10 5 21"></polyline>
+                                    </svg>
+                                    }
+                                    @case ('pdf') {
+                                    <svg class="file-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                        <polyline points="14 2 14 8 20 8"></polyline>
+                                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                                        <polyline points="10 9 9 9 8 9"></polyline>
+                                    </svg>
+                                    }
+                                    @case ('video') {
+                                    <svg class="file-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect>
+                                        <line x1="7" y1="2" x2="7" y2="22"></line>
+                                        <line x1="17" y1="2" x2="17" y2="22"></line>
+                                        <line x1="2" y1="12" x2="22" y2="12"></line>
+                                        <line x1="2" y1="7" x2="7" y2="7"></line>
+                                        <line x1="2" y1="17" x2="7" y2="17"></line>
+                                        <line x1="17" y1="17" x2="22" y2="17"></line>
+                                        <line x1="17" y1="7" x2="22" y2="7"></line>
+                                    </svg>
+                                    }
+                                    @case ('audio') {
+                                    <svg class="file-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M9 18V5l12-2v13"></path>
+                                        <circle cx="6" cy="18" r="3"></circle>
+                                        <circle cx="18" cy="16" r="3"></circle>
+                                    </svg>
+                                    }
+                                    @case ('word') {
+                                    <svg class="file-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                        <polyline points="14 2 14 8 20 8"></polyline>
+                                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                                        <polyline points="10 9 9 9 8 9"></polyline>
+                                    </svg>
+                                    }
+                                    @case ('excel') {
+                                    <svg class="file-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                        <polyline points="14 2 14 8 20 8"></polyline>
+                                        <line x1="8" y1="13" x2="16" y2="13"></line>
+                                        <line x1="8" y1="17" x2="16" y2="17"></line>
+                                        <line x1="8" y1="9" x2="10" y2="9"></line>
+                                    </svg>
+                                    }
+                                    @default {
+                                    <svg class="file-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
+                                        <polyline points="13 2 13 9 20 9"></polyline>
+                                    </svg>
+                                    }
+                                    }
+                                </span>
+                            </div>
+                            }
+                        </div>
+
+                        <div class="file-info">
+                            <div class="file-name" [title]="file.name">{{ file.name }}</div>
+                            <div class="file-meta">
+                                <span class="file-size">{{ formatFileSize(file.size) }}</span>
+                                <div class="file-item-actions">
+                                    @if (canPreview(file)) {
+                                    <button type="button" class="btn btn-sm btn-outline-primary action-btn"
+                                        (click)="openPreview(file, $event)" title="پیش‌نمایش">
+                                        <i class="fa fa-eye"></i>
+                                    </button>
+                                    }
+
+                                    <button type="button" class="btn btn-sm btn-outline-success action-btn"
+                                        (click)="downloadFile(file, $event)" title="دانلود">
+                                        <i class="fa fa-download"></i>
+                                    </button>
+
+                                    <button type="button" class="btn btn-sm btn-outline-danger action-btn"
+                                        (click)="removeFile(file.id, $event)" title="حذف">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    }
+
+
+                    @if (showUploadButton() && uploadFiles()) {
+                    <div class="add-more-card" (click)="fileInput.nativeElement.click()">
+                        <div class="plus-icon">+</div>
+                        <div class="add-text">افزودن فایل</div>
+                    </div>
+                    }
+                </div>
+                }
+
+            </div>
+    </div>
+
+    <div class="modal-footer">
+        @if (showUploadButton() && hasNewFiles()) {
+        <button type="button" class="btn btn-primary" [disabled]="isUploading()" (click)="uploadSelected()">
+            <i class="fa fa-cloud-upload me-1"></i> آپلود فایل‌ها
+            @if (isUploading()) {
+            <span class="spinner-border spinner-border-sm ms-1"></span>
+            }
+        </button>
+        }
+        <button type="button" class="btn btn-warning" (click)="closeUploaderModal()">بستن</button>
+    </div>
+    </form>
+</div>
+</div>
+
+<!-- File Preview Modal -->
+<div class="modal" [id]="previewModalId()" tabindex="-1" aria-labelledby="filePreviewModalLabel"
+    style="z-index: 100000000;" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                @if (previewFile()) {
+                <h5 class="modal-title" id="filePreviewModalLabel">
+                    {{ previewFile()!.name }}
+                </h5>
+                }
+                <button type="button" class="btn-close" (click)="closePreview()" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                @if (previewFile()) {
+                <div class="preview-container">
+                    @if (isImage(previewFile()!) && previewFile()!.url) {
+                    <img [src]="previewFile()!.url" [alt]="previewFile()!.name" class="img-preview w-100">
+                    }
+
+                    @if (isPdf(previewFile()!) && previewFile()!.url) {
+                    <div class="pdf-preview">
+                        <iframe [src]="pdfUrl()" class="pdf-viewer" frameborder="0"
+                            style="width: 100%; height: 100%; border: none;">
+                            <p>مرورگر شما از iframe پشتیبانی نمی‌کند.
+                            </p>
+                        </iframe>
+                    </div>
+                    }
+
+                    @if (isVideo(previewFile()!) && previewFile()!.url) {
+                    <div class="video-preview">
+                        <video controls style="width: 100%;">
+                            <source [src]="previewFile()!.url" [type]="previewFile()!.type">
+                            مرورگر شما از پخش این ویدیو پشتیبانی نمی‌کند.
+                        </video>
+                    </div>
+                    }
+
+                    @if (isAudio(previewFile()!) && previewFile()!.url) {
+                    <div class="audio-preview">
+                        <audio controls style="width: 100%;">
+                            <source [src]="previewFile()!.url" [type]="previewFile()!.type">
+                            مرورگر شما از پخش این فایل صوتی پشتیبانی نمی‌کند.
+                        </audio>
+                    </div>
+                    }
+                </div>
+                }
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" (click)="closePreview()">
+                    بستن
+                </button>
+                @if (previewFile() && previewFile()!.url) {
+                <button type="button" class="btn btn-primary" (click)="downloadFile(previewFile()!, $event)">
+                    <i class="fa fa-download me-1"></i> دانلود
+                </button>
+                }
+            </div>
+        </div>
+    </div>
+</div>

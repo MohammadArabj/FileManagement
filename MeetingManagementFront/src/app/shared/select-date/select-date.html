@@ -1,0 +1,30 @@
+<div class="modal fade" id="select-date-modal-{{id}}" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="select-date-modal-{{id}}">انتخاب تاریخ</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-6" *ngIf="type == 1">
+                        <input type="text" class="form-control" maxlength="10" [(ngModel)]="fromDate" appDateMask
+                            [input]="fromDate">
+                    </div>
+                    <div [ngClass]="type == 1 ? 'col-6' : 'col-12' ">
+                        <input type="text" class="form-control" maxlength="10" [(ngModel)]="toDate" appDateMask
+                            [input]="toDate">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-success waves-effect waves-light" (click)="submit()">
+                    <span class="btn-label">
+                        <img width="25x" height="25px" src="assets/images/icons/check.svg">
+                    </span>
+                    تایید
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

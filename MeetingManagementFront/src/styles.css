@@ -1,0 +1,25 @@
+/* ===== حل مشکل z-index برای ng-select ===== */
+.ng-dropdown-panel {
+    z-index: 1060 !important;
+}
+
+/* وقتی از appendTo="body" استفاده میشه */
+body>.ng-dropdown-panel {
+    z-index: 1060 !important;
+    position: absolute !important;
+}
+
+/* اگر داخل modal باشه */
+.modal .ng-dropdown-panel,
+.modal-open .ng-dropdown-panel {
+    z-index: 1070 !important;
+}
+
+/* جلوگیری از overflow مشکل‌ساز در card */
+.card {
+    overflow: visible !important;
+}
+
+.card-body {
+    overflow: visible !important;
+}

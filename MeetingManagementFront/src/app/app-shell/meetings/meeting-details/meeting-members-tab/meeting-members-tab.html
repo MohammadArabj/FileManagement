@@ -1,0 +1,238 @@
+<div class="row">
+    <div class="col-md-12">
+        <div class="card mb-3 h-100 w-100 shadow-sm rounded">
+            <div class="card-header d-flex justify-content-between align-items-center fw-bold">
+                <h5 class="mb-0">اعضای جلسه</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive" style="max-height: 550px; overflow-y: auto;">
+                    <table class="table table-hover table-bordered align-middle m-0">
+                        <thead class="table-light">
+                            <tr class="text-center">
+                                <th style="width: 20%"></th>
+                                <th>نقش</th>
+                                <th>اعلام حضور</th>
+                                <th>حضور</th>
+                                <th>نظر</th>
+                                <th>وضعیت امضا</th>
+                                <th>عملیات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for(member of members(); track $index) {
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <img [src]="member.image" alt="Profile" class="rounded-circle border me-2"
+                                            width="40" height="40">
+                                        <div>
+                                            <span class="fw-semibold" [ngStyle]="{'color': member.roleColor}">{{
+                                                member.name }}</span>
+                                            <div class="small text-muted">{{ member.role }}</div>
+                                            @if(member.substitute) {
+                                            <div class="text-muted small">جانشین: {{ member.substitute }}</div>
+                                            }
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    <span [ngStyle]="{'color': member.roleColor}" class="fw-medium">{{ member.role
+                                        }}</span>
+                                </td>
+                                <td class="text-center">
+                                    @if(member.isAttendance) {
+                                    <i class="fa fa-circle-check text-success fs-5"></i>
+                                    } @else {
+                                    <i class="fa fa-circle-xmark text-danger fs-5"></i>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    <div class="presence-toggle">
+                                        <button type="button" class="option"
+                                            [class.selected]="member.isPresent === false"
+                                            [class.red]="member.isPresent === false"
+                                            (click)="togglePresence(member, false)">
+                                            <i class="fa fa-times"></i>
+                                        </button>
+                                        @if(member.isPresent===null){
+                                        <button type="button" class="option" style="width: 38px" disabled
+                                            [class.selected]="member.isPresent === null"
+                                            [class.gray]="member.isPresent === null">
+                                            <i class="fa fa-question"></i>
+                                        </button>
+                                        }
+
+                                        <button type="button" class="option"
+                                            [class.selected]="member.isPresent === true"
+                                            [class.green]="member.isPresent === true"
+                                            (click)="togglePresence(member, true)">
+                                            <i class="fa fa-check"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="small text-muted">{{ member.comment }}</div>
+                                </td>
+                                <td class="text-center">
+                                    @if(member.isSign) {
+                                    <i class="fa fa-circle-check text-success fs-5"></i>
+                                    } @else {
+                                    <i class="fa fa-circle-xmark text-danger fs-5"></i>
+                                    }
+                                </td>
+                                <td>
+                                    @if(statusId() === 4) {
+                                    <a (click)="showSignModal(member.id!)" class="btn btn-sm btn-info"><i
+                                            class="fa fa-comment"></i>ثبت نظر</a>&nbsp;
+                                    }
+                                    <a (click)="askForDelete(member.id!)" class="btn btn-sm btn-danger"><i
+                                            class="fa fa-trash"></i>حذف</a>
+                                </td>
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    @if(externalMembers.length>0){
+    <div class="col-md-12 mt-2">
+        <div class="card">
+            <div class="card-header">
+                میهمانان جلسه
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered mt-2">
+                    <thead class="table-info">
+                        <tr>
+                            <th>نام</th>
+                            <th>سازمان</th>
+                            <th>ایمیل</th>
+                            <th>موبایل</th>
+                            <th>عملیات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for(member of externalMembers(); track $index) {
+                        <tr>
+                            <td>{{ member.name }}</td>
+                            <td>{{ member.organization }}</td>
+                            <td>{{ member.email }}</td>
+                            <td>{{ member.mobile }}</td>
+                            <td>
+                                @if([1,2,3].includes(roleId()!)) {
+                                <a (click)="askForDelete(member.id!)" class="btn btn-sm btn-danger"><i
+                                        class="fa fa-trash"></i>حذف</a>
+                                }
+                            </td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    }
+
+</div>
+
+<div #signModal class="modal fade" id="signModal" tabindex="-1" data-bs-backdrop="static"
+    aria-labelledby="signModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="signModalLabel">امضا ونظر</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="signForm()" class="row g-3">
+                    <div class="col-9">
+                        <custom-input rows="5" type="textarea" label="توضیحات" identity="comment" styleType="simple"
+                            formControlName="comment" [required]="false" size="col-12"></custom-input>
+                    </div>
+                    <div class="col-3">
+                        <div class="position-relative d-inline-block border border-secondary rounded text-center w-100"
+                            style="padding: 20px; margin-top: 32px; cursor: pointer; min-height: 129px;"
+                            (click)="toggleSign()">
+                            <!-- وقتی امضا وجود داره -->
+                            @if(signatureImage() && signForm().get('sign')?.value) {
+                            <img [src]="signatureImage()" alt="امضا" class="img-thumbnail w-100">
+                            } @else {
+                            <div class="text-muted">جهت امضا کلیک کنید</div>
+                            }
+                            <!-- آیکن حذف (تیک یا چیزی مشابه) -->
+                            @if(signForm().get('sign')?.value) {
+                            <i class="fa fa-times-circle text-danger position-absolute top-0 end-0"
+                                style="font-size: 1.2rem; background: white; border-radius: 50%; margin: 2px;"></i>
+                            }
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-success me-2" (click)="saveComment()">ذخیره </button>
+                <button class="btn btn-warning" data-bs-dismiss="modal">انصراف </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="memberModal" data-bs-backdrop="static" tabindex="-1">
+    <div class="modal-dialog" style="max-width: 40rem;">
+        <form class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">{{ isReplacementMode() ? 'انتخاب جانشین' : 'افزودن عضو جدید' }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="replacementForm()" class="row">
+                    <custom-select [options]="users()" identity="replacementUserGuid"
+                        formControlName="replacementUserGuid" label="کاربر" size="col-12"></custom-select>
+                    @if(!isReplacementMode()) {
+                    <custom-select [options]="roles()" identity="roleGuid" formControlName="roleGuid" label="نقش کاربر"
+                        size="col-12"></custom-select>
+                    }
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-warning" data-bs-dismiss="modal">بستن</button>
+                <button type="button" class="btn btn-success" (click)="saveMember()">ذخیره</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="modal fade" id="guestModal" tabindex="-1" aria-labelledby="guestModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="guestModalLabel">افزودن مهمان</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="guestForm()">
+                    <custom-input label="نام و نام خانوادگی" type="text" formControlName="name" identity="name"
+                        size="col-12" [required]="true"></custom-input>
+                    <custom-input label="شماره تلفن" type="mobile" formControlName="mobile" identity="mobile"
+                        size="col-12" [required]="true"></custom-input>
+                    <custom-input label="ایمیل" type="email" formControlName="email" identity="email" size="col-12"
+                        [required]="true"></custom-input>
+                    <custom-input label="نام سازمان" type="text" formControlName="organization" identity="organization"
+                        size="col-12" [required]="true"></custom-input>
+                    <custom-input label="تصویر شخصی" type="file" formControlName="profile" identity="profile"
+                        size="col-12" [required]="false"></custom-input>
+                    <custom-input label="تصویر امضا" type="file" formControlName="signature" identity="signature"
+                        size="col-12" [required]="false"></custom-input>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" (click)="addGuest()">افزودن<i
+                        class="fa fa-plus"></i></button>
+                <button type="button" class="btn btn-warning" data-bs-dismiss="modal">بستن<i
+                        class="fa fa-close"></i></button>
+            </div>
+        </div>
+    </div>
+</div>

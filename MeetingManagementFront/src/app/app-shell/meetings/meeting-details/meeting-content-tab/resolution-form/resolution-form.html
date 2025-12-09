@@ -1,0 +1,473 @@
+<!-- unified-resolution-modal.html -->
+<div class="modal-header">
+  <div>
+    <h5 class="modal-title">
+      <i class="fas fa-file-alt me-2"></i>
+      @if (isEditingResolution()) {
+      ویرایش مصوبه {{ isBoardMeeting() ? 'هیئت مدیره' : '' }}
+      } @else {
+      ثبت مصوبه {{ isBoardMeeting() ? 'هیئت مدیره' : '' }}
+      }
+    </h5>
+    <div class="modal-subtitle">
+      <small class="text-muted">
+        جلسه شماره {{ meetingNumber() }} • {{ meetingDate()}}
+      </small>
+    </div>
+  </div>
+  <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" (click)="cancelForm()"></button>
+</div>
+
+<div class="modal-body p-0">
+  <div class="main-container no-pdf" id="mainContainer">
+    <!-- پنل فایل‌ها -->
+    <div class="file-panel">
+      <div class="panel-header">
+        <h6 class="panel-title">
+          <i class="fas fa-folder-open me-2"></i>
+          مدیریت فایل‌ها
+        </h6>
+        <span class="file-count-badge" id="fileCountBadge">{{ fileCount() }} فایل</span>
+      </div>
+
+      <!-- ناحیه آپلود -->
+      <div class="file-upload-zone" id="uploadArea" (click)="triggerFileInput()" (dragover)="handleDragOver($event)"
+        (dragleave)="handleDragLeave($event)" (drop)="handleDrop($event)">
+        <div class="upload-icon">
+          <i class="fas fa-cloud-upload-alt"></i>
+        </div>
+        <div class="upload-text">فایل PDF را بکشید و رها کنید</div>
+        <div class="upload-hint">یا کلیک کنید تا فایل انتخاب کنید</div>
+        <button class="btn btn-upload" type="button">
+          <i class="fas fa-upload me-2"></i>
+          انتخاب فایل
+        </button>
+        <input type="file" #fileInput multiple accept=".pdf" style="display: none;" (change)="handleFiles($event)">
+      </div>
+
+      @if(uploadProgress() > 0) {
+      <div class="upload-progress" id="uploadProgress">
+        <div class="d-flex align-items-center mb-2">
+          <div class="spinner me-2"></div>
+          <span class="fw-bold small">در حال آپلود...</span>
+        </div>
+        <div class="progress">
+          <div class="progress-bar" id="progressBar" role="progressbar" [ngStyle]="{width: uploadProgress() + '%'}">
+          </div>
+        </div>
+      </div>
+      }
+
+      <!-- لیست فایل‌ها -->
+      <div class="files-container" id="filesList">
+        @if (uploadedFiles().length === 0) {
+        <div class="text-center text-muted py-4">
+          <i class="fas fa-folder-open fa-2x mb-2"></i><br>
+          هیچ فایلی آپلود نشده
+        </div>
+        }
+
+        @for (file of uploadedFiles(); let i = $index; track $index) {
+        <div class="file-card" [class.selected]="selectedFileId() === file.id" [class.agenda-file]="file.isAgendaFile"
+          (click)="selectFile(file.id??0)">
+          <div class="file-info">
+            <div class="file-icon">
+              <i class="fas fa-file-pdf"></i>
+              @if(file.isAgendaFile) {
+              <span class="agenda-badge" title="فایل دستور جلسه">
+                <i class="fas fa-list"></i>
+              </span>
+              }
+            </div>
+          </div>
+          <div class="file-details">
+            <div class="file-name" [title]="file.name">{{ file.name }}</div>
+            <div class="file-meta">
+              {{ file.sizeFormatted }} • {{ file.uploadDate }}
+              @if(file.isAgendaFile) {
+              <span class="agenda-label">• دستور جلسه</span>
+              }
+            </div>
+          </div>
+          <div class="file-actions">
+            <button class="action-btn btn-view" title="نمایش فایل"
+              (click)="$event.stopPropagation(); showPdfPreview(file.url, file.name??'')">
+              <i class="fas fa-eye"></i>
+            </button>
+            @if(!file.isAgendaFile) {
+            <button class="action-btn btn-delete" title="حذف فایل"
+              (click)="$event.stopPropagation(); deleteFile(file.id??0)">
+              <i class="fas fa-trash"></i>
+            </button>
+            }
+          </div>
+        </div>
+        }
+      </div>
+    </div>
+
+    <!-- پنل فرم -->
+    <div class="form-panel">
+      @if(isBoardMeeting()){
+      <form [formGroup]="boardResolutionForm" id="resolutionForm">
+        <!-- بخش اطلاعات اصلی -->
+        <div class="form-section">
+          <h6 class="section-title">
+            <i class="fas fa-info-circle"></i>
+            اطلاعات اصلی مصوبه
+          </h6>
+          <div class="row">
+            <custom-input label="موضوع مصوبه" formControlName="title" identity="title" size="col-12" [required]="true"
+              styleType="simple"></custom-input>
+            <custom-input label="مستندات" formControlName="documentation" identity="documentation" size="col-12"
+              styleType="simple" type="textarea"></custom-input>
+            <custom-input [type]="'textarea'" label="توضیحات" formControlName="description" identity="description"
+              size="col-12" styleType="simple"></custom-input>
+            <custom-input [type]="'textarea'" label="تصمیمات متخذه" formControlName="decisionsMade"
+              identity="decisionsMade" size="col-12" styleType="simple"></custom-input>
+            <custom-select label="جلسه پیرو" formControlName="parentMeetingGuid" identity="parentMeetingGuid"
+              (changed)="onMeetingChange($event)" size="col-6" styleType="simple"
+              [options]="previousMeetings"></custom-select>
+
+            <custom-select label="مصوبه پیرو" formControlName="parentResolutionId" identity="parentResolutionId"
+              size="col-6" styleType="simple" bindValue="id" [options]="previousResolutions()!"></custom-select>
+
+            <custom-select label="جلسه کمیسیون معاملات" formControlName="committeeMeetingGuid"
+              identity="committeeMeetingGuid" (changed)="onCommitteeMeetingChange($event)" size="col-6"
+              styleType="simple" [options]="previousCommitteMeetings"></custom-select>
+
+            <custom-select label="مصوبه کمیسیون معاملات" formControlName="committeeResolutionId"
+              identity="committeeResolutionId" size="col-6" styleType="simple" bindValue="id"
+              [options]="previousCommitteResolutions()!"></custom-select>
+
+            <custom-input label="مبلغ مصوب (ریال)" formControlName="approvedPrice" identity="approvedPrice" size="col-6"
+              styleType="simple"></custom-input>
+
+            <custom-input label="شماره قرارداد" formControlName="contractNumber" identity="contractNumber" size="col-6"
+              styleType="simple"></custom-input>
+          </div>
+        </div>
+
+        <!-- بخش تخصیص‌ها - Board -->
+        <div class="assignments-section-new">
+          <div class="assignments-header-new">
+            <div class="header-content-new">
+              <h6 class="section-title-modern">
+                <i class="fas fa-user-check"></i>
+                تخصیص‌ها و پیگیری
+              </h6>
+              <div class="header-stats-new">
+                <span class="assignment-counter-new">
+                  <i class="fas fa-tasks"></i>
+                  <span>{{ boardAssignments().length }}</span> اقدام کننده
+                </span>
+                <button type="button" class="add-assignment-btn-new" (click)="addBoardAssignment(false)">
+                  <i class="fas fa-plus"></i>
+                  افزودن اقدام کننده
+                </button>
+              </div>
+              <div class="assignments-container-modern w-100" #assignmentsContainer>
+                @if (boardAssignmentControls.length > 0) {
+                @for (assignment of boardAssignmentControls; let i = $index; track $index) {
+                <div class="assignment-card-modern" [formGroup]="assignment">
+                  <div class="card-header-new">
+                    <div class="assignment-number-new">{{ i + 1 }}</div>
+                    <button type="button" class="delete-btn-new" (click)="removeBoardAssignment(i)"
+                      title="حذف اقدام کننده">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </div>
+                  <div class="row">
+                    <!-- اقدام کننده با نمایش سمت -->
+                    <div class="col-md-4" style="margin-top: 18px;">
+                      <div class="form-group">
+                        <label for="actorGuid">اقدام کننده <span class="text-danger">*</span></label>
+                        <!-- **تغییر: formControlName به actorUniqueKey تغییر کرد** -->
+                        <ng-select [multiple]="true" bindLabel="userName" bindValue="uniqueKey"
+                          formControlName="actorUniqueKey" (change)="onBoardActorsChange(i, $event)"
+                          placeholder="انتخاب کنید">
+                          @for (user of usersWithPositions(); track user.uniqueKey) {
+                          <ng-option [value]="user.uniqueKey">
+                            <div class="user-option">
+                              <img [src]="getUserPhotoUrl(user.personalNo)" [alt]="user.userName" class="user-avatar"
+                                (error)="handleImageError($event)">
+
+                              <div class="avatar-placeholder" style="display: none">
+                                {{ getUserInitials(user.userName) }}
+                              </div>
+
+                              <div class="user-info">
+                                <div class="user-name">{{ user.userName }}</div>
+                                <div class="user-position">{{ user.positionTitle }}</div>
+                              </div>
+                            </div>
+                          </ng-option>
+                          }
+                        </ng-select>
+                      </div>
+                    </div>
+
+                    <custom-input styleType="simple" label="تاریخ سر رسید" formControlName="dueDate" identity="dueDate"
+                      size="col-3" type="date"></custom-input>
+
+                    <custom-select label="وضعیت" [options]="actionStatusList" formControlName="status" identity="status"
+                      classInput="form-control" styleType="simple" size="col-3">
+                    </custom-select>
+
+                    @if (assignment.get('status')?.value == '3') {
+                    <custom-select label="نتیجه" [options]="assignmentResultList" formControlName="result"
+                      identity="result" classInput="form-control" styleType="simple" size="col-2" [required]="true">
+                    </custom-select>
+
+                    @if(assignment.get('result')?.hasError('required') && (assignment.get('result')?.touched ||
+                    assignment.get('result')?.dirty)){
+                    <div class="invalid-feedback d-block">
+                      در وضعیت «پایان یافته»، انتخاب نتیجه الزامی است.
+                    </div>
+                    }
+                    }
+
+                    <custom-input type="textarea" label="توضیحات" formControlName="description" identity="description"
+                      styleType="simple" size="col-12"></custom-input>
+
+                    <div class="status-badge-container-new">
+                      @switch (assignment.get('status')?.value) {
+                      @case ('1') {
+                      <span class="status-badge-new status-no-response-new">
+                        <i class="fas fa-hourglass-start"></i>
+                        در انتظار اقدام
+                      </span>
+                      }
+                      @case ('2') {
+                      <span class="status-badge-new status-no-response-new">
+                        <i class="fas fa-clock"></i>
+                        در حال انجام
+                      </span>
+                      }
+                      @case ('3') {
+                      <span class="status-badge-new status-completed-new">
+                        <i class="fas fa-flag-checkered"></i>
+                        پایان یافته
+                      </span>
+
+                      @if (assignment.get('result')?.value == '1') {
+                      <span class="status-badge-new status-completed-new ms-2">
+                        <i class="fas fa-check"></i>
+                        انجام شده
+                      </span>
+                      } @else if (assignment.get('result')?.value == '2') {
+                      <span class="status-badge-new status-not-completed-new ms-2">
+                        <i class="fas fa-times"></i>
+                        انجام نشده
+                      </span>
+                      } @else {
+                      <span class="status-badge-new status-not-completed-new ms-2">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        نتیجه نامشخص
+                      </span>
+                      }
+                      }
+                      }
+                    </div>
+
+                  </div>
+                </div>
+                }
+                } @else {
+                <div class="empty-state-new">
+                  <div class="empty-state-icon-new">
+                    <i class="fas fa-users"></i>
+                  </div>
+                  <div class="empty-state-title-new">هیچ اقدام کننده‌ای تعیین نشده است</div>
+                  <div class="empty-state-text-new">برای افزودن اقدام کننده روی دکمه بالا کلیک کنید</div>
+                </div>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+      }
+      @else {
+      <form [formGroup]="regularResolutionForm" id="resolutionForm">
+        <!-- بخش اطلاعات اصلی -->
+        <div class="form-section">
+          <h6 class="section-title">
+            <i class="fas fa-info-circle"></i>
+            اطلاعات اصلی مصوبه
+          </h6>
+          <div class="row">
+            <custom-input [type]="'textarea'" label="توضیحات" formControlName="description" identity="description"
+              size="col-12" styleType="simple" rows="8" [required]="true"></custom-input>
+          </div>
+        </div>
+
+        <!-- بخش تخصیص‌ها - Regular -->
+        <div class="assignments-section-new">
+          <div class="assignments-header-new">
+            <div class="header-content-new">
+              <h6 class="section-title-modern">
+                <i class="fas fa-user-check"></i>
+                تخصیص‌ها و پیگیری
+              </h6>
+              <div class="header-stats-new">
+                <span class="assignment-counter-new">
+                  <i class="fas fa-tasks"></i>
+                  <span>{{ regularAssignments().length }}</span> تخصیص
+                </span>
+                <button type="button" class="add-assignment-btn-new" (click)="addNewRegularAssignment(false)">
+                  <i class="fas fa-plus"></i>
+                  افزودن تخصیص
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div formArrayName="regularAssignments" class="mt-3">
+            @for(assignment of regularAssignments().controls; let i = $index; track $index) {
+            @if(!assignment.get('isRemoved')?.value) {
+            <div class="row border rounded p-3 mt-2 assignment-card-regular" [formGroupName]="i">
+              <!-- تخصیص یافته به - با نمایش سمت -->
+              <div class="col-md-3" style="margin-top: 1.25rem;">
+                <div class="form-group">
+                  <label for="actorGuids">
+                    تخصیص یافته به<span class="text-danger"> *</span>
+                  </label>
+                  <ng-select [multiple]="true" bindLabel="userName" bindValue="uniqueKey"
+                    [formControl]="actorGuidsControls()[i]" (change)="onActorGuidsChange($event, i)"
+                    placeholder="انتخاب کنید">
+                    @for (user of usersWithPositions(); track user.uniqueKey) {
+                    <ng-option [value]="user.uniqueKey">
+                      <div class="user-option">
+                        <img [src]="getUserPhotoUrl(user.personalNo)" [alt]="user.userName" class="user-avatar"
+                          (error)="handleImageError($event)">
+
+                        <div class="avatar-placeholder" style="display: none">
+                          {{ getUserInitials(user.userName) }}
+                        </div>
+
+                        <div class="user-info">
+                          <div class="user-name">{{ user.userName }}</div>
+                          <div class="user-position">{{ user.positionTitle }}</div>
+                        </div>
+                      </div>
+                    </ng-option>
+                    }
+
+                    <!-- قالب سفارشی برای آیتم‌های انتخاب شده -->
+                    <ng-template ng-multi-label-tmp let-items="items" let-clear="clear">
+                      <div class="selected-users">
+                        @for (item of usersWithPositions() | slice:0:2; track $index) {
+                        <span class="selected-user-tag">
+                          <img [src]="getUserPhotoUrl(item.personalNo)" [alt]="item.userName" class="user-avatar-small"
+                            (error)="handleImageError($event)">
+
+                          <span class="selected-avatar-placeholder" style="display: none">
+                            {{ getUserInitials(item.userName) }}
+                          </span>
+
+                          <span class="selected-user-name">{{ item.userName }}</span>
+                          <span class="selected-user-position">- {{ item.positionTitle }}</span>
+                        </span>
+                        }
+
+                        @if(items.length > 2){
+                        <span class="more-count">
+                          +{{ items.length - 2 }} نفر دیگر
+                        </span>
+                        }
+                      </div>
+                    </ng-template>
+                  </ng-select>
+                  <button class="btn btn-primary" (click)="selectAllMembersForAssignment(i)">انتخاب همه اعضا</button>
+                </div>
+              </div>
+
+              <div class="col-md-3">
+                <custom-select identity="type" formControlName="type" [options]="assignmentTypes()" styleType="simple"
+                  [required]="true" label="نوع تخصیص">
+                </custom-select>
+              </div>
+
+              <div class="col-md-3" style="margin-top: 1.25rem;">
+                <div class="form-group">
+                  <label for="followerGuid">
+                    مسئول پیگیری<span class="text-danger"> *</span>
+                  </label>
+                  <!-- **تغییر: formControlName به followerUniqueKey تغییر کرد** -->
+                  <ng-select [multiple]="false" bindLabel="userName" bindValue="uniqueKey"
+                    formControlName="followerUniqueKey" (change)="onFollowerChange($event, i)"
+                    placeholder="انتخاب کنید">
+                    @for (user of usersWithPositions(); track user.uniqueKey) {
+                    <ng-option [value]="user.uniqueKey">
+                      <div class="user-option">
+                        <img [src]="getUserPhotoUrl(user.personalNo)" [alt]="user.userName" class="user-avatar"
+                          (error)="handleImageError($event)">
+
+                        <div class="avatar-placeholder" style="display: none">
+                          {{ getUserInitials(user.userName) }}
+                        </div>
+
+                        <div class="user-info">
+                          <div class="user-name">{{ user.userName }}</div>
+                          <div class="user-position">{{ user.positionTitle }}</div>
+                        </div>
+                      </div>
+                    </ng-option>
+                    }
+                  </ng-select>
+                </div>
+              </div>
+
+              <div class="col-md-2">
+                <custom-input type="date" identity="dueDate" formControlName="dueDate" styleType="simple"
+                  label="تاریخ سررسید" [required]="true">
+                </custom-input>
+                @if(assignment.get('dueDate')?.hasError('beforeMeetingDate') && (assignment.get('dueDate')?.touched ||
+                assignment.get('dueDate')?.dirty)){
+                <div class="invalid-feedback d-block">
+                  تاریخ سررسید نمی‌تواند قبل از تاریخ برگزاری جلسه باشد
+                </div>
+                }
+              </div>
+
+              <div class="col-md-1">
+                @if(i !== 0) {
+                <button type="button" class="btn btn-sm btn-danger" style="margin-top: 20px;"
+                  (click)="removeRegularAssignment(i)">حذف</button>
+                }
+              </div>
+            </div>
+            }
+            }
+          </div>
+        </div>
+      </form>
+      }
+    </div>
+
+    <!-- پنل PDF -->
+    <div class="pdf-panel hidden" id="pdfPanel">
+      <div class="pdf-header">
+        <h5 id="pdf-title" class="pdf-title">پیش‌نمایش فایل</h5>
+        <button class="pdf-close" (click)="hidePdfPreview()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      @if (pdfUrl()) {
+      <iframe class="pdf-viewer" [src]="pdfUrl()"></iframe>
+      }
+    </div>
+  </div>
+</div>
+
+<div class="modal-footer">
+  <button type="button" class="btn btn-success" (click)="saveResolution()">
+    <i class="fas fa-save me-2"></i>
+    ذخیره مصوبه
+  </button>
+
+  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="cancelForm()">
+    لغو
+  </button>
+</div>

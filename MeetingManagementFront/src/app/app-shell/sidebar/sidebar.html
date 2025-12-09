@@ -1,0 +1,113 @@
+<aside id="layout-menu"
+  class="layout-menu menu-vertical menu bg-menu-theme d-flex flex-column position-relative shadow rounded-end h-100"
+  [class.collapsed]="isMenuCollapsed()">
+
+  <button class="layout-menu-toggle menu-link text-large ms-auto justify-content-center" title="بستن منو"
+    (click)="toggleSidebar()" style="top:10px;width: 40px;">
+    <i class="fa fa-sm align-middle" [class.fa-chevron-left]="!isMenuCollapsed()"
+      [class.fa-chevron-right]="isMenuCollapsed()"></i>
+  </button>
+
+  <!-- Brand -->
+  <div class="sidebar-brand">
+    <a class="brand-link" routerLink="/dashboard">
+      <img src="img/MainLogo.png" class="brand-logo" alt="logo">
+      @if (!isMenuCollapsed()) {
+      <div class="brand-text">
+        <div class="brand-title">سامانه مدیریت جلسات</div>
+      </div>
+      }
+    </a>
+  </div>
+
+  <div class="menu-inner-shadow"></div>
+
+  <ul class="menu-inner py-1 px-2">
+    <li class="menu-item" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+      <a class="menu-link" routerLink="/dashboard">
+        <i class="menu-icon tf-icons fa fa-dashboard"></i>
+        <div class="text-truncate"><b>داشبورد</b></div>
+      </a>
+    </li>
+
+    <li
+      *hasPermission="['MT_Settings','MT_Statuses','MT_UserRoles','MT_ResolutionLabels','MT_Locations','MT_Categories','MT_BoardMembers']"
+      class="menu-item" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: false }">
+      <a href="javascript:void(0);" class="menu-link menu-toggle">
+        <i class="menu-icon tf-icons fa fa-cog"></i>
+        <div class="text-truncate"><b>تنظیمات</b></div>
+      </a>
+      <ul class="menu-sub">
+        <li *hasPermission="['MT_BoardMembers']" class="menu-item" routerLinkActive="active">
+          <a routerLink="/boardMember" class="menu-link">اعضای هیئت مدیره</a>
+        </li>
+        <li *hasPermission="['MT_Statuses']" class="menu-item" routerLinkActive="active">
+          <a routerLink="/meetings/status" class="menu-link">وضعیت های جلسات</a>
+        </li>
+        <li *hasPermission="['MT_UserRoles']" class="menu-item" routerLinkActive="active">
+          <a routerLink="/meetings/role" class="menu-link">نقش کاربران در جلسه</a>
+        </li>
+        <li *hasPermission="['MT_ResolutionLabels']" class="menu-item" routerLinkActive="active">
+          <a routerLink="/meetings/label" class="menu-link">برچسب مصوبات</a>
+        </li>
+        <li *hasPermission="['MT_Locations']" class="menu-item" routerLinkActive="active">
+          <a routerLink="/meetings/room" class="menu-link">مکان های برگزاری جلسه</a>
+        </li>
+        <li *hasPermission="['MT_Categories']" class="menu-item" routerLinkActive="active">
+          <a routerLink="/meetings/category" class="menu-link">دسته بندی جلسات</a>
+        </li>
+        <li *hasPermission="['MT_Categories']" class="menu-item" routerLinkActive="active">
+          <a routerLink="/meetings/categoryPermission" class="menu-link">دسترسی دسته بندی جلسات</a>
+        </li>
+      </ul>
+    </li>
+
+    <li *hasPermission="['MT_Meetings']" class="menu-item" routerLinkActive="active">
+      <a class="menu-link" routerLink="/meetings/list">
+        <i class="menu-icon tf-icons fa fa-users"></i>
+        <div class="text-truncate"><b>جلسات</b></div>
+      </a>
+    </li>
+
+    <li *hasPermission="['MT_Followups']" class="menu-item" routerLinkActive="active">
+      <a class="menu-link" routerLink="/resolutions/list">
+        <i class="menu-icon tf-icons fa fa-file"></i>
+        <div class="text-truncate"><b>مصوبات</b></div>
+      </a>
+    </li>
+
+    <li *hasPermission="['MT_Meetings_ViewCalendar']" class="menu-item" routerLinkActive="active">
+      <a class="menu-link" routerLink="/calendar">
+        <i class="menu-icon tf-icons fa fa-calendar"></i>
+        <div class="text-truncate"><b>تقویم</b></div>
+      </a>
+    </li>
+
+    <li *hasPermission="['MT_Meetings_Search']" class="menu-item" routerLinkActive="active">
+      <a class="menu-link" routerLink="/search">
+        <i class="menu-icon tf-icons fa fa-search"></i>
+        <div class="text-truncate"><b>جستجو</b></div>
+      </a>
+    </li>
+    <li *hasPermission="['MT_Meetings_Search']" class="menu-item" routerLinkActive="active">
+      <a class="menu-link" routerLink="/resolutions/report">
+        <i class="menu-icon tf-icons fa fa-file"></i>
+        <div class="text-truncate"><b>گزارش مصوبات</b></div>
+      </a>
+    </li>
+    <li *hasPermission="['MT_User_ViewAll']" class="menu-item" routerLinkActive="active">
+      <a class="menu-link" routerLink="/user">
+        <i class="menu-icon tf-icons fa fa-users"></i>
+        <div class="text-truncate"><b> مدیریت کاربران</b></div>
+      </a>
+    </li>
+    <li *hasPermission="['MT_Archive']" class="menu-item" routerLinkActive="active">
+      <a class="menu-link" routerLink="/archive">
+        <i class="menu-icon tf-icons fa fa-archive"></i>
+        <div class="text-truncate"><b>بایگانی</b></div>
+      </a>
+    </li>
+  </ul>
+
+</aside>
+

@@ -1,0 +1,301 @@
+<div class="modal-header">
+  <h5 class="modal-title">
+    <i class="fas fa-file-alt me-2"></i>
+    {{ isEditingResolution() ? 'ویرایش مصوبه هیئت مدیره' : 'ثبت مصوبه هیئت مدیره' }}
+    @if(meetingNumber()) {
+    <span class="meeting-number-badge">جلسه شماره {{ meetingNumber() }}</span>
+    }
+  </h5>
+  <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" (click)="cancelForm()"></button>
+</div>
+
+<div class="modal-body p-0">
+  <div class="main-container no-pdf" id="mainContainer">
+    <!-- پنل فایل‌ها -->
+    <div class="file-panel">
+      <div class="panel-header">
+        <h6 class="panel-title">
+          <i class="fas fa-folder-open me-2"></i>
+          مدیریت فایل‌ها
+        </h6>
+        <span class="file-count-badge" id="fileCountBadge">{{ fileCount() }} فایل</span>
+      </div>
+
+      <!-- ناحیه آپلود -->
+      <div class="file-upload-zone" id="uploadArea" (click)="triggerFileInput()" (dragover)="handleDragOver($event)"
+        (dragleave)="handleDragLeave($event)" (drop)="handleDrop($event)">
+        <div class="upload-icon">
+          <i class="fas fa-cloud-upload-alt"></i>
+        </div>
+        <div class="upload-text">فایل PDF را بکشید و رها کنید</div>
+        <div class="upload-hint">یا کلیک کنید تا فایل انتخاب کنید</div>
+        <button class="btn btn-upload" type="button">
+          <i class="fas fa-upload me-2"></i>
+          انتخاب فایل
+        </button>
+        <input type="file" #boardFileInput multiple accept=".pdf" style="display: none;"
+          (change)="handleBoardFiles($event)">
+      </div>
+
+      @if(uploadProgress() > 0) {
+      <div class="upload-progress" id="uploadProgress">
+        <div class="d-flex align-items-center mb-2">
+          <div class="spinner me-2"></div>
+          <span class="fw-bold small">در حال آپلود...</span>
+        </div>
+        <div class="progress">
+          <div class="progress-bar" id="progressBar" role="progressbar" [ngStyle]="{width: uploadProgress() + '%'}">
+          </div>
+        </div>
+      </div>
+      }
+
+      <!-- لیست فایل‌ها -->
+      <div class="files-container" id="filesList">
+        @if (boardUploadedFiles().length === 0) {
+        <div class="text-center text-muted py-4">
+          <i class="fas fa-folder-open fa-2x mb-2"></i><br>
+          هیچ فایلی آپلود نشده
+        </div>
+        }
+
+        @for (file of boardUploadedFiles(); let i = $index; track $index) {
+        <div class="file-card" [class.selected]="selectedBoardFileId() === file.id"
+          [class.agenda-file]="file.isAgendaFile" (click)="selectBoardFile(file.id??0)">
+          <div class="file-info">
+            <div class="file-icon">
+              <i class="fas fa-file-pdf"></i>
+              @if(file.isAgendaFile) {
+              <span class="agenda-badge" title="فایل دستور جلسه">
+                <i class="fas fa-list"></i>
+              </span>
+              }
+            </div>
+            <div class="file-details">
+              <div class="file-name" [title]="file.name">{{ file.name }}</div>
+              <div class="file-meta">
+                {{ file.sizeFormatted }} • {{ file.uploadDate }}
+                @if(file.isAgendaFile) {
+                <span class="agenda-label">• دستور جلسه</span>
+                }
+              </div>
+            </div>
+            <div class="file-actions">
+              <button class="action-btn btn-view" title="نمایش فایل"
+                (click)="$event.stopPropagation(); showPdfPreview(file.url, file.name??'')">
+                <i class="fas fa-eye"></i>
+              </button>
+              @if(!file.isAgendaFile) {
+              <button class="action-btn btn-delete" title="حذف فایل"
+                (click)="$event.stopPropagation(); deleteBoardFile(file.id??0)">
+                <i class="fas fa-trash"></i>
+              </button>
+              }
+            </div>
+          </div>
+        </div>
+        }
+      </div>
+    </div>
+
+    <!-- پنل فرم -->
+    <div class="form-panel">
+      <form [formGroup]="boardResolutionForm" id="boardResolutionForm">
+        <!-- بخش اطلاعات اصلی -->
+        <div class="form-section">
+          <h6 class="section-title">
+            <i class="fas fa-info-circle"></i>
+            اطلاعات اصلی مصوبه
+          </h6>
+          <div class="row">
+            <custom-input label="عنوان" formControlName="title" identity="title" size="col-12" [required]="true"
+              styleType="simple"></custom-input>
+
+            <custom-select label="جلسه پیرو" formControlName="parentMeetingGuid" identity="parentMeetingGuid"
+              (changed)="onMeetingChange($event)" size="col-6" styleType="simple"
+              [options]="previousMeetings"></custom-select>
+
+            <custom-select label="مصوبه پیرو" formControlName="parentResolutionId" identity="parentResolutionId"
+              size="col-6" styleType="simple" [options]="previousResolutions()!"></custom-select>
+
+            <custom-select label="جلسه کمیسیون معاملات" formControlName="committeeMeetingGuid"
+              identity="committeeMeetingGuid" size="col-6" styleType="simple"
+              [options]="previousCommitteMeetings"></custom-select>
+
+            <custom-select label="مصوبه کمیسیون معاملات" formControlName="committeeResolutionId"
+              identity="committeeResolutionId" size="col-6" styleType="simple"
+              [options]="previousCommitteResolutions"></custom-select>
+
+            <custom-input label="مستندات" formControlName="documentation" identity="documentation" size="col-12"
+              styleType="simple" type="textarea"></custom-input>
+
+            <custom-input [type]="'textarea'" label="توضیحات" formControlName="description" identity="description"
+              size="col-12" styleType="simple"></custom-input>
+
+            <custom-input label="مبلغ مصوب (ریال)" formControlName="approvedPrice" identity="approvedPrice" size="col-6"
+              styleType="simple"></custom-input>
+
+            <custom-input label="شماره قرارداد" formControlName="contractNumber" identity="contractNumber" size="col-6"
+              styleType="simple"></custom-input>
+          </div>
+        </div>
+
+        <!-- بخش تخصیص‌ها -->
+        <div class="assignments-section-new">
+          <div class="assignments-header-new">
+            <div class="header-content-new">
+              <h6 class="section-title-modern">
+                <i class="fas fa-user-check"></i>
+                تخصیص‌ها و پیگیری
+              </h6>
+              <div class="header-stats-new">
+                <span class="assignment-counter-new">
+                  <i class="fas fa-tasks"></i>
+                  <span>{{ assignments().length }}</span> اقدام کننده
+                </span>
+                <button type="button" class="add-assignment-btn-new" (click)="addAssignment()">
+                  <i class="fas fa-plus"></i>
+                  افزودن اقدام کننده
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="assignments-container-modern" #assignmentsContainer>
+            @if (assignmentControls().length > 0) {
+            @for (assignment of assignmentControls(); let i = $index; track $index) {
+            <div class="assignment-card-modern" [formGroup]="assignment">
+              <div class="card-header-new">
+                <div class="assignment-number-new">{{ i + 1 }}</div>
+                <button type="button" class="delete-btn-new" (click)="removeAssignment(i)" title="حذف اقدام کننده">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+              <div class="row">
+                <custom-select label="اقدام کننده" [options]="users()" formControlName="actorGuid" identity="actorGuid"
+                  (changed)="onActorChange(i, $event)" classInput="form-control" styleType="simple"
+                  size="col-4"></custom-select>
+
+                <custom-input styleType="simple" label="تاریخ سر رسید" formControlName="dueDate" identity="dueDate"
+                  size="col-4" type="date"></custom-input>
+
+                <custom-select label="وضعیت" [options]="statusList" formControlName="status" identity="status"
+                  classInput="form-control" styleType="simple" size="col-4"></custom-select>
+
+                <custom-input type="textarea" label="توضیحات" formControlName="description" identity="description"
+                  styleType="simple" size="col-12"></custom-input>
+
+                <div class="status-badge-container-new">
+                  @switch (assignment.get('status')?.value) {
+                  @case ('completed') {
+                  <span class="status-badge-new status-completed-new">
+                    <i class="fas fa-check"></i>
+                    انجام شده
+                  </span>
+                  }
+                  @case ('not_completed') {
+                  <span class="status-badge-new status-not-completed-new">
+                    <i class="fas fa-times"></i>
+                    انجام نشده
+                  </span>
+                  }
+                  @case ('no_response') {
+                  <span class="status-badge-new status-no-response-new">
+                    <i class="fas fa-question"></i>
+                    بدون پاسخ
+                  </span>
+                  }
+                  }
+                </div>
+              </div>
+            </div>
+            }
+            } @else {
+            <div class="empty-state-new">
+              <div class="empty-state-icon-new">
+                <i class="fas fa-users"></i>
+              </div>
+              <div class="empty-state-title-new">هیچ اقدام کننده‌ای تعیین نشده است</div>
+              <div class="empty-state-text-new">برای افزودن اقدام کننده روی دکمه بالا کلیک کنید</div>
+            </div>
+            }
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <div class="pdf-panel hidden" id="boardPdfPanel">
+      <div class="pdf-header">
+        <h5 id="pdf-title" class="pdf-title">پیش‌نمایش فایل</h5>
+        <button class="pdf-close" (click)="hidePdfPreview()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      @if (boardPdfUrl()) {
+      <iframe class="pdf-viewer" [src]="boardPdfUrl()"></iframe>
+      }
+    </div>
+  </div>
+</div>
+
+<div class="modal-footer">
+  <button type="button" class="btn btn-gradient btn-lg" (click)="saveBoardResolution()">
+    <i class="fas fa-save me-2"></i>
+    ذخیره مصوبه
+  </button>
+  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="cancelForm()">
+    لغو
+  </button>
+</div>
+
+<style>
+  .meeting-number-badge {
+    background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8em;
+    font-weight: 600;
+    margin-right: 10px;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+  }
+
+  .agenda-file {
+    border-left: 4px solid #17a2b8 !important;
+    background: linear-gradient(to right, #f8f9fa, #e9ecef);
+  }
+
+  .agenda-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: #17a2b8;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .agenda-label {
+    color: #17a2b8;
+    font-weight: 600;
+  }
+
+  .file-icon {
+    position: relative;
+  }
+
+  .file-card.agenda-file .file-actions .btn-delete {
+    display: none;
+  }
+
+  .file-card.agenda-file:hover {
+    border-left-color: #138496;
+    box-shadow: 0 4px 15px rgba(23, 162, 184, 0.2);
+  }
+</style>

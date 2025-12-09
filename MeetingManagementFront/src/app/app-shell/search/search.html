@@ -1,0 +1,35 @@
+@if(isPermitted()) {
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+    <!-- تب‌ها -->
+    <ul class="nav nav-pills flex-nowrap overflow-auto rounded px-3 py-2" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button type="button" class="nav-link" [class.active]="activeTab() === 'meetings'" role="tab"
+                data-bs-toggle="tab" data-bs-target="#navs-meetings" aria-controls="navs-meetings"
+                aria-selected="activeTab() === 'meetings'" (click)="onTabChange('meetings')">
+                جلسات
+            </button>
+        </li>
+
+        <li class="nav-item" role="presentation">
+            <button type="button" class="nav-link" [class.active]="activeTab() === 'resolutions'" role="tab"
+                data-bs-toggle="tab" data-bs-target="#navs-resolutions" aria-controls="navs-resolutions"
+                aria-selected="activeTab() === 'resolutions'" (click)="onTabChange('resolutions')">
+                مصوبات
+            </button>
+        </li>
+    </ul>
+
+</div>
+
+<div class="tab-content">
+    <div class="tab-pane fade" [class.active]="activeTab() === 'meetings'" [class.show]="activeTab() === 'meetings'"
+        id="navs-meetings" role="tabpanel">
+        <app-meeting-search></app-meeting-search>
+    </div>
+
+    <div class="tab-pane fade" [class.active]="activeTab() === 'resolutions'"
+        [class.show]="activeTab() === 'resolutions'" id="navs-resolutions" role="tabpanel">
+        <app-resolution-search></app-resolution-search>
+    </div>
+</div>
+}

@@ -1,0 +1,483 @@
+<div class="row mt-2">
+    <!-- <div class="col-md-2">
+        <div class="guide-section">
+            <div class="guide-items">
+                <div class="guide-item">
+                    <div class="guide-icon">
+                        <i class="fa fa-mouse-pointer"></i>
+                    </div>
+                    <span>برای مشاهده جزئیات روی هر گره کلیک کنید</span>
+                </div>
+                <div class="guide-item">
+                    <div class="guide-icon">
+                        <i class="fa fa-plus"></i>
+                    </div>
+                    <span>برای افزودن اقدام یا پیگیری از منوی جزئیات استفاده کنید</span>
+                </div>
+                <div class="guide-item">
+                    <div class="guide-icon">
+                        <i class="fa fa-palette"></i>
+                    </div>
+                    <span>رنگ‌ها نشان‌دهنده وضعیت فعالیت‌ها هستند</span>
+                </div>
+            </div>
+        </div>
+    </div> -->
+
+    <!-- Center Content: Chart Controls and Chart -->
+    <div class="center-content col-md-8">
+        <!-- Chart Controls (Moved above chart) -->
+        <div class="chart-controls">
+            <div class="control-group">
+                <button class="control-btn primary" (click)="fitChart()" title="تناسب با صفحه">
+                    <i class="fa fa-expand-arrows-alt"></i>
+                    <span>تناسب صفحه</span>
+                </button>
+                <!-- <button class="control-btn info" (click)="centerChart()" title="وسط‌چینی">
+                    <i class="fa fa-crosshairs"></i>
+                    <span>وسط‌چینی</span>
+                </button> -->
+            </div>
+
+            <div class="control-group">
+                <button class="control-btn success" (click)="expandAll()" title="باز کردن همه">
+                    <i class="fa fa-plus-circle"></i>
+                    <span>باز کردن همه</span>
+                </button>
+                <button class="control-btn warning" (click)="collapseAll()" title="بستن همه">
+                    <i class="fa fa-minus-circle"></i>
+                    <span>بستن همه</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Loading State -->
+        @if (isLoading()) {
+        <div class="loading-state">
+            <div class="loading-animation">
+                <div class="spinner"></div>
+                <div class="loading-text">
+                    <h3>در حال بارگذاری درخت ارجاعات...</h3>
+                    <p>لطفاً کمی صبر کنید</p>
+                </div>
+            </div>
+        </div>
+        }
+        <div class="chart-wrapper">
+            <div #chartContainer id="chartContainer" class="org-chart-container-inner"></div>
+        </div>
+        <!-- Chart Container -->
+        @if (treeData() && !isLoading()) {
+
+        }
+
+        <!-- Enhanced Empty State -->
+        @if (!treeData() && !isLoading()) {
+        <div class="empty-state">
+            <div class="empty-animation">
+                <i class="fa fa-sitemap"></i>
+            </div>
+            <h3>درخت ارجاعات موجود نیست</h3>
+            <p>این تخصیص هنوز هیچ ارجاعی ندارد یا در دسترس نیست</p>
+            <button class="btn-refresh" (click)="loadTree()">
+                <i class="fa fa-refresh"></i>
+                تلاش مجدد
+            </button>
+        </div>
+        }
+    </div>
+
+
+</div>
+
+@if (selectedNode()) {
+<div class="modal-overlay show" (click)="closeModal()">
+    <div class="enhanced-modal" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <div class="person-avatar">
+                <img [src]="getPersonImage(selectedNode()?.actorName??'')" [alt]="selectedNode()?.actorName"
+                    onerror="this.src='assets/images/default-avatar.png'">
+            </div>
+            <div class="person-info">
+                <h4 class="text-white">{{ selectedNode()?.actorName }}</h4>
+                <!-- <p>{{ selectedNode()?.actorPositionTitle || 'موقعیت سازمانی' }}</p> -->
+                @if (selectedNode()?.referrerName) {
+                <span class="referrer-badge">
+                    <i class="fa fa-user"></i>
+                    ارجاع از: {{ selectedNode()?.referrerName }}
+                </span>
+                }
+            </div>
+            <button class="close-btn" (click)="closeModal()">
+                <i class="fa fa-times"></i>
+            </button>
+        </div>
+
+        <div class="modal-body">
+            <!-- Enhanced Tabs -->
+            <div class="enhanced-tabs">
+                <button class="tab-btn" [class.active]="activeTab() === 'actions'" (click)="activeTab.set('actions')">
+                    <div class="tab-icon">
+                        <i class="fa fa-tasks"></i>
+                    </div>
+                    <div class="tab-content">
+                        <span class="tab-title">اقدامات</span>
+                        <span class="tab-count">{{ selectedNode()?.actions?.length || 0 }}</span>
+                    </div>
+                </button>
+
+                <!-- <button class="tab-btn" [class.active]="activeTab() === 'followups'"
+                    (click)="activeTab.set('followups')">
+                    <div class="tab-icon">
+                        <i class="fa fa-eye"></i>
+                    </div>
+                    <div class="tab-content">
+                        <span class="tab-title">پیگیری‌ها</span>
+                        <span class="tab-count">{{ selectedNode()?.followups?.length || 0 }}</span>
+                    </div>
+                </button>
+
+                <button class="tab-btn" [class.active]="activeTab() === 'children'" (click)="activeTab.set('children')">
+                    <div class="tab-icon">
+                        <i class="fa fa-users"></i>
+                    </div>
+                    <div class="tab-content">
+                        <span class="tab-title">زیرمجموعه‌ها</span>
+                        <span class="tab-count">{{ selectedNode()?.children?.length || 0 }}</span>
+                    </div>
+                </button> -->
+            </div>
+
+            <div class="tab-content-area">
+                <!-- Actions Tab Content -->
+                @if (activeTab() === 'actions') {
+                <div class="tab-panel">
+                    @if (selectedNode()?.actions?.length) {
+                    <div class="items-list">
+                        @for (action of selectedNode()?.actions; track action.id) {
+                        <div class="enhanced-item action-item">
+                            <div class="item-header">
+                                <div class="item-status">
+                                    <span class="status-indicator"
+                                        [style.background-color]="getStatusColor(action.statusStr??'')"></span>
+                                    <span class="status-text">{{ getStatusText(action.statusStr??'') }}</span>
+                                </div>
+                                <!-- <div class="item-actions">
+                                    <button class="action-btn edit" (click)="editAction(action, 'action')"
+                                        title="ویرایش">
+                                        <i class="fa fa-edit"></i>
+                                    </button>
+                                    <button class="action-btn delete" (click)="deleteAction(action.id)" title="حذف">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </div> -->
+                            </div>
+
+                            <div class="item-content">
+                                <p class="item-description">{{ action.description }}</p>
+                                <div class="item-meta">
+                                    <span class="meta-item">
+                                        <i class="fa fa-calendar"></i>
+                                        {{ action.date }}
+                                    </span>
+                                    <span class="meta-item">
+                                        <i class="fa fa-user"></i>
+                                        {{ action.userName || 'نامشخص' }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        }
+                    </div>
+                    } @else {
+                    <div class="empty-tab-content">
+                        <div class="empty-icon">
+                            <i class="fa fa-tasks"></i>
+                        </div>
+                        <h4>هیچ اقدامی ثبت نشده</h4>
+                        <p>هنوز هیچ اقدامی برای این شخص ثبت نشده است</p>
+                    </div>
+                    }
+                    <!-- <button class="add-btn" (click)="openActionModal(selectedNode()!, 'action')">
+                        <i class="fa fa-plus"></i>
+                        <span>افزودن اقدام جدید</span>
+                    </button> -->
+                </div>
+                }
+
+                <!-- Followups Tab Content -->
+                @if (activeTab() === 'followups') {
+                <div class="tab-panel">
+                    @if (showFollowupForm()) {
+                    <div class="inline-followup-form mt-3">
+                        <div class="card border-info">
+                            <div class="card-header bg-info bg-opacity-10 py-2">
+                                <h6 class="mb-0 text-info d-flex align-items-center justify-content-between">
+                                    <span>
+                                        <i class="fa fa-eye me-2"></i>
+                                        ثبت پیگیری جدید
+                                    </span>
+                                    <button type="button" class="btn-close btn-close-sm"
+                                        (click)="closeFollowupForm()"></button>
+                                </h6>
+                            </div>
+                            <div class="card-body p-3">
+                                <form (ngSubmit)="saveAction()" #actionForm="ngForm">
+                                    <div class="form-body">
+                                        <div class="form-grid">
+                                            <!-- Status Selection -->
+                                            <div class="form-group">
+                                                <label class="form-label">
+                                                    <i class="fa fa-flag"></i>
+                                                    {{ actionType() === 'action' ? 'وضعیت اقدام' : 'وضعیت پیگیری' }}
+                                                    <span class="required">*</span>
+                                                </label>
+                                                <div class="select-wrapper">
+                                                    <select class="form-control" [(ngModel)]="actionStatus"
+                                                        name="actionStatus" required>
+                                                        <option value="">انتخاب کنید...</option>
+                                                        @if (actionType() === 'action') {
+                                                        <option value="Done">انجام شده</option>
+                                                        <option value="InProgress">در حال انجام</option>
+                                                        <option value="NotDone">انجام نشده</option>
+                                                        } @else {
+                                                        <option value="FollowingUp">در حال پیگیری</option>
+                                                        <option value="NotFollowedUp">پیگیری نشده</option>
+                                                        }
+                                                    </select>
+                                                    <i class="fa fa-chevron-down select-icon"></i>
+                                                </div>
+                                            </div>
+
+                                            <!-- Date Input -->
+                                            <div class="form-group">
+                                                <label class="form-label">
+                                                    <i class="fa fa-calendar"></i>
+                                                    تاریخ
+                                                    <span class="required">*</span>
+                                                </label>
+                                                <input type="text" class="form-control" [(ngModel)]="actionDate"
+                                                    name="actionDate" data-jdp placeholder="انتخاب تاریخ..." required>
+                                            </div>
+
+                                            <!-- Description -->
+                                            <div class="form-group full-width">
+                                                <label class="form-label">
+                                                    <i class="fa fa-comment-dots"></i>
+                                                    توضیحات
+                                                    @if (actionStatus !== 'Done') {
+                                                    <span class="required">*</span>
+                                                    }
+                                                </label>
+                                                <textarea rows="4" class="form-control" [(ngModel)]="actionDescription"
+                                                    name="actionDescription"
+                                                    placeholder="توضیحات دقیق خود را وارد کنید..."
+                                                    [required]="actionStatus !== 'Done'"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-footer">
+                                        <button type="button" class="btn btn-cancel" (click)="closeActionModal()">
+                                            <i class="fa fa-times"></i>
+                                            انصراف
+                                        </button>
+                                        <button type="submit" class="btn btn-save" [disabled]="isSaving()">
+                                            @if (isSaving()) {
+                                            <div class="btn-spinner"></div>
+                                            } @else {
+                                            <i class="fa fa-save"></i>
+                                            }
+                                            {{ editMode() ? 'به‌روزرسانی' : 'ذخیره' }}
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    }
+                    @else {
+                    @if (selectedNode()?.followups?.length) {
+                    <div class="items-list">
+                        @for (followup of selectedNode()?.followups; track followup.id) {
+                        <div class="enhanced-item followup-item">
+                            <div class="item-header">
+                                <div class="item-status">
+                                    <span class="status-indicator"
+                                        [style.background-color]="getStatusColor(followup.followStatusStr??'')"></span>
+                                    <span class="status-text">{{ getStatusText(followup.followStatusStr??'')
+                                        }}</span>
+                                </div>
+                                <!-- <div class="item-actions">
+                                    <button class="action-btn edit" (click)="editAction(followup, 'follow')"
+                                        title="ویرایش">
+                                        <i class="fa fa-edit"></i>
+                                    </button>
+                                    <button class="action-btn delete" (click)="deleteAction(followup.id)" title="حذف">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </div> -->
+                            </div>
+
+                            <div class="item-content">
+                                <p class="item-description">{{ followup.description }}</p>
+                                <div class="item-meta">
+                                    <span class="meta-item">
+                                        <i class="fa fa-calendar"></i>
+                                        {{ followup.date }}
+                                    </span>
+                                    <span class="meta-item">
+                                        <i class="fa fa-user"></i>
+                                        {{ followup.userName || 'نامشخص' }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        }
+                    </div>
+                    } @else {
+                    <div class="empty-tab-content">
+                        <div class="empty-icon">
+                            <i class="fa fa-eye"></i>
+                        </div>
+                        <h4>هیچ پیگیری ثبت نشده</h4>
+                        <p>هنوز هیچ پیگیری برای این شخص ثبت نشده است</p>
+                    </div>
+                    }
+
+                    <button class="add-btn" (click)="toggleFollowupForm()">
+                        <i class="fa fa-plus"></i>
+                        <span>افزودن پیگیری جدید</span>
+                    </button>
+                    }
+
+                </div>
+                }
+
+                <!-- Children Tab Content -->
+                @if (activeTab() === 'children') {
+                <div class="tab-panel">
+                    @if (selectedNode()?.children?.length) {
+                    <div class="children-grid">
+                        @for (child of selectedNode()?.children; track child.id) {
+                        <div class="child-card" (click)="onNodeClick({data: child})">
+                            <div class="child-avatar">
+                                <img [src]="getPersonImage(child.actorName)" [alt]="child.actorName"
+                                    onerror="this.src='assets/images/default-avatar.png'">
+                            </div>
+                            <div class="child-info">
+                                <h4>{{ child.actorName }}</h4>
+                                <!-- <p>{{ child.actorPositionTitle || 'موقعیت سازمانی' }}</p> -->
+                                <div class="child-stats">
+                                    <span class="stat-badge actions">{{ child.actions.length || 0 }} اقدام</span>
+                                    <span class="stat-badge followups">{{ child.followups.length || 0 }}
+                                        پیگیری</span>
+                                </div>
+                            </div>
+                        </div>
+                        }
+                    </div>
+                    } @else {
+                    <div class="empty-tab-content">
+                        <div class="empty-icon">
+                            <i class="fa fa-users"></i>
+                        </div>
+                        <h4>زیرمجموعه‌ای وجود ندارد</h4>
+                        <p>این شخص هیچ زیرمجموعه‌ای ندارد</p>
+                    </div>
+                    }
+                </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+}
+
+<div class="modal fade" id="treeActionModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="enhanced-form-modal">
+            <div class="form-header">
+                <div class="form-icon">
+                    <i class="fa fa-plus-circle"></i>
+                </div>
+                <div class="form-title">
+                    <h6>{{ modalTitle() }}</h6>
+                    <p>{{ actionSelectedNode()?.actorName }}</p>
+                </div>
+                <button type="button" class="close-btn" (click)="closeActionModal()">
+                    <i class="fa fa-times"></i>
+                </button>
+            </div>
+
+            <form (ngSubmit)="saveAction()" #actionForm="ngForm">
+                <div class="form-body">
+                    <div class="form-grid">
+                        <!-- Status Selection -->
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fa fa-flag"></i>
+                                {{ actionType() === 'action' ? 'وضعیت اقدام' : 'وضعیت پیگیری' }}
+                                <span class="required">*</span>
+                            </label>
+                            <div class="select-wrapper">
+                                <select class="form-control" [(ngModel)]="actionStatus" name="actionStatus" required>
+                                    <option value="">انتخاب کنید...</option>
+                                    @if (actionType() === 'action') {
+                                    <option value="Done">انجام شده</option>
+                                    <option value="InProgress">در حال انجام</option>
+                                    <option value="NotDone">انجام نشده</option>
+                                    } @else {
+                                    <option value="FollowingUp">در حال پیگیری</option>
+                                    <option value="NotFollowedUp">پیگیری نشده</option>
+                                    }
+                                </select>
+                                <i class="fa fa-chevron-down select-icon"></i>
+                            </div>
+                        </div>
+
+                        <!-- Date Input -->
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fa fa-calendar"></i>
+                                تاریخ
+                                <span class="required">*</span>
+                            </label>
+                            <input type="text" class="form-control" [(ngModel)]="actionDate" name="actionDate" data-jdp
+                                placeholder="انتخاب تاریخ..." required>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="form-group full-width">
+                            <label class="form-label">
+                                <i class="fa fa-comment-dots"></i>
+                                توضیحات
+                                @if (actionStatus !== 'Done') {
+                                <span class="required">*</span>
+                                }
+                            </label>
+                            <textarea rows="4" class="form-control" [(ngModel)]="actionDescription"
+                                name="actionDescription" placeholder="توضیحات دقیق خود را وارد کنید..."
+                                [required]="actionStatus !== 'Done'"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-footer">
+                    <button type="button" class="btn btn-cancel" (click)="closeActionModal()">
+                        <i class="fa fa-times"></i>
+                        انصراف
+                    </button>
+                    <button type="submit" class="btn btn-save" [disabled]="isSaving()">
+                        @if (isSaving()) {
+                        <div class="btn-spinner"></div>
+                        } @else {
+                        <i class="fa fa-save"></i>
+                        }
+                        {{ editMode() ? 'به‌روزرسانی' : 'ذخیره' }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,337 @@
+<div class="container-fluid py-4">
+    <!-- Header Card -->
+    <div class="card shadow-sm border-0 rounded-4 mb-4">
+        <div class="card-body p-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4 class="fw-bold text-primary mb-0">
+                    <i class="fa fa-tasks ms-2"></i>
+                    مدیریت اقدامات و پیگیری‌ها
+                </h4>
+                <button class="btn btn-outline-secondary" (click)="onBackClick()">
+                    <i class="fa fa-arrow-right ms-1"></i>بازگشت
+                </button>
+            </div>
+
+            <!-- Resolution Info -->
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <div class="info-box">
+                        <small class="text-muted">
+                            <i class="fa fa-hashtag ms-1"></i>شماره جلسه
+                        </small>
+                        <div class="fw-semibold">{{ resolutionData().meetingNumber }}</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="info-box">
+                        <small class="text-muted">
+                            <i class="fa fa-calendar ms-1"></i>تاریخ
+                        </small>
+                        <div class="fw-semibold">{{ resolutionData().meetingDate }}</div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="info-box">
+                        <small class="text-muted">
+                            <i class="fa fa-file-alt ms-1"></i>عنوان جلسه
+                        </small>
+                        <div class="fw-semibold">{{ resolutionData().meetingTitle }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-3 mt-2">
+                <div class="col-md-3">
+                    <div class="info-box">
+                        <small class="text-muted">
+                            <i class="fa fa-bookmark ms-1"></i>شماره مصوبه
+                        </small>
+                        <span class="badge bg-light text-dark border">
+                            {{ resolutionData().resolutionNumber }}
+                        </span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="info-box">
+                        <small class="text-muted">
+                            <i class="fa fa-heading ms-1"></i>عنوان مصوبه
+                        </small>
+                        <div class="fw-semibold">{{ resolutionData().resolutionTitle }}</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="info-box">
+                        <small class="text-muted">
+                            <i class="fa fa-clock ms-1"></i>مهلت اقدام
+                        </small>
+                        <span class="badge bg-warning text-dark">
+                            {{ resolutionData().dueDate }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Indicator -->
+    @if (isLoading()) {
+    <div class="d-flex justify-content-center py-5">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">در حال بارگذاری...</span>
+        </div>
+    </div>
+    } @else {
+    <!-- Actions and Followups Row -->
+    <div class="row g-4">
+        <!-- Actions Section -->
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-header bg-transparent py-3 border-0">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="fw-bold mb-0">
+                            <i class="fa fa-tasks text-primary ms-2"></i>اقدامات
+                        </h5>
+                        <div class="d-flex gap-2">
+                            <span class="badge bg-primary-subtle text-primary">
+                                {{ actionsCount() }} مورد
+                            </span>
+                            @if (userType() === 'action') {
+                            <button class="btn btn-sm btn-primary" (click)="openActionModal('action')"
+                                [disabled]="isSaving()">
+                                <i class="fa fa-plus ms-1"></i>اقدام جدید
+                            </button>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="timeline-container">
+                        @for (item of actions(); track item.id) {
+                        <div class="timeline-item">
+                            <div class="timeline-marker" [ngClass]="getStatusClass(item, 'action')">
+                            </div>
+                            <div class="timeline-content">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div>
+                                        <span class="badge border"
+                                            [ngClass]="'bg-' + getStatusClass(item, 'action').replace('bg-', '') + '-subtle text-' + getStatusClass(item, 'action').replace('bg-', '') + ' border-' + getStatusClass(item, 'action').replace('bg-', '')">
+                                            <i class="fa fa-flag ms-1"></i>
+                                            {{ getStatusLabel(item, 'action') }}
+                                        </span>
+                                        <small class="text-muted ms-2">
+                                            <i class="fa fa-user ms-1"></i>{{ item.userName }}
+                                        </small>
+                                        <small class="text-muted ms-2">
+                                            <i class="fa fa-calendar ms-1"></i>{{ item.date }}
+                                        </small>
+                                    </div>
+                                    @if (canEditAction(item)) {
+                                    <div class="btn-group">
+                                        <button class="btn btn-sm btn-outline-primary"
+                                            (click)="editAction(item.id, 'action')" [disabled]="isSaving()">
+                                            <i class="fa fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-danger" (click)="deleteAction(item.id)"
+                                            [disabled]="isSaving()">
+                                            <i class="fa fa-trash"></i>
+                                        </button>
+                                    </div>
+                                    }
+                                </div>
+                                <p class="mb-0 text-secondary">{{ item.description }}</p>
+                            </div>
+                        </div>
+                        } @empty {
+                        <div class="empty-holder text-center py-5">
+                            <div class="empty-illustration mb-3" style="font-size: 3rem;">💤</div>
+                            <div class="text-muted">هیچ اقدامی ثبت نشده؛ اولین مورد را اضافه کنید.</div>
+                        </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Followups Section -->
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-header bg-transparent py-3 border-0">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="fw-bold mb-0">
+                            <i class="fa fa-eye text-success ms-2"></i>پیگیری‌ها
+                        </h5>
+                        <div class="d-flex gap-2">
+                            <span class="badge bg-success-subtle text-success">
+                                {{ followupsCount() }} مورد
+                            </span>
+                            @if (userType() === 'follow') {
+                            <button class="btn btn-sm btn-success" (click)="openActionModal('follow')"
+                                [disabled]="isSaving()">
+                                <i class="fa fa-plus ms-1"></i>پیگیری جدید
+                            </button>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="timeline-container">
+                        @for (item of followups(); track item.id) {
+                        <div class="timeline-item">
+                            <div class="timeline-marker" [ngClass]="getStatusClass(item, 'follow')">
+                            </div>
+                            <div class="timeline-content">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div>
+                                        <span class="badge border"
+                                            [ngClass]="'bg-' + getStatusClass(item, 'follow').replace('bg-', '') + '-subtle text-' + getStatusClass(item, 'follow').replace('bg-', '') + ' border-' + getStatusClass(item, 'follow').replace('bg-', '')">
+                                            <i class="fa fa-eye ms-1"></i>
+                                            {{ getStatusLabel(item, 'follow') }}
+                                        </span>
+                                        <small class="text-muted ms-2">
+                                            <i class="fa fa-user ms-1"></i>{{ item.userName }}
+                                        </small>
+                                        <small class="text-muted ms-2">
+                                            <i class="fa fa-calendar ms-1"></i>{{ item.date }}
+                                        </small>
+                                    </div>
+                                    @if (canEditAction(item)) {
+                                    <div class="btn-group">
+                                        <button class="btn btn-sm btn-outline-primary"
+                                            (click)="editAction(item.id, 'follow')" [disabled]="isSaving()">
+                                            <i class="fa fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-danger" (click)="deleteAction(item.id)"
+                                            [disabled]="isSaving()">
+                                            <i class="fa fa-trash"></i>
+                                        </button>
+                                    </div>
+                                    }
+                                </div>
+                                <p class="mb-0 text-secondary">{{ item.description }}</p>
+                            </div>
+                        </div>
+                        } @empty {
+                        <div class="empty-holder text-center py-5">
+                            <div class="empty-illustration mb-3" style="font-size: 3rem;">💤</div>
+                            <div class="text-muted">هیچ پیگیری‌ای ثبت نشده؛ اولین مورد را اضافه کنید.</div>
+                        </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    }
+</div>
+
+<!-- Action/Follow Modal -->
+<div class="modal fade" id="actionModal" tabindex="-1" aria-labelledby="actionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold" id="actionModalLabel">
+                    <i class="fa fa-plus-circle ms-2"></i>
+                    {{ modalTitle() }}
+                </h5>
+                <button type="button" class="btn-close" (click)="closeModal()" aria-label="بستن"></button>
+            </div>
+
+            <form (ngSubmit)="saveAction()" #actionForm="ngForm">
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <!-- Status Selection -->
+                        @if (modalType() === 'action') {
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">
+                                <i class="fa fa-flag ms-1"></i>وضعیت اقدام
+                                <span class="text-danger">*</span>
+                            </label>
+                            <select class="form-select" [value]="selectedStatus()"
+                                (change)="selectedStatus.set($any($event.target)?.value)" name="selectedStatus" required>
+                                <option value="">انتخاب کنید...</option>
+                                @for (option of actionStatusOptions; track option.value) {
+                                <option [value]="option.value">{{ option.label }}</option>
+                                }
+                            </select>
+                            <div class="invalid-feedback">
+                                لطفاً وضعیت اقدام را انتخاب کنید
+                            </div>
+                        </div>
+                        }
+
+                        @if (modalType() === 'follow') {
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">
+                                <i class="fa fa-flag ms-1"></i>وضعیت پیگیری
+                                <span class="text-danger">*</span>
+                            </label>
+                            <select class="form-select" [value]="selectedStatus()"
+                                (change)="selectedStatus.set($any($event.target)?.value)" name="selectedStatus" required>
+                                <option value="">انتخاب کنید...</option>
+                                @for (option of followStatusOptions; track option.value) {
+                                <option [value]="option.value">{{ option.label }}</option>
+                                }
+                            </select>
+                            <div class="invalid-feedback">
+                                لطفاً وضعیت پیگیری را انتخاب کنید
+                            </div>
+                        </div>
+                        }
+
+                        <!-- Date Input -->
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">
+                                <i class="fa fa-calendar ms-1"></i>تاریخ
+                                <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" class="form-control" [value]="actionDate()"
+                                (input)="actionDate.set($any($event.target)?.value)" name="actionDate" data-jdp
+                                placeholder="انتخاب تاریخ..." required>
+                            <div class="invalid-feedback">
+                                لطفاً تاریخ را انتخاب کنید
+                            </div>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">
+                                <i class="fa fa-comment-dots ms-1"></i>توضیحات
+                                @if (isDescriptionRequired()) {
+                                <span class="text-danger">*</span>
+                                }
+                            </label>
+                            <textarea rows="4" class="form-control" [value]="description()"
+                                (input)="description.set($any($event.target)?.value)" name="description"
+                                placeholder="توضیحات دقیق خود را وارد کنید..."
+                                [required]="isDescriptionRequired()"></textarea>
+                            <div class="invalid-feedback">
+                                لطفاً توضیحات را وارد کنید
+                            </div>
+                            @if (!isDescriptionRequired()) {
+                            <small class="form-text text-muted">
+                                <i class="fa fa-info-circle ms-1"></i>
+                                برای وضعیت "انجام شده" وارد کردن توضیحات اجباری نیست
+                            </small>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" (click)="closeModal()"
+                        [disabled]="isSaving()">
+                        <i class="fa fa-times ms-1"></i>انصراف
+                    </button>
+                    <button type="submit" class="btn btn-success" [disabled]="isSaving()">
+                        @if (isSaving()) {
+                        <span class="spinner-border spinner-border-sm ms-1"></span>
+                        } @else {
+                        <i class="fa fa-save ms-1"></i>
+                        }
+                        {{ editMode() ? 'به‌روزرسانی' : 'ذخیره' }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

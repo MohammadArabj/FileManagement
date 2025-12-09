@@ -1,0 +1,164 @@
+@if(!isLoading()){
+
+<div class="row">
+  <div class="col-md-8">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card h-100 flex-fill d-flex flex-column">
+          <div class="card-header">
+            <h5 class="mb-0">جزئیات جلسه</h5>
+          </div>
+          <div class="card-body flex-grow-1">
+            <form [formGroup]="meetingForm" id="submitForm" class="mt-2">
+              <div class="row g-2 row-cols-2">
+                <div [ngClass]="isBoardMeetingCategory()?'col-4':'col'">
+                  <custom-select label="دسته بندی" formControlName="categoryGuid" [options]="categories()"
+                    styleType="simple" identity="categoryGuid" [required]="true"
+                    (changed)="onCategoryChange()"></custom-select>
+                </div>
+                @if(isBoardMeetingCategory()){
+                <div [ngClass]="isBoardMeetingCategory()?'col-4':'col'">
+                  <custom-input label="شماره جلسه" formControlName="number" type="text" identity="number"
+                    maxlength="200" styleType="simple" [required]="true"></custom-input>
+                </div>
+                }
+                <div [ngClass]="isBoardMeetingCategory()?'col-4':'col'">
+                  <custom-input type="date" identity="date" label="تاریخ" formControlName="date" [required]="true"
+                    styleType="simple" (changed)="onDateChange()"></custom-input>
+                </div>
+                <div class="col-12">
+                  <custom-input label="عنوان جلسه" formControlName="title" type="text" identity="title" maxlength="200"
+                    styleType="simple" [required]="true"></custom-input>
+                </div>
+                <div class="col">
+                  <custom-input label="ساعت شروع" formControlName="startTime" type="time" identity="startTime"
+                    styleType="simple" [required]="true" (change)="onTimeChange()"></custom-input>
+                  @if (meetingForm.errors?.['timeInvalid']) {
+                  <div class="text-danger small mt-1">
+                    ساعت شروع باید کوچکتر از ساعت پایان باشد.
+                  </div>
+                  }
+                </div>
+                <div class="col">
+                  <custom-input label="ساعت پایان" formControlName="endTime" type="time" identity="endTime"
+                    styleType="simple" [required]="true" (change)="onTimeChange()"></custom-input>
+                </div>
+                <div class="col">
+                  <custom-select label="مکان" formControlName="locationType" [options]="locationTypes"
+                    styleType="simple" identity="locationType" [required]="true"
+                    (changed)="onLocationTypeChange($event)"></custom-select>
+                </div>
+                @if (meetingForm.get('locationType')?.value === 'internal') {
+                <div class="col">
+                  <custom-select label="محل برگزاری" formControlName="roomGuid" [options]="rooms()" identity="roomGuid"
+                    styleType="simple" (changed)="onRoomChange()"></custom-select>
+                  @if (meetingForm.get('roomGuid')?.errors?.['conflict']) {
+                  <div class="text-danger small mt-1">
+                    این اتاق در بازه زمانی انتخاب‌شده، رزرو شده است.
+                  </div>
+                  }
+                </div>
+                }
+                @if (meetingForm.get('locationType')?.value === 'external') {
+                <div class="col">
+                  <custom-input label="آدرس مکان" formControlName="roomName" type="textarea" identity="roomName"
+                    styleType="simple" [required]="false"></custom-input>
+                </div>
+                }
+                @if (meetingForm.get('locationType')?.value === 'online') {
+                <div class="col">
+                  <custom-input label="لینک جلسه" formControlName="roomLink" type="text" identity="roomLink"
+                    styleType="simple" [required]="false"></custom-input>
+                </div>
+                }
+                <div class="form-check col-6">
+                  <input class="form-check-input" type="checkbox" formControlName="notAllowReplacement"
+                    styleType="simple" id="notAllowReplacement">
+                  <label class="form-check-label" for="notAllowReplacement">انتخاب جانشین برای جلسه مجاز نیست</label>
+                </div>
+                <div class="form-check col-6">
+                  <input class="form-check-input" type="checkbox" [checked]="isFollowUp()" id="isFollowUp"
+                    (change)="onCheckboxChange($event)">
+                  <label class="form-check-label" for="isFollowUp">پیرو جلسه دیگری است</label>
+                </div>
+                @if (isFollowUpChecked()) {
+                <custom-select label="جلسه پیشین" formControlName="followGuid" styleType="simple" [options]="meetings()"
+                  identity="followGuid" size="col-12"></custom-select>
+                <small class="text-info d-block mt-2">جهت جستجوی جلسه می‌توانید قسمتی از
+                  شماره جلسه و یا عنوان جلسه را وارد کنید.</small>
+                }
+
+                <!-- نمایش اطلاعات اضافی برای جلسات هیئت مدیره -->
+                @if (isBoardMeetingCategory()) {
+                <div class="col-12">
+                  <div class="alert alert-info" role="alert">
+                    <i class="fas fa-info-circle me-2"></i>
+                    این جلسه از نوع هیئت مدیره است. اعضای نمایش داده شده از فهرست اعضای هیئت مدیره بارگذاری شده‌اند.
+                  </div>
+                </div>
+                }
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-12 mt-3">
+
+        <app-meeting-agendas [agendas]="agendas" (agendasUpdate)="onAgendasUpdate($event)"></app-meeting-agendas>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4 d-flex">
+    <app-meeting-participants class="flex-fill" [selectedMembers]="selectedMembers()" [allSystemUsers]="allUsers()"
+      [conflictedUsers]="conflictedUsers()" [availableSystemUsers]="availableUsers()" [allUsesrs]="systemUsers()"
+      [isBoardMeeting]="isBoardMeetingCategory()" [availableBoardMembers]="boardMembers()"
+      (membersUpdated)="onMembersUpdated($event)" [operationMode]="createType()"
+      (fileStorageUpdated)="onFileStorageUpdated($event)" (conflictCheckRequested)="triggerConflictCheck()" />
+
+  </div>
+</div>
+
+<div class="row mt-1">
+  <div class="col-md-12 text-end">
+    @if (createType() !== 'Edit') {
+    <button class="btn btn-draft mx-1" (click)="submitMeeting(1)"> پیش نویس </button>
+    }
+    @if(isBoardMeetingCategory()){
+    <button class="btn btn-success mx1" (click)="submitMeeting(3)">ثبت و ارسال پیامک </button>
+    }
+    @if(isBoardMeetingCategory()&&createType() === 'Edit'){
+    <button class="btn btn-primary mx1" (click)="submitMeeting(3)">ویرایش و ارسال پیامک </button>
+    }
+    <button class="btn mx-1" [ngClass]="createType()==='Edit'?'btn-draft':'btn-success'" (click)="submitMeeting(2)"
+      style="width: 108.25px;">{{createType()==='Edit' ? "ویرایش" : "ثبت"}}</button>
+    <a class="btn btn-warning mx-1" routerLink='/meetings/list' routerLinkActive="router-link-active"
+      style="width: 108.25px;">انصراف</a>
+
+    @if (createType() !== 'Edit') {
+    <div class="alert alert-info d-flex mt-2 position-relative" role="alert">
+      <h6 class="alert-heading mb-1 position-absolute top-1 translate-middle-x" style="margin-right: 18px;">راهنما</h6>
+
+      <span
+        class="badge badge-center rounded-pill bg-info border-label-info p-3 position-absolute top-50 translate-middle"
+        style="margin-right: 18px; margin-top: 9px;">
+        <i class="fa fa-detail fs-6"></i>
+      </span>
+
+      <div class="d-flex flex-column w-100" style="margin-right: 48px;">
+        <div class="d-flex align-items-center mb-2">
+          <button class="btn btn-sm btn-draft">کلید پیش نویس</button>
+          <span class="text-muted" style="font-size: 0.85rem;">در این حالت جلسه ثبت می‌گردد و فقط برای ثبت‌کننده قابل
+            مشاهده است.</span>
+        </div>
+
+        <div class="d-flex align-items-center">
+          <button class="btn btn-sm btn-success" style="width: 102px;">کلید ثبت</button>
+          <span class="text-muted" style="font-size: 0.85rem;">در این حالت جلسه ثبت می‌گردد و برای همه اعضا قابل نمایش
+            می‌باشد.</span>
+        </div>
+      </div>
+    </div>
+    }
+  </div>
+</div>
+}

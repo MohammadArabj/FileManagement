@@ -1,0 +1,208 @@
+@if (isPermitted()) {
+
+<!-- Search Card -->
+<div class="card shadow-sm mb-4">
+    <div class="card-header bg-primary text-white">
+        <i class="fa fa-search"></i>
+        جستجو و فیلتر پیشرفته
+    </div>
+    <div class="card-body">
+        <div class="row g-3">
+
+            <!-- نوع نمایش -->
+            <div class="col-md-6 col-lg-3">
+                <label class="form-label">
+                    <i class="fa fa-eye text-primary"></i>
+                    نوع نمایش
+                </label>
+                <div class="select-wrapper">
+                    <select class="form-select" [ngModel]="tempViewType()" (ngModelChange)="tempViewType.set($event)">
+                        <option [ngValue]="AssignmentViewType.All">همه تخصیص‌ها</option>
+                        <option [ngValue]="AssignmentViewType.OriginalAssignment">تخصیص‌های اصلی</option>
+                        <option [ngValue]="AssignmentViewType.ReceivedReferral"> دریافتی از دیگران</option>
+                        <option [ngValue]="AssignmentViewType.GivenReferral">ارسالی به دیگران</option>
+                    </select>
+                    <i class="fa fa-chevron-down select-icon"></i>
+                </div>
+            </div>
+
+            <!-- نقش من -->
+            @if (showRoleFilter()) {
+            <div class="col-md-6 col-lg-3">
+                <label class="form-label">
+                    <i class="fa fa-user-tag text-info"></i>
+                    نقش من
+                </label>
+                <div class="select-wrapper">
+                    <select class="form-select" [ngModel]="tempRole()" (ngModelChange)="tempRole.set($event)">
+                        <option [ngValue]="''">همه نقش‌ها</option>
+                        <option [ngValue]="'Action'">اقدام‌کننده</option>
+                        <option [ngValue]="'Follow'">پیگیری‌کننده</option>
+                    </select>
+                    <i class="fa fa-chevron-down select-icon"></i>
+                </div>
+            </div>
+            }
+
+            <!-- وضعیت اقدام -->
+            @if (showActionStatusFilter()) {
+            <div class="col-md-6 col-lg-3">
+                <label class="form-label">
+                    <i class="fa fa-check-circle text-success"></i>
+                    وضعیت اقدام
+                </label>
+                <div class="select-wrapper">
+                    <select class="form-select" [ngModel]="tempActionStatus()"
+                        (ngModelChange)="tempActionStatus.set($event)">
+                        <option [ngValue]="null">همه</option>
+                        <option [ngValue]="ActionStatus.Pending">در انتظار اقدام</option>
+                        <option [ngValue]="ActionStatus.InProgress">در حال انجام</option>
+                        <option [ngValue]="ActionStatus.End">پایان یافته</option>
+                        <option [ngValue]="ActionStatus.Overdue">گذشته از مهلت</option>
+                    </select>
+                    <i class="fa fa-chevron-down select-icon"></i>
+                </div>
+            </div>
+            }
+
+            <!-- وضعیت پیگیری -->
+            @if (showFollowStatusFilter()) {
+            <div class="col-md-6 col-lg-3">
+                <label class="form-label">
+                    <i class="fa fa-eye text-warning"></i>
+                    وضعیت پیگیری
+                </label>
+                <div class="select-wrapper">
+                    <select class="form-select" [ngModel]="tempFollowStatus()"
+                        (ngModelChange)="tempFollowStatus.set($event)">
+                        <option [ngValue]="null">همه</option>
+                        <option [ngValue]="ActionFollowStatus.Pending">در انتظار پیگیری</option>
+                        <option [ngValue]="ActionFollowStatus.InProgress">در حال پیگیری</option>
+                        <option [ngValue]="ActionFollowStatus.End">پایان پیگیری</option>
+                    </select>
+                    <i class="fa fa-chevron-down select-icon"></i>
+                </div>
+            </div>
+            }
+
+            <!-- نتیجه اقدام -->
+            @if (showResultFilter()) {
+            <div class="col-md-6 col-lg-3">
+                <label class="form-label">
+                    <i class="fa fa-flag-checkered text-success"></i>
+                    نتیجه اقدام
+                </label>
+                <div class="select-wrapper">
+                    <select class="form-select" [ngModel]="tempResult()" (ngModelChange)="tempResult.set($event)">
+                        <option [ngValue]="null">همه</option>
+                        <option [ngValue]="AssignmentResult.Done">انجام شده</option>
+                        <option [ngValue]="AssignmentResult.NotDone">انجام نشده</option>
+                    </select>
+                    <i class="fa fa-chevron-down select-icon"></i>
+                </div>
+            </div>
+            }
+
+            <!-- فقط گذشته از مهلت -->
+            <div class="col-md-6 col-lg-3">
+                <label class="form-label">
+                    <i class="fa fa-exclamation-triangle text-danger"></i>
+                    فیلتر خاص
+                </label>
+                <div class="form-check form-switch mt-2">
+                    <input class="form-check-input" type="checkbox" id="overdueSwitch" [ngModel]="tempShowOverdue()"
+                        (ngModelChange)="tempShowOverdue.set($event)">
+                    <label class="form-check-label" for="overdueSwitch">
+                        فقط گذشته از مهلت
+                    </label>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- دکمه‌های عملیات -->
+        <div class="row mt-3">
+            <div class="col-12">
+                <div class="d-flex gap-2 justify-content-end">
+                    <button class="btn btn-primary" (click)="applyFilters()">
+                        <i class="fa fa-search"></i>
+                        اعمال فیلتر
+                    </button>
+                    <button class="btn btn-outline-secondary" (click)="clearAllFilters()">
+                        <i class="fa fa-times"></i>
+                        پاک کردن همه فیلترها
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- نمایش فیلترهای فعال -->
+        @if (hasActiveFilters()) {
+        <div class="active-filters mt-3">
+            <div class="d-flex align-items-center gap-2 flex-wrap">
+                <span class="filter-label">
+                    <i class="fa fa-filter"></i>
+                    فیلترهای فعال:
+                </span>
+                @for (filter of activeFilters(); track filter.type) {
+                <span class="filter-tag">
+                    {{filter.label}}
+                    <button class="btn-close-filter" (click)="removeFilter(filter.type)"
+                        [title]="'حذف فیلتر: ' + filter.label">
+                        <i class="fa fa-times"></i>
+                    </button>
+                </span>
+                }
+            </div>
+        </div>
+        }
+    </div>
+</div>
+
+<!-- Data Grid Card -->
+<div class="card shadow-sm">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+        لیست مصوبات
+        <span class="badge bg-primary ms-2">{{records().length}} مورد</span>
+    </div>
+
+    <div class="card-body p-0">
+        @if (loading()) {
+        <div class="loading-state">
+            <div class="spinner-container">
+                <div class="spinner"></div>
+            </div>
+            <p class="loading-text">در حال بارگذاری اطلاعات...</p>
+        </div>
+        }
+
+        @else if (records().length === 0) {
+        <div class="empty-state">
+            <div class="empty-icon">
+                <i class="fa fa-inbox"></i>
+            </div>
+            <h3>موردی یافت نشد</h3>
+            <p>با فیلترهای انتخابی هیچ تخصیصی یافت نشد</p>
+            @if (hasActiveFilters()) {
+            <button class="btn btn-primary mt-3" (click)="clearAllFilters()">
+                <i class="fa fa-refresh"></i>
+                نمایش همه
+            </button>
+            }
+        </div>
+        }
+
+        @else {
+        <div class="grid-container">
+            <ag-grid-angular #agGrid id="resolutionGrid" [components]="components"
+                class="ag-theme-material font-sahel modern-grid" [rowData]="records()" [gridOptions]="gridOptions()"
+                [modules]="modules()" (gridReady)="onGridReady($event)"
+                (firstDataRendered)="onFirstDataRendered($event)"
+                style="height: calc(100vh - 400px); min-height: 400px;">
+            </ag-grid-angular>
+        </div>
+        }
+    </div>
+</div>
+
+}

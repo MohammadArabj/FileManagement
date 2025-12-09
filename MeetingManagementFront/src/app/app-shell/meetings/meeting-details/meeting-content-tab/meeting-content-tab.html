@@ -1,0 +1,113 @@
+<div class="row">
+  @if (!isBoardMeeting()) {
+  <div class="col-md-4">
+    <div class="row">
+      <div class="col-md-12 d-flex">
+        <app-meeting-description class="w-100" [description]="description()" [canEditDescription]="canEditDescription()"
+          [roleId]="roleId()" [statusId]="statusId()" [isDelegate]="isDelegate()" [currentMember]="currentMember()"
+          [permissions]="permissions()" [hasChairmanSigned]="hasChairmanSigned()"
+          (descriptionSaved)="onDescriptionSaved($event)" (editCanceled)="onDescriptionEditCanceled()">
+        </app-meeting-description>
+
+      </div>
+    </div>
+  </div>
+  }
+  @if(isBoardMeeting()) {
+  <app-board-resolution-list [resolutions]="resolutions()" [canDrag]="canDragResolutions()"
+    [canEditResolution]="canEditResolution()" [canAddResolution]="canAddResolution()"
+    [canDeleteFile]="canUploadFileForResolution()" [canDeleteResolution]="canDeleteResolution()"
+    [canAddAssignment]="canAddAssignment()" [canViewFiles]="canViewFiles()" [roleId]="roleId()" [statusId]="statusId()"
+    [meeting]="meeting()" (resolutionDropped)="onResolutionDropped($event)" (addResolution)="openAddResolutionModal()"
+    (editResolution)="onEditResolution($event)" (deleteResolution)="onDeleteResolution($event)"
+    (assignResolution)="onAssignResolution($event)" (showFiles)="onShowFiles($event)"
+    (printResolution)="onPrintResolution($event.resolution, $event.index)"
+    (printAllResolutions)="onPrintAllResolutions()" (editAssignment)="onEditAssignment($event)"
+    (deleteAssignment)="onDeleteAssignment($event)">
+  </app-board-resolution-list>
+  }
+  @else{
+  <div class=" d-flex col-md-8">
+    <app-resolution-list class="w-100" [resolutions]="resolutions()" [canDrag]="canDragResolutions()"
+      [canEditResolution]="canEditResolution()" [canAddResolution]="canAddResolution()"
+      [canDeleteResolution]="canDeleteResolution()" [canAddAssignment]="canAddAssignment()"
+      [canViewFiles]="canViewFiles()" [roleId]="roleId()" [statusId]="statusId()" [meeting]="meeting()"
+      (resolutionDropped)="onResolutionDropped($event)" (addResolution)="openAddResolutionModal()"
+      (editResolution)="onEditResolution($event)" (deleteResolution)="onDeleteResolution($event)"
+      (assignResolution)="onAssignResolution($event)" (showFiles)="onShowFiles($event)"
+      (printResolution)="onPrintResolution($event.resolution, $event.index)"
+      (printAllResolutions)="onPrintAllResolutions()" (editAssignment)="onEditAssignment($event)"
+      (deleteAssignment)="onDeleteAssignment($event)">
+    </app-resolution-list>
+  </div>
+  }
+
+  <!-- Modals (now as child components) -->
+
+  <!-- Normal Resolution Add/Edit Modal -->
+
+  <!-- Board Meeting Resolution Modal -->
+  @if (isBoardMeeting()) {
+  <div class="modal fade" #addResolutionModal id="addResolutionModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xxl">
+      <div class="modal-content">
+        <app-resolution-form [meetingType]="'board'" [isEditingResolution]="isEditingResolution()"
+          [selectedResolution]="selectedResolutionForEdit()" [meetingGuid]="meetingGuid()" [meetingDate]="meetingDate()"
+          [users]="allUsers()" [assignmentTypes]="assignmentTypes()" [userList]="userList()"
+          (resolutionSaved)="onResolutionSaved()" (modalClosed)="onResolutionFormModalClosed()"
+          (filesUploaded)="onFilesUploaded($event)"></app-resolution-form>
+      </div>
+    </div>
+  </div>
+  }
+  @else {
+  <div class="modal fade" #addResolutionModal id="addResolutionModal" tabindex="-1"
+    aria-labelledby="addResolutionModalLabel" data-bs-backdrop="static" aria-hidden="true">
+    <div class="modal-dialog modal-xxl">
+      <div class="modal-content">
+        <app-resolution-form [meetingType]="'regular'" [isEditingResolution]="isEditingResolution()"
+          [selectedResolution]="selectedResolutionForEdit()" [meetingGuid]="meetingGuid()" [meetingDate]="meetingDate()"
+          [users]="allUsers()" [assignmentTypes]="assignmentTypes()" [userList]="userList()"
+          (resolutionSaved)="onResolutionSaved()" (modalClosed)="onResolutionFormModalClosed()"
+          (filesUploaded)="onFilesUploaded($event)"></app-resolution-form>
+      </div>
+    </div>
+  </div>
+
+  }
+
+
+  <!-- Assign Resolution Modal -->
+  <div class="modal fade" #assignModal id="assignModal" tabindex="-1" aria-labelledby="assignModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <app-assignment-modal [resolution]="selectedResolutionForAssign()" [assignment]="selectedAssignmentForEdit()"
+          [users]="allUsers()" [assignmentTypes]="assignmentTypes()" [meetingDate]="meetingDate()"
+          [userList]="userList()" (assignmentSaved)="onAssignmentSaved()"
+          (modalClosed)="onAssignmentModalClosed()"></app-assignment-modal>
+      </div>
+    </div>
+  </div>
+
+  <!-- File Management Modal -->
+  <div class="modal" #fileModal id="fileModal" data-bs-backdrop="static" tabindex="-1" aria-modal="true" role="dialog">
+    <div class="modal-dialog" style="max-width: 40rem;">
+      <form class="modal-content">
+        <app-file-management-modal [attachments]="attachments()" [roleId]="roleId()" [statusId]="statusId()"
+          (fileViewed)="onFileViewed($event)" (fileDeleted)="onFileDeleted($event)"
+          (modalClosed)="onFileManagementModalClosed()"></app-file-management-modal>
+      </form>
+    </div>
+  </div>
+
+  <!-- File Viewer Modal -->
+  <div class="modal fade" #fileViewerModal id="fileViewerModal" tabindex="-1" aria-labelledby="fileViewerModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <app-file-viewer-modal [fileData]="selectedFileForViewer()"
+          (modalClosed)="onFileViewerModalClosed()"></app-file-viewer-modal>
+      </div>
+    </div>
+  </div>

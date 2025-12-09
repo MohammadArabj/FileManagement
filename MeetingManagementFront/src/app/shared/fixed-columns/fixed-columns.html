@@ -1,0 +1,62 @@
+<button
+  class="btn-success btn btn-fixed-columns"
+  (click)="itemGuid == item.guid ? showDetail('') : showDetail(item.guid)"
+>
+  {{ itemGuid == item.guid ? "عدم نمایش" : "نمایش" }}
+</button>
+
+<div class="" *ngIf="itemGuid == item.guid">
+    <div [ngClass]="customClassName ? 'button-list mt-2 ' + customClassName : 'button-list mt-2 button-box'">
+        <app-icon-button
+        identifier="submitBtn"
+        *ngIf="item.isActive == 1 && item.isLocked != 2"
+        label="حذف"
+        icon="mdi-trash-can-outline"
+        className="danger btn-sm"
+        (click)="onDelete(item.guid)"
+        permission="{{ permissions.delete }}"
+      >
+      </app-icon-button>
+      <app-icon-button
+        *ngIf="item.isActive == 2"
+        identifier="submitBtn"
+        label="فعال سازی"
+        icon="mdi-check-outline"
+        className="success btn-sm"
+        (clicked)="onActivate(item.guid)"
+        permission="{{ permissions.active }}"
+      >
+      </app-icon-button>
+      <app-icon-button
+        *ngIf="item.isActive == 1"
+        identifier="submitBtn"
+        label="غیر فعال سازی"
+        icon="mdi-cancel"
+        className="warning btn-sm"
+        (clicked)="onDeactivate(item.guid)"
+        permission="{{ permissions.deActive }}"
+      >
+      </app-icon-button>
+    
+      <app-icon-button
+        *ngIf="item.isActive == 1 && item.isLocked != 2"
+        identifier="submitBtn"
+        label="ویرایش"
+        icon="mdi-book-edit-outline"
+        className="primary btn-sm"
+        (clicked)="onOpenOpsModal(item.guid)"
+        permission="{{ permissions.edit }}"
+      >
+      </app-icon-button>
+      <app-icon-button
+        *ngIf="item.fileName || item.attachmentName"
+        identifier="downloadBtn"
+        label="دانلود"
+        icon="free_icon-white"
+        className="primary btn-sm"
+        (clicked)="onDownloadFile(item.guid)"
+      >
+      </app-icon-button>
+    </div>
+  
+</div>

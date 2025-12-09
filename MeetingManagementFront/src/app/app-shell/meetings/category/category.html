@@ -1,0 +1,504 @@
+<!-- category.html - Fixed with ViewAll permission -->
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">لیست دسته بندی‌ها</h5>
+        <div class="header-actions">
+          @if (isLoading()) {
+          <div class="spinner-border spinner-border-sm text-primary me-2" role="status">
+            <span class="visually-hidden">در حال بارگذاری...</span>
+          </div>
+          }
+          <app-label-button identifier="addBtn" label="افزودن" variant="success" (clicked)="openOpsModal()"
+            permission="MT_Categories_Add">
+          </app-label-button>
+        </div>
+      </div>
+
+      <div class="card-body">
+        @if (isLoading()) {
+        <div class="text-center py-4">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">در حال بارگذاری...</span>
+          </div>
+          <p class="mt-2 text-muted">در حال بارگذاری داده‌ها...</p>
+        </div>
+        } @else if (!hasRecords()) {
+        <div class="text-center py-5">
+          <i class="fa fa-inbox fa-3x text-muted mb-3"></i>
+          <h5 class="text-muted">هیچ دسته‌بندی یافت نشد</h5>
+          <p class="text-muted">برای شروع، یک دسته‌بندی جدید اضافه کنید.</p>
+          <app-label-button identifier="addFirstBtn" label="افزودن اولین دسته‌بندی" variant="primary"
+            (clicked)="openOpsModal()" permission="MT_Categories_Add">
+          </app-label-button>
+        </div>
+        } @else {
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover align-middle">
+            <thead class="table-warning">
+              <tr>
+                <th scope="col" class="text-center">#</th>
+                <th scope="col">عنوان</th>
+                <th scope="col">فرمت شماره‌گذاری</th>
+                <th scope="col" class="text-center">شماره شروع</th>
+                <th scope="col" class="text-center">گام شمارش</th>
+                <th scope="col" class="text-center">نوع دسترسی</th>
+                <th scope="col" class="text-center">تاریخ ایجاد</th>
+                <th scope="col" class="text-center">وضعیت</th>
+                <th scope="col" class="text-center">عملیات</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              @for (item of records(); track item.guid; let index = $index) {
+              <tr class="table-row" [class.table-warning]="!item.isActive">
+                <td class="text-center">{{ index + 1 }}</td>
+                <td>
+                  <strong>{{ item.title }}</strong>
+                </td>
+                <td>
+                  <code class="bg-light p-1 rounded">{{ item.numberFormat }}</code>
+                  <small class="d-block text-muted mt-1">
+                    پیش‌نمایش: {{ previewNumberFormat() }}
+                  </small>
+                </td>
+                <td class="text-center">
+                  <span class="badge bg-info">{{ item.startNumber }}</span>
+                </td>
+                <td class="text-center">
+                  <span class="badge bg-secondary">{{ item.step }}</span>
+                </td>
+                <td class="text-center">
+                  @if (item.viewAll === true) {
+                  <span class="badge bg-primary">
+                    <i class="fa fa-globe me-1"></i>دسترسی کامل
+                  </span>
+                  } @else {
+                  <span class="badge bg-secondary">
+                    <i class="fa fa-users me-1"></i>دسترسی محدود
+                  </span>
+                  }
+                </td>
+                <td class="text-center">
+                  <small class="text-muted">{{ item.created }}</small>
+                </td>
+                <td class="text-center">
+                  @if (item.isActive === 1) {
+                  <span class="badge bg-success">
+                    <i class="fa fa-check me-1"></i>فعال
+                  </span>
+                  } @else {
+                  <span class="badge bg-danger">
+                    <i class="fa fa-times me-1"></i>غیرفعال
+                  </span>
+                  }
+                </td>
+                <td class="text-center">
+                  <app-icon-button identifier="managePermissionBtn" label="مدیریت دسترسی" icon="fa fa-users"
+                    variant="primary" (clicked)="openPermissionModal(item, item.title)" permission="MT_Categories">
+                  </app-icon-button>
+                  <div class="btn-group btn-group-sm" role="group">
+                    @if (item.isActive === 1) {
+                    <app-icon-button identifier="editBtn{{ index }}" label="ویرایش" icon="fa fa-edit" variant="primary"
+                      (clicked)="openOpsModal(item.guid)" permission="MT_Categories_Edit">
+                    </app-icon-button>
+
+                    <app-icon-button identifier="deactivateBtn{{ index }}" label="غیرفعال" icon="fa fa-pause"
+                      variant="warning" (clicked)="deactivate(item.guid)" permission="MT_Categories_ToggleActive">
+                    </app-icon-button>
+                    } @else {
+                    <app-icon-button identifier="activateBtn{{ index }}" label="فعال‌سازی" icon="fa fa-play"
+                      variant="success" (clicked)="activate(item.guid)" permission="MT_Categories_ToggleActive">
+                    </app-icon-button>
+                    }
+
+                    <app-icon-button identifier="deleteBtn{{ index }}" label="حذف" icon="fa fa-trash" variant="danger"
+                      (clicked)="delete(item.guid)" permission="MT_Categories_Delete">
+                    </app-icon-button>
+
+                  </div>
+                </td>
+              </tr>
+              } @empty {
+              <tr>
+                <td colspan="9" class="text-center py-4 text-muted">
+                  هیچ داده‌ای یافت نشد
+                </td>
+              </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Main Modal for CRUD operations -->
+<app-modal #opsModal [config]="modalConfig()" (submited)="submit($event)" (onModalHide)="modalClosed()">
+
+  @if (form(); as currentForm) {
+  <form [formGroup]="currentForm" id="submitForm" class="row g-3" novalidate>
+    <!-- Title Field -->
+    <div class="col-12">
+      <custom-input label="عنوان" formControlName="title" identity="title" size="col-12" [required]="true"
+        styleType="simple" (valueChanged)="onTitleChange($event)">
+      </custom-input>
+    </div>
+
+    <!-- Number Format Field with Help -->
+    <div class="col-12">
+      <div class="form-group">
+        <label for="numberFormat" class="form-label d-flex align-items-center">
+          فرمت شماره‌گذاری
+          <span class="text-danger ms-1">*</span>
+          <button type="button" class="btn btn-link btn-sm p-0 ms-2 text-primary" (click)="openHelpModal()"
+            title="راهنما">
+            <i class="fa fa-question-circle"></i>
+          </button>
+        </label>
+
+        <div class="input-group">
+          <input type="text" id="numberFormat" formControlName="numberFormat" class="form-control text-start"
+            [class.is-invalid]="isFieldInvalid('numberFormat')" placeholder="مثال: Mt/%i/%d/شماره" autocomplete="off">
+          <span class="input-group-text">
+            <i class="fa fa-hashtag text-muted"></i>
+          </span>
+        </div>
+
+        <!-- Preview -->
+        @if (currentForm.get('numberFormat')?.value) {
+        <div class="mt-2 p-2 bg-light rounded">
+          <small class="text-muted">پیش‌نمایش: </small>
+          <code>{{ previewNumberFormat() }}</code>
+        </div>
+        }
+
+        <!-- Validation Errors -->
+        @if (isFieldInvalid('numberFormat')) {
+        <div class="invalid-feedback d-block">
+          {{ getFieldError('numberFormat') }}
+        </div>
+        }
+      </div>
+    </div>
+
+    <!-- Start Number and Step Fields -->
+    <div class="col-md-6">
+      <custom-input label="شماره شروع" formControlName="startNumber" type="number" [min]="1" identity="startNumber"
+        styleType="simple" size="col-12" classInput="text-start" [required]="true">
+      </custom-input>
+    </div>
+
+    <div class="col-md-6">
+      <custom-input label="گام شمارش" formControlName="step" type="number" [min]="1" identity="step" size="col-12"
+        styleType="simple" [required]="true">
+      </custom-input>
+    </div>
+
+    <!-- Form Status Indicator -->
+    <div class="col-12">
+      @if (!isFormValid()) {
+      <div class="alert alert-warning alert-sm d-flex align-items-center">
+        <i class="fa fa-exclamation-triangle me-2"></i>
+        لطفاً تمام فیلدهای الزامی را تکمیل کنید
+      </div>
+      }
+    </div>
+  </form>
+  }
+</app-modal>
+
+<!-- Help Modal -->
+<app-modal #helpModal [config]="helpModalConfig()">
+  <div class="help-content">
+    <h6 class="mb-3">
+      <i class="fa fa-info-circle text-primary me-2"></i>
+      راهنمای فرمت شماره‌گذاری
+    </h6>
+
+    <p class="text-muted mb-3">
+      برای تعریف فرمت شماره‌گذاری از علامت‌های زیر استفاده کنید:
+    </p>
+
+    <div class="table-responsive">
+      <table class="table table-sm table-bordered">
+        <thead class="table-light">
+          <tr>
+            <th>علامت</th>
+            <th>توضیح</th>
+            <th>مثال</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>%i</code></td>
+            <td>شماره افزایشی</td>
+            <td>1, 2, 3, ...</td>
+          </tr>
+          <tr>
+            <td><code>%d</code></td>
+            <td>روز</td>
+            <td>01, 02, ..., 31</td>
+          </tr>
+          <tr>
+            <td><code>%m</code></td>
+            <td>ماه</td>
+            <td>01, 02, ..., 12</td>
+          </tr>
+          <tr>
+            <td><code>%y</code></td>
+            <td>سال</td>
+            <td>2024, 2025, ...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="examples mt-4">
+      <h6 class="mb-2">
+        <i class="fa fa-lightbulb text-warning me-2"></i>
+        نمونه‌های کاربردی:
+      </h6>
+
+      <div class="example-item mb-2">
+        <code class="bg-light p-2 rounded d-block">Mt/%i/%y/شماره</code>
+        <small class="text-muted">→ Mt/1/2024/شماره</small>
+      </div>
+
+      <div class="example-item mb-2">
+        <code class="bg-light p-2 rounded d-block">DOC-%m-%y-%i</code>
+        <small class="text-muted">→ DOC-12-2024-1</small>
+      </div>
+
+      <div class="example-item">
+        <code class="bg-light p-2 rounded d-block">%y/%m/%d-%i</code>
+        <small class="text-muted">→ 2024/12/25-1</small>
+      </div>
+    </div>
+
+    <div class="alert alert-info mt-3">
+      <i class="fa fa-info-circle me-2"></i>
+      <strong>نکته:</strong> حداقل یکی از علامت‌های %i یا %d باید در فرمت استفاده شود.
+    </div>
+  </div>
+</app-modal>
+
+<!-- Permission Management Modal -->
+<app-modal #permissionModal [config]="permissionModalConfig()" (submited)="submitPermissions()"
+  (onModalHide)="permissionModalClosed()">
+
+  <div class="permission-management-container">
+    <!-- Header with statistics -->
+    <div class="row mb-3">
+      <div class="col-12">
+        <div class="alert alert-info">
+          <strong>دسته‌بندی:</strong> {{ selectedCategoryTitle() }}
+          <span class="float-end">
+            @if (hasViewAllPermission()) {
+            <span class="badge bg-success">دسترسی کل فعال</span>
+            } @else {
+            <strong>{{ selectedCount }}</strong> نفر از
+            <strong>{{ totalUsers() }}</strong> نفر انتخاب شده
+            }
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ViewAll Permission Toggle -->
+    <div class="row mb-3">
+      <div class="col-12">
+        <div class="card border-primary">
+          <div class="card-body p-3">
+            <div class="d-flex align-items-center justify-content-between">
+              <div class="d-flex align-items-center">
+                <i class="fa fa-globe text-primary fa-lg me-2"></i>
+                <div>
+                  <h6 class="mb-1">دسترسی کامل </h6>
+                  <small class="text-muted">همه کاربران به این دسته‌بندی دسترسی خواهند داشت</small>
+                </div>
+              </div>
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="viewAllSwitch" [checked]="hasViewAllPermission()"
+                  (change)="toggleViewAllPermission()">
+                <label class="form-check-label" for="viewAllSwitch">
+                  {{ hasViewAllPermission() ? 'فعال' : 'غیرفعال' }}
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- User Selection Section - Only show if ViewAll is disabled -->
+    @if (!hasViewAllPermission()) {
+    <!-- Search and Filter Controls -->
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <form [formGroup]="searchForm">
+          <div class="input-group">
+            <input type="text" class="form-control" formControlName="searchTerm" placeholder="جستجو در نام یا سمت...">
+            <span class="input-group-text">
+              <i class="fa fa-search"></i>
+            </span>
+          </div>
+        </form>
+      </div>
+      <div class="col-md-6">
+        <div class="btn-group" role="group">
+          <button type="button" class="btn btn-outline-primary btn-sm" [class.active]="showOnlySelected()"
+            (click)="toggleShowOnlySelected()">
+            <i class="fa fa-filter"></i>
+            فقط انتخاب شده‌ها ({{ filteredSelectedCount }})
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bulk Actions -->
+    <div class="row mb-3">
+      <div class="col-12">
+        <div class="btn-group" role="group">
+          <button type="button" class="btn btn-success btn-sm" (click)="selectAll()"
+            [disabled]="paginatedUsers().length === 0">
+            <i class="fa fa-check-square"></i>
+            انتخاب/لغو صفحه جاری
+          </button>
+          <button type="button" class="btn btn-info btn-sm" (click)="selectAllFiltered()"
+            [disabled]="filteredUsers().length === 0">
+            <i class="fa fa-check-double"></i>
+            انتخاب/لغو همه موارد جستجو
+          </button>
+          <button type="button" class="btn btn-warning btn-sm" (click)="clearAllSelections()"
+            [disabled]="selectedCount === 0">
+            <i class="fa fa-times"></i>
+            لغو همه انتخاب‌ها
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Users List -->
+    <div class="user-list-container" style="height: 400px; overflow-y: auto;">
+      @if (isLoadingPermissions()) {
+      <div class="text-center p-4">
+        <i class="fa fa-spinner fa-spin fa-2x"></i>
+        <p class="mt-2">در حال بارگذاری...</p>
+      </div>
+      } @else if (paginatedUsers().length === 0) {
+      <div class="text-center p-4">
+        <i class="fa fa-users fa-2x text-muted"></i>
+        <p class="mt-2 text-muted">کاربری یافت نشد</p>
+      </div>
+      } @else {
+      <div class="row">
+        @for (user of paginatedUsers(); track user.guid) {
+        <div class="col-md-6 mb-2">
+          <div class="card user-card" [class.selected]="user.isSelected" [class.border-success]="user.isSelected"
+            (click)="toggleUserSelection(user)" style="cursor: pointer; transition: all 0.2s;">
+            <div class="card-body p-2">
+              <div class="d-flex align-items-center">
+                <input type="checkbox" class="form-check-input me-2" [checked]="user.isSelected"
+                  (click)="$event.stopPropagation()">
+
+                <div class="flex-grow-1">
+                  <h6 class="card-title mb-1" style="font-size: 0.9rem;">
+                    <i class="fa fa-user text-primary me-1"></i>
+                    {{ user.name }}
+                  </h6>
+                  <p class="card-text text-muted mb-0" style="font-size: 0.8rem;">
+                    <i class="fa fa-briefcase me-1"></i>
+                    {{ user.position }}
+                  </p>
+                </div>
+
+                @if (user.isSelected) {
+                <div class="text-success">
+                  <i class="fa fa-check-circle"></i>
+                </div>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+        }
+      </div>
+      }
+    </div>
+
+    <!-- Pagination -->
+    @if (totalPages() > 1) {
+    <div class="row mt-3">
+      <div class="col-12">
+        <nav>
+          <ul class="pagination pagination-sm justify-content-center">
+            <li class="page-item" [class.disabled]="currentPage() === 1">
+              <button class="page-link" (click)="previousPage()" [disabled]="currentPage() === 1">
+                <i class="fa fa-chevron-right"></i>
+              </button>
+            </li>
+
+            @for (page of [].constructor(totalPages()); track $index) {
+            <li class="page-item" [class.active]="currentPage() === $index + 1"
+              [style.display]="isPageVisible($index + 1) ? 'block' : 'none'">
+              <button class="page-link" (click)="goToPage($index + 1)">
+                {{ $index + 1 }}
+              </button>
+            </li>
+            }
+
+            <li class="page-item" [class.disabled]="currentPage() === totalPages()">
+              <button class="page-link" (click)="nextPage()" [disabled]="currentPage() === totalPages()">
+                <i class="fa fa-chevron-left"></i>
+              </button>
+            </li>
+          </ul>
+        </nav>
+
+        <div class="text-center small text-muted">
+          صفحه {{ currentPage() }} از {{ totalPages() }}
+          ({{ filteredUsers().length }} نتیجه از {{ totalUsers() }} کاربر)
+        </div>
+      </div>
+    </div>
+    }
+    }
+
+  </div>
+</app-modal>
+
+<style>
+  .user-card {
+    transition: all 0.2s ease;
+  }
+
+  .user-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .user-card.selected {
+    background-color: #f8f9ff;
+    border-color: #28a745 !important;
+  }
+
+  .permission-management-container .alert {
+    border-radius: 8px;
+  }
+
+  .form-switch .form-check-input {
+    width: 2.5em;
+    height: 1.25em;
+  }
+
+  .examples .example-item {
+    padding: 8px;
+    border-left: 3px solid #007bff;
+    background: #f8f9fa;
+    margin-bottom: 8px;
+  }
+</style>

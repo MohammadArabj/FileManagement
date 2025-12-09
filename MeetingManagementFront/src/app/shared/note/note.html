@@ -1,0 +1,75 @@
+<table class="table table-stripped table-bordered" [formGroup]="notesFrm">
+
+    <thead>
+        <tr>
+            <th>تاریخ</th>
+            <th>تولید کننده</th>
+            <th>یادداشت</th>
+            <th *ngIf="useSecondLang">یادداشت لاتین</th>
+            <th *ngIf="!isInViewMode">عملیات</th>
+        </tr>
+    </thead>
+
+    <tbody *ngIf="isInViewMode">
+        <tr *ngFor="let note of notes.controls">
+            <td>{{note.get('creationDate')?.value}}</td>
+            <td>{{note.get('creatorName')?.value}}</td>
+            <td>{{note.get('note')?.value}}</td>
+            <td *ngIf="useSecondLang">{{note.get('engNote')?.value}}</td>
+        </tr>
+    </tbody>
+
+    <tbody *ngIf="!isInViewMode" formArrayName="notes">
+        <tr *ngFor="let note of notes.controls; let i = index" [formGroupName]="i">
+            <input type="hidden" id="noteId{{i}}" class="form-control" formControlName="id" />
+            <td>{{note.get('creationDate')?.value}}</td>
+            <td>{{note.get('creatorName')?.value}}</td>
+            <td>
+                <input type="text" formControlName="note"
+                    [ngClass]="canEditNote(note) ? 'form-control' : 'form-control-plaintext' "
+                    [readonly]="!canEditNote(note)" required />
+            </td>
+            <td *ngIf="useSecondLang">
+                <input type="text" id="engNote" maxlength="500" formControlName="engNote"
+                    [ngClass]="canEditNote(note) ? 'form-control' : 'form-control-plaintext' "
+                    [readonly]="!canEditNote(note)" required>
+            </td>
+            <td>
+                <a *ngIf="canEditNote(note)" class="btn" type="button" class="btn" (click)="submit(note)">
+                    <i class="fas fa-1-5x fa-check text-success"></i>
+                </a>
+                <a *ngIf="canEditNote(note)" type="button" class="btn" (click)="goToEditMode(note, false)">
+                    <i class="fas fa-1-5x fa-times"></i>
+                </a>
+                <a *ngIf="!canEditNote(note)" [ngClass]="{'disabled': currentUserId !== note.get('creator')?.value}"
+                    type="button" class="btn" (click)="goToEditMode(note, true)">
+                    <i class="fas fa-1-5x fa-edit text-warning"></i>
+                </a>
+                <a *ngIf="!canEditNote(note)" [ngClass]="{'disabled': currentUserId !== note.get('creator')?.value}"
+                    type="button" class="btn" (click)="removeNote(i)">
+                    <i class="fas fa-1-5x fa-trash text-danger"></i>
+                </a>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<ng-container *ngIf="!isInViewMode">
+
+    <div class="separator">آیتم جدید</div>
+
+    <div class="form-group row">
+        <div class="form-group col-md-8">
+            <input type="text" class="form-control" placeholder="یادداشت" [(ngModel)]="newNote" id="newNote"
+                maxlength="500" required autocomplete="off">
+        </div>
+        <div class="form-group col-md-3">
+            <input type="text" class="form-control" placeholder="یادداشت لاتین" [(ngModel)]="newEngNote" id="newEngNote"
+                maxlength="500" required autocomplete="off">
+        </div>
+        <div class="form-group col-md-1">
+            <button class="btn font-20" type="button" (click)="addNote()"><i class="ri-add-line"></i></button>
+        </div>
+    </div>
+
+</ng-container>

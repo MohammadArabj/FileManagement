@@ -1,0 +1,22 @@
+<div class="btn-group">
+    <button type="button" class="btn btn-outline-secondary waves-effect waves-light m-1" data-toggle="dropdown"
+        aria-expanded="false"> ابزار جدول
+        @if (hasSavedState) {
+        <span>(شخصی شده)</span>
+        }
+        <span class="btn-label"><i class="fas fa-cog"></i></span>
+    </button>
+    <div class="dropdown-menu">
+        <ng-container *hasPermission="[exportPermission]">
+            <button class="dropdown-item" type="button" (click)="onExportExcel()"> Excel دریافت خروجی <i
+                    class="fas fa-file-excel"></i></button>
+            <button class="dropdown-item" type="button" (click)="onExportCSV()"> CSV دریافت خروجی <i
+                    class="fas fa-file-csv"></i></button>
+            <hr class="mt-1 mb-1" />
+        </ng-container>
+        <button class="dropdown-item" type="button" (click)="saveState()"> ذخیره حالت جدول <i
+                class="fas fa-save"></i></button>
+        <button class="dropdown-item" type="button" (click)="resetState()"> برگشت جدول به حالت پیش فرض
+            <i class="fas fa-redo"></i></button>
+    </div>
+</div>

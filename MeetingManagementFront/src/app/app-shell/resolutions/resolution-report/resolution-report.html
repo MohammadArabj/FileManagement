@@ -1,0 +1,293 @@
+
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+    <!-- تب‌ها -->
+    <ul class="nav nav-pills flex-nowrap overflow-auto rounded px-3 py-2" role="tablist">
+        <li class="nav-item" role="presentation">
+
+            <button class="nav-link" [class.active]="activeTab() === 'detail'" (click)="switchTab('detail')">
+                گزارش تفصیلی
+            </button>
+        </li>
+
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" [class.active]="activeTab() === 'summary'" (click)="switchTab('summary')">
+                گزارش خلاصه
+            </button>
+        </li>
+
+    </ul>
+
+</div>
+<!-- Unified Filter Section -->
+<div class="card  mb-4 no-print">
+    <div class="card-header">
+        <h5 class="card-title mb-4">
+            <i class="fa fa-filter me-2"></i>
+            فیلترهای جستجو
+        </h5>
+    </div>
+    <div class="card-body">
+
+        <form [formGroup]="reportForm" (ngSubmit)="generateReport()" class="filter-section">
+            <!-- Row 1: Date and Meeting Info -->
+            <div class="row g-3 mb-3">
+                <div class="col-md-3">
+                    <label class="form-label">از تاریخ</label>
+                    <input type="text" data-jdp class="form-control" formControlName="fromDate">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">تا تاریخ</label>
+                    <input type="text" data-jdp class="form-control" formControlName="toDate">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">شماره جلسه</label>
+                    <input type="text" class="form-control" formControlName="meetingNumber" placeholder="شماره جلسه">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">عنوان جلسه</label>
+                    <input type="text" class="form-control" formControlName="meetingTitle" placeholder="عنوان جلسه">
+                </div>
+            </div>
+            <!-- Row 2: Category and Resolution Info -->
+            <div class="row g-3 mb-3">
+                <div class="col-md-3">
+                    <label class="form-label">دسته‌بندی جلسه</label>
+                    <select class="form-select" formControlName="categoryGuid">
+                        <option value="">همه دسته‌بندی‌ها</option>
+                        @for (category of categories(); track category.guid) {
+                        <option [value]="category.guid">{{ category.title }}</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">شماره مصوبه</label>
+                    <input type="text" class="form-control" formControlName="resolutionNumber"
+                        placeholder="شماره مصوبه">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">عنوان مصوبه</label>
+                    <input type="text" class="form-control" formControlName="resolutionTitle" placeholder="عنوان مصوبه">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">متن مصوبه</label>
+                    <input type="text" class="form-control" formControlName="resolutionText" placeholder="متن مصوبه">
+                </div>
+            </div>
+            <!-- Row 3: Additional Filters -->
+            <div class="row g-3 mb-4">
+                <div class="col-md-3">
+                    <label class="form-label">تاریخ سررسید</label>
+                    <input type="text" data-jdp class="form-control" formControlName="dueDate">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">وضعیت اقدام</label>
+                    <select class="form-select" formControlName="actionStatus">
+                        <option value="">همه وضعیت‌ها</option>
+                        <option value="Done">اقدامات انجام‌شده</option>
+                        <option value="InProgress">اقدامات در حال انجام</option>
+                        <option value="NotDone">اقدامات انجام‌نشده</option>
+                        <option value="End">اقدامات پایان یافته</option>
+                        <option value="Impossible">اقدامات غیر قابل انجام</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">تصمیمات متخذه</label>
+                    <input type="text" class="form-control" formControlName="decisions" placeholder="تصمیمات متخذه">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">توضیحات</label>
+                    <input type="text" class="form-control" formControlName="description" placeholder="توضیحات">
+                </div>
+            </div>
+            <!-- Row 4: Position Filter -->
+            <div class="row g-3 mb-4">
+                <!-- <div class="col-md-3">
+                        <label class="form-label">سمت</label>
+                        <select class="form-select" formControlName="positionGuid">
+                            <option value="">همه سمت‌ها</option>
+                            @for (position of positions(); track position.guid) {
+                            <option [value]="position.guid">{{ position.title }}</option>
+                            }
+                        </select>
+                    </div> -->
+                <div class="col-md-3">
+                    <label class="form-label">سوابق و مستندات</label>
+                    <input type="text" class="form-control" formControlName="documentation"
+                        placeholder="سوابق و مستندات">
+                </div>
+            </div>
+            <div class="action-buttons">
+                <button class="btn-modern btn-clear" type="button" (click)="clearFilters()" [disabled]="isLoading">
+                    <i class="bx bx-x"></i>
+                    <span>پاک کردن</span>
+                </button>
+                <button class="btn-modern btn-search" type="submit" [disabled]="isLoading">
+                    @if (isLoading) {
+                    <span class="loading-spinner me-2"></span>
+                    در حال تولید...
+                    } @else {
+                    <i class="fas fa-search me-2"></i>
+                    تولید گزارش
+                    }
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- Detail Report Results -->
+@if (activeTab() === 'detail' && detailResults().length > 0) {
+<div class="card  mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center p-4 no-print">
+        <h5 class="mb-0">
+            <i class="fas fa-table me-2"></i>
+            نتایج گزارش تفصیلی ({{ detailResults().length }} مورد)
+        </h5>
+        <div class="d-flex gap-2">
+            <button class="btn btn-success-modern btn-modern" (click)="printReport()">
+                <i class="fas fa-print me-2"></i>
+                چاپ گزارش
+            </button>
+            <button class="btn btn-success-modern btn-modern" (click)="printReportWithDecisions()">
+                <i class="fas fa-print me-2"></i>
+                چاپ با تصمیمات متخذه
+            </button>
+        </div>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-modern mb-0">
+                <thead>
+                    <tr>
+                        <th>ردیف</th>
+                        <th>دسته جلسه</th>
+                        <th>شماره جلسه</th>
+                        <th>تاریخ جلسه</th>
+                        <th>عنوان جلسه</th>
+                        <th>سمت</th>
+                        <th>شماره مصوبه</th>
+                        <th>عنوان مصوبه</th>
+                        <th>سررسید</th>
+                        <th>وضعیت</th>
+                        <th>نتیجه</th>
+                        <th>تعداد اقدامات</th>
+                        <th>تصمیمات متخذه</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (item of detailResults(); track item; let i = $index) {
+                    <tr>
+                        <td>{{ i + 1 }}</td>
+                        <td>
+                            <span class="meeting-category-badge category-{{ item.meetingCategory }}">
+                                {{ item.meetingCategory }}
+                            </span>
+                        </td>
+                        <td>{{ item.meetingNumber || '-' }}</td>
+                        <td>{{ item.meetingDate }}</td>
+                        <td>{{ item.meetingTitle || '-' }}</td>
+                        <td>{{ item.position }}</td>
+                        <td>{{ item.resolutionNumber || '-' }}</td>
+                        <td>{{ item.resolutionTitle || '-' }}</td>
+                        <td>{{ item.dueDate }}</td>
+                        <td>
+                            <span [class]="getActionStatusBadgeClass(item.actionStatus)">
+                                {{ getActionStatusText(item.actionStatus) }}
+                            </span>
+                        </td>
+                        <td>{{ item.result || '-' }}</td>
+                        <td>
+                            <span class="badge bg-info">{{ item.totalActions || 0 }}</span>
+                        </td>
+                        <td>{{ item.decisionsMade || '-' }}</td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+}
+<!-- Summary Report Results -->
+@if (activeTab() === 'summary' && summaryResult()) {
+<!-- Summary Table -->
+<div class="card ">
+    <div class="card-header d-flex justify-content-between align-items-center p-4 no-print">
+        <h5 class="mb-0">
+            <i class="fa fa-chart-pie me-2"></i>
+            گزارش خلاصه بر اساس سمت
+        </h5>
+        <div class="d-flex gap-2">
+            <button class="btn btn-success-modern btn-modern" (click)="printReport()">
+                <i class="fa fa-print me-2"></i>
+                چاپ گزارش
+            </button>
+        </div>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-modern mb-0">
+                <thead>
+                    <tr>
+                        <th>نام سمت</th>
+                        <th>تعداد جلسات</th>
+                        <th>تعداد مصوبات</th>
+                        <th>انجام شده</th>
+                        <th>در حال انجام</th>
+                        <th>انجام نشده</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (item of summaryResult()?.positionSummaries; track item) {
+                    <tr>
+                        <td class="fw-bold">{{ item.positionName }}</td>
+                        <td>{{ item.totalMeetings }}</td>
+                        <td>{{ item.totalResolutions }}</td>
+                        <td>
+                            <span class="badge bg-success">{{ item.completedResolutions }}</span>
+                        </td>
+                        <td>
+                            <span class="badge bg-warning">{{ item.inProgressResolutions }}</span>
+                        </td>
+                        <td>
+                            <span class="badge bg-secondary">{{ item.notStartedResolutions }}</span>
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+}
+<!-- Empty States -->
+@if (activeTab() === 'detail' && isDetailTabEmpty) {
+<div class="empty-state">
+    <i class="fa fa-search-minus"></i>
+    <h4>هیچ نتیجه‌ای یافت نشد</h4>
+    <p>لطفاً معیارهای جستجوی خود را تغییر دهید و مجدداً تلاش کنید</p>
+    <button class="btn btn-primary-modern btn-modern" (click)="clearFilters()">
+        <i class="fa fa-redo me-2"></i>
+        جستجوی جدید
+    </button>
+</div>
+}
+@if (activeTab() === 'summary' && isSummaryTabEmpty) {
+<div class="empty-state">
+    <i class="fa fa-chart-pie"></i>
+    <h4>داده‌ای برای نمایش وجود ندارد</h4>
+    <p>لطفاً فیلترهای خود را تغییر دهید و مجدداً جستجو کنید</p>
+    <button class="btn btn-primary-modern btn-modern" (click)="clearFilters()">
+        <i class="fa fa-redo me-2"></i>
+        جستجوی جدید
+    </button>
+</div>
+}
+<!-- Loading Overlay -->
+@if (detailLoading() || summaryLoading()) {
+<div class="loading-overlay">
+    <div class="loading-content">
+        <div class="loading-spinner-large"></div>
+        <p class="mt-3">در حال تولید گزارش...</p>
+    </div>
+</div>
+}

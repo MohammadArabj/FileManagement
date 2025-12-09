@@ -1,0 +1,28 @@
+@if (isLoading()) {
+<div class="text-center py-5">
+    <div class="spinner-border text-primary" role="status"></div>
+    <p class="mt-2 text-muted">در حال بارگذاری درخت ارجاعات...</p>
+</div>
+}
+
+<!-- Tree View -->
+@if (treeData() && !isLoading()) {
+<div class="tree-view">
+    <app-tree-node [node]="treeData()!" [level]="0" [isRoot]="true" [expandedNodes]="expandedNodes()"
+        (onNodeToggle)="toggleNode($event)" (onAddAction)="openActionModal($event, 'action')"
+        (onAddFollowup)="openActionModal($event, 'follow')" (onEditAction)="editAction($event.action, $event.type)"
+        (onDeleteAction)="deleteAction($event)" (onCreateReferral)="openReferralModal($event)"
+        (onViewDetails)="viewNodeDetails($event)"></app-tree-node>
+</div>
+}
+
+<!-- Empty State -->
+@if (!treeData() && !isLoading()) {
+<div class="empty-state text-center py-5">
+    <div class="empty-icon mb-3">
+        <i class="fa fa-sitemap text-muted" style="font-size: 3rem;"></i>
+    </div>
+    <h5 class="text-muted">درخت ارجاعات موجود نیست</h5>
+    <p class="text-muted">این تخصیص هیچ ارجاعی ندارد یا قابل دسترسی نیست.</p>
+</div>
+}

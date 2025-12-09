@@ -1,0 +1,103 @@
+.dropdown-menu {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.list-group-item img {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+}
+
+.selected-member {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.selected-member img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.list-group-item {
+  cursor: pointer;
+}
+
+.border-success {
+  border: 2px solid green;
+}
+
+.border-danger {
+  border: 2px solid red;
+}
+
+.border-secondary {
+  border: 1px solid #ccc;
+}
+
+.fixed-label {
+  width: 130px;
+  /* عرض ثابت برای قسمت label */
+  text-align: right;
+  /* متن را به سمت راست تراز کنید */
+}
+
+.bg-light {
+  background-color: #cccccc61 !important;
+}
+
+.btn-draft {
+  color: #fff;
+  background-color: #5bc0de;
+  border-color: #5bc0de;
+  box-shadow: 0 0.125rem 0.25rem 0 rgba(61, 202, 221, 0.4);
+}
+
+.btn-draft:hover {
+  color: #fff !important;
+  background-color: #5bc0de !important;
+  border-color: #5bc0de !important;
+  transform: translateY(-1px) !important
+}
+
+.btn-check:focus+.btn-draft,
+.btn-draft:focus,
+.btn-draft.focus {
+  color: #fff;
+  background-color: #5bc0de;
+  border-color: #5bc0de;
+  transform: translateY(0);
+  box-shadow: none
+}
+
+.btn-check:checked+.btn-draft,
+.btn-check:active+.btn-draft,
+.btn-draft:active,
+.btn-draft.active,
+.btn-draft.show.dropdown-toggle,
+.show>.btn-draft.dropdown-toggle {
+  color: #fff !important;
+  background-color: #5bc0de !important;
+  border-color: #5bc0de !important
+}
+
+.btn-check:checked+.btn-draft:focus,
+.btn-check:active+.btn-draft:focus,
+.btn-draft:active:focus,
+.btn-draft.active:focus,
+.btn-draft.show.dropdown-toggle:focus,
+.show>.btn-draft.dropdown-toggle:focus {
+  box-shadow: none
+}
+
+.btn-draft.disabled,
+.btn-draft:disabled {
+  color: #fff !important;
+  background-color: #5bc0de !important;
+  border-color: #5bc0de !important;
+  box-shadow: none !important
+}

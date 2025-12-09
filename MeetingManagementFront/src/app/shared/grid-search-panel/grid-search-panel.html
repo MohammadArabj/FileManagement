@@ -1,0 +1,49 @@
+<div class="btn-group">
+    <button type="button" class="btn btn-outline-secondary waves-effect waves-light m-1" data-toggle="dropdown"
+        aria-expanded="false">
+        {{getCurrentMonthName()}} <span class="btn-label"><i class="far fa-calendar-alt"></i></span>
+    </button>
+
+    <div class="dropdown-menu" style="width: max-content; direction: rtl;">
+        <div class="row">
+
+            <div class="col-4" style="border-left: 1px solid #eee;">
+                <ng-container *ngFor="let session of sessions">
+                    <button class="dropdown-item" type="button" (click)="emitSearch(session.id, 2)">
+                        <span *ngIf="calendarType == 1">{{session.name}}</span>
+                        <span *ngIf="calendarType == 2">{{session.miladi}}</span>
+                    </button>
+                </ng-container>
+                <button class="dropdown-item text-primary" type="button" data-toggle="modal"
+                    data-target="#select-date-modal-2"> شرط سفارشی
+                </button>
+                <button class="dropdown-item text-danger" type="button" (click)="emitSearch(0, 0)">
+                    بدون
+                    شرط
+                </button>
+            </div>
+
+            <div class="col-4">
+                <ng-container *ngFor="let month of months">
+                    <button *ngIf="7 > month.id" class="dropdown-item" type="button" (click)="emitSearch(month.id, 1)">
+                        <span *ngIf="calendarType == 1"> {{month.name}} </span>
+                        <span *ngIf="calendarType == 2"> {{month.miladi}} </span>
+                    </button>
+                </ng-container>
+            </div>
+
+            <div class="col-4">
+                <ng-container *ngFor="let month of months">
+                    <button *ngIf="13 > month.id && month.id > 6" class="dropdown-item" type="button"
+                        (click)="emitSearch(month.id, 1)">
+                        <span *ngIf="calendarType == 1"> {{month.name}} </span>
+                        <span *ngIf="calendarType == 2"> {{month.miladi}} </span>
+                    </button>
+                </ng-container>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<app-select-date [id]="2" [type]="1" (submited)="customSeachSelected($event)"></app-select-date>

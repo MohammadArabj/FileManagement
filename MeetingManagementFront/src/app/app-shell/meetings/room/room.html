@@ -1,0 +1,148 @@
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">لیست مکان‌های برگزاری جلسات</h5>
+        <div class="header-actions">
+          @if (isLoading()) {
+          <div class="spinner-border spinner-border-sm text-primary me-2" role="status">
+            <span class="visually-hidden">در حال بارگذاری...</span>
+          </div>
+          }
+          <app-label-button identifier="addBtn" label="افزودن" variant="success" (clicked)="openOpsModal()"
+            permission="MT_Locations_Add">
+          </app-label-button>
+        </div>
+      </div>
+
+      <div class="card-body">
+        @if (isLoading()) {
+        <div class="text-center py-4">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">در حال بارگذاری...</span>
+          </div>
+          <p class="mt-2 text-muted">در حال بارگذاری داده‌ها...</p>
+        </div>
+        } @else if (!hasRecords()) {
+        <div class="text-center py-5">
+          <i class="fa fa-building fa-3x text-muted mb-3"></i>
+          <h5 class="text-muted">هیچ مکانی یافت نشد</h5>
+          <p class="text-muted">برای شروع، یک مکان جدید اضافه کنید.</p>
+          <app-label-button identifier="addFirstBtn" label="افزودن اولین مکان" variant="primary"
+            (clicked)="openOpsModal()" permission="MT_Locations_Add">
+          </app-label-button>
+        </div>
+        } @else {
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover align-middle">
+            <thead class="table-info">
+              <tr>
+                <th scope="col">عنوان</th>
+                <th scope="col" class="text-center">ظرفیت</th>
+                <th scope="col">آدرس</th>
+                <th scope="col">تاریخ ایجاد</th>
+                <th scope="col" class="text-center">وضعیت</th>
+                <th scope="col" class="text-center">عملیات</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              @for (item of records(); track item.guid) {
+              <tr [class.table-warning]="item.isActive !== 1">
+                <td>
+                  <strong>{{ item.title }}</strong>
+                </td>
+                <td class="text-center">
+                  <span class="badge bg-primary">{{ item.capacity }}</span>
+                </td>
+                <td>
+                  @if (item.address) {
+                  <small class="text-muted">{{ item.address }}</small>
+                  } @else {
+                  <span class="text-muted">--</span>
+                  }
+                </td>
+                <td>
+                  <small class="text-muted">{{ item.created }}</small>
+                </td>
+                <td class="text-center">
+                  @if (item.isActive === 1) {
+                  <span class="badge bg-success">
+                    <i class="fa fa-check me-1"></i>فعال
+                  </span>
+                  } @else {
+                  <span class="badge bg-danger">
+                    <i class="fa fa-times me-1"></i>غیرفعال
+                  </span>
+                  }
+                </td>
+                <td class="text-center">
+                  <div class="btn-group btn-group-sm" role="group">
+                    @if (item.isActive === 1) {
+                    <app-icon-button identifier="editBtn{{ $index }}" label="ویرایش" icon="fa fa-edit"
+                      variant="primary" (clicked)="openOpsModal(item.guid)" permission="MT_Locations_Edit">
+                    </app-icon-button>
+
+                    <app-icon-button identifier="deactivateBtn{{ $index }}" label="غیرفعال" icon="fa fa-pause"
+                      variant="warning" (clicked)="deactivate(item.guid)" permission="MT_Locations_ToggleActive">
+                    </app-icon-button>
+                    } @else {
+                    <app-icon-button identifier="activateBtn{{ $index }}" label="فعال‌سازی" icon="fa fa-play"
+                      variant="success" (clicked)="activate(item.guid)" permission="MT_Locations_ToggleActive">
+                    </app-icon-button>
+                    }
+
+                    <app-icon-button identifier="deleteBtn{{ $index }}" label="حذف" icon="fa fa-trash"
+                      variant="danger" (clicked)="delete(item.guid)" permission="MT_Locations_Delete">
+                    </app-icon-button>
+                  </div>
+                </td>
+              </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Main Modal for CRUD operations -->
+<app-modal #opsModal [config]="modalConfig()" (submited)="submit($event)" (onModalHide)="modalClosed()">
+
+  @if (form(); as currentForm) {
+  <form [formGroup]="currentForm" id="submitForm" class="row g-3" novalidate>
+    <!-- Title Field -->
+    <div class="col-12">
+      <custom-input label="عنوان" formControlName="title" identity="title" size="col-12" [required]="true"
+        styleType="simple">
+      </custom-input>
+    </div>
+
+    <!-- Capacity Field -->
+    <div class="col-md-6">
+      <custom-input label="ظرفیت" formControlName="capacity" type="number" identity="capacity" size="col-12"
+        styleType="simple" [required]="true" [min]="1">
+      </custom-input>
+    </div>
+
+    <!-- Address Field -->
+    <div class="col-md-6">
+      <custom-input label="آدرس" formControlName="address" type="textarea" identity="address" size="col-12"
+        styleType="simple">
+      </custom-input>
+    </div>
+
+    <!-- Form Status Indicator -->
+    <div class="col-12">
+      @if (!isFormValid()) {
+      <div class="alert alert-warning alert-sm d-flex align-items-center">
+        <i class="fa fa-exclamation-triangle me-2"></i>
+        لطفاً تمام فیلدهای الزامی را تکمیل کنید
+      </div>
+      }
+    </div>
+  </form>
+  }
+</app-modal>

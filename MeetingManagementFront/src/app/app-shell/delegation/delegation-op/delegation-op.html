@@ -1,0 +1,78 @@
+<form [formGroup]="delegationOpsForm" (ngSubmit)="submit('')" id="submitForm">
+    <div class="row">
+
+        <div class="col-7">
+            <div class="card">
+                <div class="card-header">
+                    مشخصات گروه کاربری
+                </div>
+                <div class="card-body">
+
+                    <div class="form-group row">
+                        <custom-select [options]="users" identity="delegateeGuid" formControlName="delegateeGuid"
+                            label="کاربر" size="col-12"></custom-select>
+                        <custom-input type="date" identity="startDate" size="col-6" formControlName="startDate"
+                            label="تاریخ شروع"></custom-input>
+                        <custom-input type="date" identity="endDate" size="col-6" formControlName="endDate"
+                            label="تاریخ پایان"></custom-input>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="col-5">
+            <div class="card">
+                <div class="bg-soft-primary card-header text-primary">
+                    حقوق دسترسی
+                </div>
+                <div class="card-body">
+                    <div id="checkTree">
+                        <ul class="rtl">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <input type="text" class="form-control" id="plugins4_q" placeholder="جستجو ..."
+                                    autocomplete="off" style="width: 85%;">
+                                <button class="btn btn-primary" (click)="collapseAll()" type="button">
+                                    <img width="20x" height="20px" src="/images/icons/compress-arrows-alt-solid.svg">
+                                </button>
+                                <button class="btn btn-primary" (click)="expandAll()" type="button">
+                                    <img width="20x" height="20px" src="/images/icons/expand-arrows-alt-solid.svg">
+                                </button>
+                            </div>
+
+                            <br>
+
+                            <div id="basicTree"> </div>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</form>
+
+<div class="card mt-3">
+    <div class="card-body">
+        <div class="button-list">
+            <a href="javascript:void(0)" type="button" class="btn btn-success waves-effect waves-light mr-1"
+                (click)="submit('exit')">
+                ذخیره و خروج
+            </a>
+            <a href="javascript:void(0)" type="button" class="btn btn-success waves-effect waves-light mr-1"
+                (click)="submit('')">
+                ذخیره
+            </a>
+            <a href="javascript:void(0)" type="button" class="btn btn-primary waves-effect waves-light mr-1"
+                (click)="submit('new')">
+                ذخیره و
+                جدید
+            </a>
+            <a href="javascript:void(0)" type="button" class="btn btn-warning waves-effect waves-light mr-1"
+                (click)="onBtnCancelClick()">
+                انصراف
+            </a>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,121 @@
+<div class="search-card" [class.collapsed]="isCollapsed()">
+        <div class="search-header" (click)="toggleCollapse()">
+            <div class="header-content">
+                <i class="bx bx-search-alt search-icon"></i>
+                <h5 class="header-title">جستجوی پیشرفته جلسات</h5>
+            </div>
+            <button class="collapse-btn" type="button">
+                <i class="bx" [class.bx-chevron-down]="!isCollapsed()" [class.bx-chevron-up]="isCollapsed()"></i>
+            </button>
+        </div>
+
+        <div class="search-body" [class.show]="!isCollapsed()">
+            <form [formGroup]="form()" (ngSubmit)="search()">
+                <div class="search-grid">
+                    <!-- Row 1 -->
+                    <div class="input-group-modern">
+                        <custom-select [options]="categories()" formControlName="categoryGuid" identity="categoryGuid"
+                            size="col-12" label="دسته بندی" styleType="simple">
+                        </custom-select>
+                    </div>
+                    <div class="input-group-modern">
+                        <custom-input type="text" identity="title" formControlName="title" label="عنوان جلسه"
+                            size="col-12" styleType="simple">
+                        </custom-input>
+                    </div>
+                    <div class="input-group-modern">
+                        <custom-input type="text" identity="number" formControlName="number" label="شماره جلسه"
+                            size="col-12" styleType="simple">
+                        </custom-input>
+                    </div>
+                    <div class="input-group-modern">
+                        <custom-input type="text" identity="agenda" formControlName="agenda" label="دستور جلسه"
+                            size="col-12" styleType="simple">
+                        </custom-input>
+                    </div>
+
+                    <!-- Row 2 -->
+                    <div class="input-group-modern">
+                        <custom-input type="date" identity="dateFrom" formControlName="dateFrom" label="تاریخ از"
+                            size="col-12" styleType="simple">
+                        </custom-input>
+                    </div>
+                    <div class="input-group-modern">
+                        <custom-input type="date" identity="dateTo" formControlName="dateTo" label="تاریخ تا"
+                            size="col-12" styleType="simple">
+                        </custom-input>
+                    </div>
+                    <div class="input-group-modern">
+                        <custom-select [options]="rooms()" formControlName="roomGuid" label="محل برگزاری" size="col-12"
+                            styleType="simple">
+                        </custom-select>
+                    </div>
+                    <div class="input-group-modern">
+                        <custom-select identity="statusGuid" [options]="statuses()" formControlName="statusGuid"
+                            label="وضعیت" size="col-12" styleType="simple">
+                        </custom-select>
+                    </div>
+
+                    <!-- Row 3 -->
+                    <div class="input-group-modern">
+                        <custom-select identity="secretaryGuid" [options]="userList()" formControlName="secretaryGuid"
+                            label="دبیر" size="col-12" styleType="simple">
+                        </custom-select>
+                    </div>
+                    <div class="input-group-modern">
+                        <custom-select identity="chairmanGuid" [options]="userList()" formControlName="chairmanGuid"
+                            label="رئیس" size="col-12" styleType="simple">
+                        </custom-select>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn-modern btn-clear" type="button" (click)="clearForm()" [disabled]="loading()">
+                        <i class="bx bx-x"></i>
+                        <span>پاک کردن</span>
+                    </button>
+                    <button class="btn-modern btn-search" type="submit" [disabled]="loading()">
+                        @if (!loading()) {
+                        <i class="bx bx-search"></i>
+                        <span>جستجو</span>
+                        }
+                        @if (loading()) {
+                        <span class="spinner"></span>
+                        <span>در حال جستجو...</span>
+                        }
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Results Grid -->
+    @if (records().length > 0) {
+    <div class="results-card">
+        <div class="results-header">
+            <div class="results-header-left">
+                <h5>نتایج جستجو</h5>
+                <span class="results-count">{{ records().length }} مورد</span>
+            </div>
+        </div>
+        <ag-grid-angular #agGrid id="meetingGrid" [components]="components"
+            class="ag-theme-material font-sahel modern-grid" [rowData]="records()" [gridOptions]="gridOptions()"
+            [modules]="modules()" (gridReady)="onGridReady($event)" (firstDataRendered)="onFirstDataRendered($event)">
+        </ag-grid-angular>
+    </div>
+    }
+
+    <!-- Empty State -->
+    @if (isSearchEmpty()) {
+    <div class="empty-state">
+        <div class="empty-icon">
+            <i class="bx bx-search-alt-2"></i>
+        </div>
+        <h4>نتیجه‌ای یافت نشد</h4>
+        <p>لطفاً معیارهای جستجوی خود را تغییر دهید</p>
+        <button class="btn-modern btn-search" (click)="clearForm()">
+            <i class="bx bx-refresh"></i>
+            <span>جستجوی جدید</span>
+        </button>
+    </div>
+    }

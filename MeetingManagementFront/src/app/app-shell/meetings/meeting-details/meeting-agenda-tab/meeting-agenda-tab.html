@@ -1,0 +1,176 @@
+<div class="col-md-12">
+
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">لیست دستورهای جلسه</h5>
+            @if (agendas().length!==0) {
+            <button class="btn btn-primary btn-sm ms-2 float-end" (click)="print()">چاپ</button>
+            }
+            @if (canAddAgenda()&&agendas().length>0) {
+            <button class="btn btn-success btn-sm float-end" (click)="openAddAgendaModal()">
+                افزودن دستور
+            </button>
+            }
+        </div>
+        <div class="card-body" style="max-height: 560px; overflow-y: auto;background-color:#a1acb866 ;">
+            @if (canShowEmptyMessage()) {
+            <div class="alert alert-info text-center w-100 d-flex justify-content-center align-items-center flex-column"
+                style="height: 25%; margin-top: 10px;">
+                <strong>موردی ثبت نشده است</strong>
+                <br />
+                @if (canAddAgenda()&&agendas().length===0) {
+                <button (click)="openAddAgendaModal()" class="btn btn-success">افزودن دستور جلسه</button>
+                }
+            </div>
+            }
+
+            @if (canDragAgendas()) {
+            <div cdkDropList (cdkDropListDropped)="onDrop($event)" class="list-container">
+                @if (agendas().length>0) {
+                <div class="alert alert-warning text-center mb-3 mt-3" role="alert">
+                    <i class="fa fa-info-circle me-2"></i>
+                    جهت تغییر ترتیب دستورات جلسه، آیتم مورد نظر را گرفته و به مکان دلخواه بکشید و رها کنید
+                </div>
+                }
+                @for ( agenda of agendas();let i=$index; track $index) {
+                <div class="card mb-3 shadow-sm border-0 rounded-3" cdkDrag [ngClass]="{'mt-3': i === 0}">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">دستور جلسه شماره {{i+1}}</h5>
+                        <div>
+                            @if (canEditOrDeleteAgenda()) {
+                            <button class="btn btn-sm btn-primary me-2" (click)="openEditModal(agenda)">
+                                ویرایش
+                            </button>
+                            <button class="btn btn-sm btn-danger me-2" (click)="deleteAgenda(agenda)">
+                                حذف
+                            </button>
+                            }
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="mt-3">
+                            <p class="text-justify mb-3 space-preline" style="text-align: justify">{{ agenda.text }}</p>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-white">
+                        @if (agenda.fileGuid) {
+                        <div class="mt-3 col-md-6">
+                            <button class="corner-counter-btn" (click)="openUploaderModal(agenda.fileGuid)">
+                                <span class="counter-badge">1</span>
+                                <i class="fa fa-cloud-upload-alt"></i>
+                                <span>مشاهده فایل</span>
+                            </button>
+                        </div>
+                        }
+                    </div>
+                </div>
+                }
+            </div>
+            }
+
+            @else {
+            <div class="list-container">
+                @for (agenda of agendas();let i =$index; track $index) {
+                <div class="card mb-3 shadow-sm border-0 rounded-3" [ngClass]="{'mt-3': i === 0}">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">دستور جلسه شماره {{i+1}}</h5>
+                        <div>
+                            @if (canEditOrDeleteAgenda()) {
+                            <button class="btn btn-sm btn-primary me-2" (click)="openEditModal(agenda)">
+                                ویرایش
+                            </button>
+                            <button class="btn btn-sm btn-danger me-2" (click)="deleteAgenda(agenda)">
+                                حذف
+                            </button>
+                            }
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="mt-3">
+                            <p class="text-justify mb-3" style="text-align: justify">{{ agenda.text }}</p>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-white">
+                        @if (agenda.fileGuid) {
+                        <button class="corner-counter-btn" (click)="openUploaderModal(agenda.fileGuid)">
+                            <span class="counter-badge">1</span>
+                            <i class="fa fa-cloud-upload-alt"></i>
+                            <span>مشاهده فایل</span>
+                        </button>
+                        }
+                    </div>
+                </div>
+                }
+            </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- بخش چاپ -->
+<div id="printSection" style="display: none;">
+    <div class="header-container">
+        <img src="{{siteUrl()}}/img/MainLogo.png" alt="لوگو">
+        <div class="header-content">
+            <p>شماره جلسه: {{ meeting().number }}</p>
+            <h2>دستور جلسه</h2>
+            <p>تاریخ جلسه: {{ meeting().mtDate }}</p>
+        </div>
+    </div>
+    <table class="table table-bordered">
+        <tr>
+            <th class="text-center">ردیف</th>
+            <th>متن دستور جلسه</th>
+            <th>پیوست</th>
+        </tr>
+        @for (agenda of agendas();let i=$index; track $index) {
+        <tr>
+            <td class="text-center">{{ i + 1 }}</td>
+            <td>{{ agenda.text }}</td>
+            <td>{{agenda.fileGuid?'دارد':'ندارد'}}</td>
+        </tr>
+        }
+    </table>
+</div>
+
+<!-- مدال افزودن/ویرایش دستور جلسه -->
+<div class="modal fade" id="addAgendaModal" tabindex="-1" aria-labelledby="addAgendaModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addAgendaModalModalLabel">
+                    {{ isEditingAgenda() ? 'ویرایش دستور جلسه' : 'افزودن دستور جدید' }}
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="agendaForm">
+                    <custom-input type="textarea" label="توضیحات" identity="text" formControlName="text"
+                        styleType="simple" [required]="false" size="col-12">
+                    </custom-input>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <!-- ✅ دکمه باز کردن مدال آپلود -->
+                <button class="corner-counter-btn" (click)="uploaderModal.open()">
+                    <span class="counter-badge">{{uploadedGuids.length }}</span>
+                    <i class="fa fa-cloud-upload-alt"></i>
+                    <span>بارگذاری فایل</span>
+                </button>
+                <button class="btn btn-success me-2" (click)="saveAgenda()">ذخیره</button>
+                <button class="btn btn-warning" data-bs-dismiss="modal">انصراف</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- <app-file-uploader-modal #uploaderModal title="افزودن پیوست" [folderPath]="uploadFolderPath()"
+    [existingFileGuids]="existingFiles" (confirmed)="onFilesConfirmed($event)">
+</app-file-uploader-modal> -->
+
+<app-file-manager-modal #fileManager modalId="myFileManager" title="انتخاب فایل‌ها" [folderPath]="'uploads/documents'"
+    [existingFileGuids]="existingFileGuids" [multiple]="true" [maxFiles]="5" [maxFileSizeMB]="50"
+    acceptedTypes="image/*,application/pdf" [autoUpload]="true" (confirmed)="onFilesConfirmed($event)"
+    (cancelled)="onCancelled()" (filesChanged)="onFilesChanged($event)">
+</app-file-manager-modal>
+
+<button (click)="fileManager.open()">مدیریت فایل‌ها</button>

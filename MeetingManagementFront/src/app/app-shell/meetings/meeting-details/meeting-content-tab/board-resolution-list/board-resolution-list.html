@@ -1,0 +1,335 @@
+<div class="resolutions-container">
+    <div class="main-header">
+        <div class="header-content">
+            <div class="header-left">
+                <div class="meeting-info">
+                    <div class="meeting-item">
+                        <i class="fas fa-hashtag"></i>
+                        <span>جلسه {{ meeting()?.number }}</span>
+                    </div>
+                    <div class="meeting-item">
+                        <i class="fas fa-calendar"></i>
+                        <span>{{ meeting()?.mtDate }}</span>
+                    </div>
+                    @if(resolutions().length > 0) {
+                    <div class="meeting-item">
+                        <i class="fas fa-file-alt"></i>
+                        <span>{{resolutions().length}} مصوبه</span>
+                    </div>
+                    }
+                </div>
+            </div>
+            <div class="header-actions">
+                @if(resolutions().length > 0) {
+                <button class="action-btn print" (click)="printAllResolutionsClicked()" title="چاپ همه مصوبات">
+                    <i class="fas fa-print"></i>
+                </button>
+                }
+                @if(canAddResolution()) {
+                @if(resolutions().length !== 0) {
+                <button class="action-btn add" (click)="openAddResolutionModal()" title="افزودن مصوبه جدید">
+                    <i class="fas fa-plus"></i>
+                </button>
+                }
+                }
+            </div>
+        </div>
+    </div>
+    <div class="resolutions-content">
+        @if(resolutions().length === 0) {
+        <div class="empty-state">
+            <div class="empty-icon">
+                <i class="fas fa-clipboard-list"></i>
+            </div>
+            <h3>هنوز مصوبه‌ای ثبت نشده است</h3>
+            <p>برای شروع، اولین مصوبه خود را اضافه کنید</p>
+            @if(canAddResolution()) {
+            <button (click)="openAddResolutionModal()" class="add-btn">
+                <i class="fas fa-plus"></i>
+                افزودن اولین مصوبه
+            </button>
+            }
+        </div>
+        }
+        <div class="content-layout">
+            <div class="resolutions-panel" [class.with-preview]="showFilePreview()">
+            <div class="resolutions-list">
+                @for(resolution of resolutions(); let i = $index; track trackByFn(i,resolution)) {
+                <div class="resolution-item">
+            
+                    <div class="resolution-main">
+                        <div class="resolution-number">{{resolution.number || (i + 1)}}</div>
+                        <div class="resolution-content">
+                            <h3 class="resolution-title">
+                                {{resolution.title || 'مصوبه شماره ' + (resolution.number || (i + 1))}}
+                            </h3>
+                            <div class="resolution-meta">
+                                @if(resolution.followUpMeeting) {
+                                <span class="meta-item">
+                                    <i class="fas fa-calendar-check"></i>
+                                    جلسه پیرو: {{resolution.followUpMeeting}}
+                                </span>
+                                }
+                                @if(resolution.followUpResolution) {
+                                <span class="meta-item">
+                                    <i class="fas fa-link"></i>
+                                    مصوبه پیرو: {{resolution.followUpResolution}}
+                                </span>
+                                }
+                                @if(resolution.committeeMeeting) {
+                                <span class="meta-item">
+                                    <i class="fas fa-users"></i>
+                                    کمیسیون: {{resolution.committeeMeeting}}
+                                </span>
+                                }
+                                @if(resolution.committeeResolution) {
+                                <span class="meta-item">
+                                    <i class="fas fa-file-signature"></i>
+                                    مصوبه کمیسیون: {{resolution.committeeResolution}}
+                                </span>
+                                }
+                                @if(resolution.approvedPrice) {
+                                <span class="meta-item financial">
+                                    <i class="fas fa-dollar-sign"></i>
+                                    قیمت مصوب:
+                                    {{resolution.approvedPrice}} ریال
+                                </span>
+                                }
+                                @if(resolution.contractNumber) {
+                                <span class="meta-item contract">
+                                    <i class="fas fa-file-contract"></i>
+                                    شماره قرار داد: {{resolution.contractNumber}}
+                                </span>
+                                }
+                            </div>
+                        </div>
+                        <div class="resolution-actions">
+                            @if(canEditResolution()) {
+                            <button class="action-btn edit" (click)="openEditResolutionModal(resolution)" title="ویرایش">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            }
+                            @if(canAddAssignment()) {
+                            <button class="action-btn assign" (click)="assignResolutionClicked(resolution)" title="تخصیص">
+                                <i class="fas fa-user-plus"></i>
+                            </button>
+                            }
+                            <button class="action-btn print" (click)="printResolutionClicked(resolution, i)" title="چاپ">
+                                <i class="fas fa-print"></i>
+                            </button>
+                            @if(canDeleteResolution()) {
+                            <button class="action-btn delete" (click)="deleteResolutionClicked(resolution)" title="حذف">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                            }
+                        </div>
+                    </div>
+            
+                    @if(resolution.description || resolution.documentation || resolution.decisionsMade) {
+                    <div class="additional-content">
+                        @if(resolution.documentation) {
+                        <div class="documentation-section">
+                            <div class="section-header">
+                                <i class="fas fa-folder-open"></i>
+                                <span>مستندات</span>
+                            </div>
+                            <div class="content-text" [innerHTML]="resolution.documentation"></div>
+                        </div>
+                        }
+                        @if(resolution.description) {
+                        <div class="description-section">
+                            <div class="section-header">
+                                <i class="fas fa-align-left"></i>
+                                <span>توضیحات</span>
+                            </div>
+                            <div class="content-text" [innerHTML]="resolution.description"></div>
+                        </div>
+                        }
+                        @if(resolution.decisionsMade) {
+                        <div class="description-section">
+                            <div class="section-header">
+                                <i class="fas fa-align-left"></i>
+                                <span>تصمیمات متخذه</span>
+                            </div>
+                            <div class="content-text" [innerHTML]="resolution.decisionsMade"></div>
+                        </div>
+                        }
+                    </div>
+                    }
+            
+                    @if(resolution.id) {
+                    <div class="files-section">
+                        <div class="files-header">
+                            <i class="fas fa-paperclip"></i>
+                            <span>فایل‌های ضمیمه</span>
+                            @if(isLoadingFiles(resolution.id)) {
+                            <div class="loading-spinner">
+                                <i class="fas fa-spinner fa-spin"></i>
+                            </div>
+                            }
+                            @else {
+                            <span class="files-count">{{getFilesCount()(resolution.id)}} فایل</span>
+                            }
+                        </div>
+            
+                        @if(!isLoadingFiles(resolution.id)) {
+                        <div class="files-list">
+                            @if(getFilesForResolution(resolution.id).length === 0) {
+                            <div class="no-files">
+                                <i class="fas fa-folder-open"></i>
+                                <span>هیچ فایلی ضمیمه نشده است</span>
+                            </div>
+                            }
+                            @else {
+                            @for(file of getFilesForResolution(resolution.id); track file.id) {
+                            <div class="file-item" (click)="selectFileForPreview(file)">
+                                <div class="file-info">
+                                    <div class="file-icon">
+                                        <i class="fas fa-file-pdf"></i>
+                                    </div>
+                                    <div class="file-details">
+                                        <div class="file-name" [title]="file.name">{{file.name}}</div>
+                                        <div class="file-meta"> {{file.uploadDate}}</div>
+                                    </div>
+                                </div>
+                                <div class="file-actions" (click)="$event.stopPropagation()">
+                                    <button class="file-action-btn view" (click)="selectFileForPreview(file)" title="مشاهده فایل">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="file-action-btn fullscreen" (click)="openFileInFullScreen(file)"
+                                        title="مشاهده تمام صفحه">
+                                        <i class="fas fa-expand"></i>
+                                    </button>
+                                    <button class="file-action-btn download" (click)="downloadFile(file)" title="دانلود فایل">
+                                        <i class="fas fa-download"></i>
+                                    </button>
+                                    @if(canDeleteFile()) {
+                                    @if(isDeletingFile(file.id!)) {
+                                    <div class="file-action-btn deleting" title="در حال حذف...">
+                                        <i class="fas fa-spinner fa-spin"></i>
+                                    </div>
+                                    } @else {
+                                    <button class="file-action-btn delete" (click)="confirmDeleteFile(file, resolution.id!)"
+                                        title="حذف فایل">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                    }
+                                    }
+                                </div>
+                            </div>
+                            }
+                            }
+                        </div>
+                        }
+                    </div>
+                    }
+            
+                    @if(resolution.assignments && resolution.assignments.length > 0) {
+                    <div class="assignments-section">
+                        <div class="assignments-header">
+                            <i class="fas fa-tasks"></i>
+                            <span>{{resolution.assignments.length}} تخصیص</span>
+                        </div>
+                        <div class="assignments-list">
+                            @for(assign of resolution.assignments; track $index) {
+                            <div class="assignment">
+                                <div class="assignment-info">
+                                    <div class="assignment-main">
+                                        <span class="assignment-actor">{{assign.actorName}}</span>
+                                        <span class="assignment-type">{{assign.type}}</span>
+                                    </div>
+                                    <div class="assignment-details">
+                                        <span class="assignment-follower">
+                                            <i class="fas fa-user-check"></i>
+                                            پیگیری: {{assign.followerName}}
+                                        </span>
+                                        <span class="assignment-due">
+                                            <i class="fas fa-calendar-alt"></i>
+                                            تا {{assign.dueDate}}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="assignment-actions">
+                                    @if(canAddAssignment()) {
+                                    <button class="action-btn-sm edit" (click)="editAssignmentClicked(assign.id)" title="ویرایش">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="action-btn-sm delete" (click)="deleteAssignmentClicked(assign)" title="حذف">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                    }
+                                </div>
+                            </div>
+                            }
+                        </div>
+                    </div>
+                    }
+                </div>
+                }
+            </div>
+            </div>
+
+            @if(showFilePreview() && selectedFileForPreview()) {
+            <div class="file-preview-panel">
+                <div class="preview-header">
+                    <div class="preview-title">
+                        <i class="fas fa-file-pdf"></i>
+                        <span>{{selectedFileForPreview()?.name}}</span>
+                    </div>
+                    <div class="preview-actions">
+                        <button class="preview-action-btn" (click)="openFileInFullScreen(selectedFileForPreview()!)"
+                            title="مشاهده تمام صفحه">
+                            <i class="fas fa-expand"></i>
+                        </button>
+                        <button class="preview-action-btn" (click)="downloadFile(selectedFileForPreview()!)"
+                            title="دانلود فایل">
+                            <i class="fas fa-download"></i>
+                        </button>
+                        <button class="preview-action-btn close" (click)="closeFilePreview()" title="بستن پیش‌نمایش">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="preview-content">
+                    @if(pdfUrl()) {
+                    <iframe [src]="pdfUrl()" class="pdf-viewer" frameborder="0"
+                        style="width: 100%; height: 100%; border: none;">
+                        <p>مرورگر شما از iframe پشتیبانی نمی‌کند.
+                            <a [href]="selectedFileForPreview()!.url" target="_blank">
+                                اینجا کلیک کنید برای مشاهده فایل
+                            </a>
+                        </p>
+                    </iframe>
+                    }
+                </div>
+            </div>
+            }
+        </div>
+    </div>
+</div>
+
+<ng-template #descriptionModal let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">توضیحات مصوبه</h4>
+        <button type="button" class="btn-close" (click)="modal.dismiss()"></button>
+    </div>
+    <div class="modal-body">
+        <div [innerHTML]="modalContent"></div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="modal.close()">بستن</button>
+    </div>
+</ng-template>
+
+<ng-template #documentationModal let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">مستندات مصوبه</h4>
+        <button type="button" class="btn-close" (click)="modal.dismiss()"></button>
+    </div>
+    <div class="modal-body">
+        <div [innerHTML]="modalContent"></div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="modal.close()">بستن</button>
+    </div>
+</ng-template>

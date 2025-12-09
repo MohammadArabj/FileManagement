@@ -1,0 +1,424 @@
+/* استایل‌های اصلی کامپوننت آپلودر */
+.elegant-file-uploader {
+  --primary-color: #4a6cf7;
+  --success-color: #0cbc87;
+  --danger-color: #d6293e;
+  --secondary-color: #6c757d;
+  --light-bg: #f8f9fa;
+  --border-radius: 8px;
+  --box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  font-family: 'Vazirmatn', 'Tahoma', sans-serif;
+}
+
+
+.modal-footer {
+  background-color: #fff;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  padding: 0.75rem 1rem;
+}
+
+/* محیط آپلود (Drop zone) */
+.upload-container {
+  border: 1px dashed #cfd9e6;
+  border-radius: var(--border-radius);
+  padding: 0.5rem 1rem;
+  text-align: center;
+  transition: all 0.3s ease;
+  background-color: rgba(74, 108, 247, 0.02);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.upload-container:hover {
+  border-color: var(--primary-color);
+  background-color: rgba(74, 108, 247, 0.04);
+}
+
+.upload-container.drag-over {
+  border-color: var(--primary-color);
+  background-color: rgba(74, 108, 247, 0.06);
+}
+
+.upload-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.upload-icon-wrapper {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: rgba(74, 108, 247, 0.1);
+  margin-bottom: 0.5rem;
+}
+
+.upload-icon {
+  width: 24px;
+  height: 24px;
+  color: var(--primary-color);
+}
+
+.upload-text .main-text {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 0.25rem;
+}
+
+.upload-text .sub-text {
+  color: #6c757d;
+  font-size: 0.8rem;
+}
+
+.browse-link {
+  color: var(--primary-color);
+  text-decoration: underline;
+  cursor: pointer;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.browse-link:hover {
+  color: #3152d0;
+}
+
+.file-input {
+  display: none;
+}
+
+/* گرید فایل‌های آپلود شده */
+.files-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 0.8rem;
+  margin-top: 1rem;
+}
+
+/* کارت فایل */
+.file-card {
+  border-radius: var(--border-radius);
+  background-color: white;
+  overflow: hidden;
+  position: relative;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  height: 170px;
+  display: flex;
+  flex-direction: column;
+}
+
+.file-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* پیشنمایش فایل */
+.file-preview {
+  height: 100px;
+  background-color: #f8f9fa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+}
+
+.file-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.2s ease;
+}
+
+.file-preview:hover img {
+  transform: scale(1.03);
+}
+
+.file-icon {
+  width: 40px;
+  height: 40px;
+  color: #6c757d;
+}
+
+/* اطلاعات فایل */
+.file-info {
+  padding: 0.5rem;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.file-name {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 0.3rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 0.75rem;
+}
+
+.file-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.7rem;
+  color: #6c757d;
+  margin-top: auto;
+}
+
+.file-size {
+  font-weight: 500;
+}
+
+/* دکمه‌های اکشن */
+.file-item-actions {
+  display: flex;
+  gap: 0.15rem;
+}
+
+.action-btn {
+  border: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  padding: 0;
+  font-size: 0.7rem;
+}
+
+.btn-outline-primary {
+  color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.btn-outline-primary:hover {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.btn-outline-success {
+  color: var(--success-color);
+  border-color: var(--success-color);
+}
+
+.btn-outline-success:hover {
+  background-color: var(--success-color);
+  color: white;
+}
+
+.btn-outline-danger {
+  color: var(--danger-color);
+  border-color: var(--danger-color);
+}
+
+.btn-outline-danger:hover {
+  background-color: var(--danger-color);
+  color: white;
+}
+
+/* کارت اضافه کردن فایل جدید */
+.add-more-card {
+  border: 1px dashed #cfd9e6;
+  border-radius: var(--border-radius);
+  background-color: rgba(74, 108, 247, 0.02);
+  height: 170px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.add-more-card:hover {
+  border-color: var(--primary-color);
+  background-color: rgba(74, 108, 247, 0.04);
+  transform: translateY(-2px);
+}
+
+.plus-icon {
+  font-size: 1.8rem;
+  color: var(--primary-color);
+  line-height: 1;
+  margin-bottom: 0.3rem;
+  opacity: 0.6;
+}
+
+.add-text {
+  color: #6c757d;
+  font-weight: 500;
+  font-size: 0.8rem;
+}
+
+/* نوار پیشرفت */
+.card-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.progress-circle {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.progress-circle svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+  overflow: visible;
+}
+
+.progress-circle svg path {
+  fill: none;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke: var(--primary-color);
+}
+
+.progress-circle span {
+  position: absolute;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+/* مودال پیش‌نمایش */
+.preview-container {
+  text-align: center;
+  height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f8f9fa;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+}
+
+.img-preview {
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.pdf-preview,
+.video-preview,
+.audio-preview {
+  width: 100%;
+  height: 100%;
+}
+
+
+
+/* دکمه‌های اصلی (Modal Footer) */
+.modal-footer .btn {
+  padding: 0.35rem 0.8rem;
+  font-size: 0.85rem;
+}
+
+/* انیمیشن‌ها */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.05);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+.upload-container.drag-over .upload-icon-wrapper {
+  animation: pulse 1.5s infinite;
+}
+
+/* استایل‌های RTL */
+[dir="rtl"] .modal-header .btn-close {
+  margin-left: 0;
+  margin-right: auto;
+}
+
+[dir="rtl"] .modal-footer {
+  justify-content: flex-start;
+}
+
+/* استایل‌های سازگار با صفحات نمایش کوچک */
+@media (max-width: 768px) {
+  .files-grid {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 0.6rem;
+  }
+
+  .file-card {
+    height: 150px;
+  }
+
+  .file-preview {
+    height: 85px;
+  }
+
+  .add-more-card {
+    height: 150px;
+  }
+}
+
+@media (max-width: 576px) {
+  .files-grid {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 0.5rem;
+  }
+}
+
+.file-card {
+  position: relative;
+  border: 1px solid #dee2e6;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+}
+
+.file-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.new-badge {
+  position: absolute;
+  top: 10px;
+  left: -30px;
+  background: linear-gradient(to right, #ff416c, #ff4b2b);
+  color: white;
+  padding: 4px 30px;
+  font-size: 12px;
+  font-weight: bold;
+  text-align: center;
+  transform: rotate(-45deg);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+}

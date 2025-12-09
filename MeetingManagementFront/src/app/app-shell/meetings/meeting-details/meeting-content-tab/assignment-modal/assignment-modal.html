@@ -1,0 +1,45 @@
+<div class="modal-header">
+  <h5 class="modal-title" id="assignModalLabel">تخصیص مصوبه</h5>
+  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="cancelForm()"></button>
+</div>
+<div class="modal-body">
+  <form [formGroup]="assignForm" id="assignForm">
+    <input type="hidden" formControlName="resolutionId">
+    <input type="hidden" formControlName="id">
+
+    <div class="mb-3">
+      <custom-select identity="actorGuid" label="اقدام کننده" [options]="users()" [required]="true"
+        formControlName="actorGuid">
+      </custom-select>
+    </div>
+
+    <div class="mb-3">
+      <custom-select identity="type" formControlName="type" [options]="assignmentTypes()" [required]="true"
+        label="نوع تخصیص">
+      </custom-select>
+    </div>
+
+    <div class="mb-3">
+      <custom-select identity="followerGuid" label="مسئول پیگیری" [options]="users()" [required]="true"
+        formControlName="followerGuid">
+      </custom-select>
+    </div>
+
+    <div class="mb-3">
+      <custom-input type="date" identity="dueDate" formControlName="dueDate" label="تاریخ سررسید" [required]="true">
+      </custom-input>
+      @if (assignForm.get('dueDate')?.hasError('beforeMeetingDate') && (assignForm.get('dueDate')?.touched ||
+      assignForm.get('dueDate')?.dirty)) {
+      <div style="color: red;font-size: small;">
+        تاریخ سررسید نمی‌تواند قبل از تاریخ برگزاری جلسه باشد
+      </div>
+      }
+
+    </div>
+  </form>
+</div>
+
+<div class="modal-footer">
+  <button type="button" class="btn btn-success" (click)="saveAssignment()">ذخیره</button>
+  <button type="button" class="btn btn-warning" data-bs-dismiss="modal" (click)="cancelForm()">بستن</button>
+</div>

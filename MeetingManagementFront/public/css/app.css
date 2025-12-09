@@ -1,0 +1,3925 @@
+/* ===== فونت و تنظیمات کلی ===== */
+@font-face {
+  font-family: 'Sahel';
+  src: url('/fonts/Sahel.ttf');
+}
+
+
+
+:root {
+  /* پالت گرفته شده از لوگوی پتروشیمی اصفهان */
+  --primary: #083b7c;
+  --primary-dark: #052451;
+  --primary-light: #e4ecfb;
+  --accent: #f97316;
+  --accent-soft: #fff3e6;
+  --danger: #e11d48;
+  --border-soft: #e5e7eb;
+  --bg-body: #f4f6fb;
+  --bg-card: #ffffff;
+
+  --radius-lg: 18px;
+  --radius-md: 12px;
+  --radius-pill: 999px;
+
+  --shadow-soft: 0 16px 40px rgba(8, 60, 125, 0.10);
+  --shadow-sm: 0 6px 16px rgba(15, 23, 42, 0.10);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Sahel' !important;
+  background: radial-gradient(circle at top left, #fdf2e2 0, #f4f6fb 35%, #edf2ff 100%);
+  color: #111827;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+
+/* ===== هدر بالا ===== */
+.top-bar {
+  background: linear-gradient(135deg, #083b7c, #052451);
+  color: #e5e7eb;
+  padding: 10px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 10px 30px rgba(5, 36, 81, 0.6);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.top-bar-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.top-bar-logo {
+  width: 46px;
+  height: 46px;
+  border-radius: 16px;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.18);
+}
+
+.top-bar-logo img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.top-bar-text-main {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.top-bar-text-sub {
+  font-size: 12px;
+  color: #cbd5f5;
+}
+
+.top-bar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.chip {
+  border-radius: var(--radius-pill);
+  border: 1px solid rgba(248, 250, 252, 0.3);
+  padding: 4px 10px;
+  font-size: 11px;
+  background: rgba(15, 23, 42, 0.4);
+}
+
+.btn-outline-light {
+  border-radius: var(--radius-pill);
+  border: 1px solid #e5e7eb;
+  background: transparent;
+  color: #e5e7eb;
+  font-size: 12px;
+  padding: 5px 12px;
+  cursor: pointer;
+}
+
+.btn-outline-light:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* ===== لِی‌اوت اصلی: هدر + سایدبار + بدنه ===== */
+.app-shell {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-areas:
+    "sidebar main";
+}
+
+/* سایدبار */
+.app-sidebar {
+  grid-area: sidebar;
+  background: #031426;
+  color: #e5e7eb;
+  padding: 14px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: 12px 0 30px rgba(5, 24, 48, 0.7);
+}
+
+.sidebar-section-title {
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #6b7280;
+  padding: 4px 8px;
+}
+
+.sidebar-nav {
+  list-style: none;
+  margin: 0;
+  padding: 0 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  text-decoration: none;
+  color: inherit;
+  font-size: 13px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+}
+
+.sidebar-link-icon {
+  width: 26px;
+  height: 26px;
+  border-radius: 10px;
+  background: radial-gradient(circle at 20% 20%, #f97316, #020617);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+
+.sidebar-link-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.sidebar-link-meta small {
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+.sidebar-link.active {
+  background: #0b1220;
+  border-color: rgba(148, 163, 184, 0.7);
+  box-shadow: var(--shadow-sm);
+}
+
+.sidebar-link:hover:not(.active) {
+  background: rgba(15, 23, 42, 0.85);
+}
+
+.sidebar-footer {
+  margin-top: auto;
+  padding: 8px 6px;
+  border-top: 1px dashed rgba(75, 85, 99, 0.7);
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+/* بدنه صفحه */
+.page-wrapper {
+  grid-area: main;
+  padding: 16px 18px 22px;
+}
+
+/* ===== کارت‌ها و پنل‌ها ===== */
+.panel,
+.card {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+  padding: 14px 16px 16px;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+}
+
+.panel-header,
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.panel-title,
+.card-title {
+  font-size: 15px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.panel-title-pill,
+.card-pill {
+  font-size: 11px;
+  border-radius: var(--radius-pill);
+  padding: 2px 8px;
+  background: var(--primary-light);
+  color: var(--primary-dark);
+}
+
+.panel-subtitle,
+.card-subtitle {
+  font-size: 11px;
+  color: #6b7280;
+  margin-bottom: 8px;
+}
+
+/* ===== فرم‌ها ===== */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.form-group label {
+  font-size: 12px;
+  color: #4b5563;
+}
+
+.form-group small {
+  font-size: 10px;
+  color: #9ca3af;
+}
+
+.form-control,
+.form-select,
+.form-textarea {
+  border-radius: 12px;
+  padding: 7px 10px;
+  border: 1px solid var(--border-soft);
+  font-size: 13px;
+  outline: none;
+  background: #f9fafb;
+}
+
+.form-textarea {
+  min-height: 68px;
+  resize: vertical;
+}
+
+.form-control:focus,
+.form-select:focus,
+.form-textarea:focus {
+  border-color: var(--primary);
+  background: #ffffff;
+  box-shadow: 0 0 0 1px rgba(8, 59, 124, 0.2);
+}
+
+.inline-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 6px;
+}
+
+.switch-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+/* ===== دکمه‌ها ===== */
+.btn,
+.btn-ghost {
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  padding: 5px 12px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn {
+  background: linear-gradient(135deg, var(--accent), #fb923c);
+  border-color: #fdba74;
+  color: #111827;
+  font-weight: 500;
+}
+
+.btn-ghost {
+  background: transparent;
+  border-color: var(--border-soft);
+  color: #374151;
+}
+
+.btn-ghost:hover {
+  background: #f3f4f6;
+}
+
+.link-small {
+  font-size: 11px;
+  color: var(--primary);
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+/* ===== دستور جلسه ===== */
+.section-block {
+  margin-top: 14px;
+  padding-top: 10px;
+  border-top: 1px dashed #e5e7eb;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.section-title {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.agenda-input-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) auto;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.agenda-items {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.agenda-item {
+  border-radius: var(--radius-md);
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+  padding: 8px 10px;
+  box-shadow: var(--shadow-sm);
+}
+
+.agenda-item-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.agenda-item-title {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.agenda-item-files {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.file-chip {
+  font-size: 10px;
+  border-radius: var(--radius-pill);
+  padding: 2px 8px;
+  background: var(--accent-soft);
+  color: #7c2d12;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.file-chip button {
+  border: none;
+  background: transparent;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+/* ===== اعضا / مهمان ===== */
+.badge-soft {
+  border-radius: var(--radius-pill);
+  padding: 2px 8px;
+  font-size: 11px;
+  background: #eef2ff;
+  color: var(--primary-dark);
+}
+
+.search-input {
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border-soft);
+  padding: 5px 10px;
+  font-size: 12px;
+  outline: none;
+  background: #f9fafb;
+  min-width: 180px;
+}
+
+.search-input:focus {
+  border-color: var(--primary);
+  background: #ffffff;
+}
+
+.people-list {
+  margin-top: 8px;
+  max-height: 190px;
+  overflow: auto;
+  border-radius: var(--radius-md);
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+}
+
+.person-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 12px;
+}
+
+.person-row:last-child {
+  border-bottom: none;
+}
+
+.avatar-sm {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #083b7c, #f97316);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.person-meta {
+  flex: 1;
+  min-width: 0;
+}
+
+.person-name {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.person-role {
+  font-size: 11px;
+  color: #6b7280;
+}
+
+.person-row select {
+  font-size: 11px;
+  border-radius: 999px;
+  padding: 3px 8px;
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+}
+
+.btn-add-person {
+  font-size: 11px;
+  border-radius: 999px;
+  border: 1px solid var(--primary);
+  padding: 3px 8px;
+  background: var(--primary);
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.btn-add-person:hover {
+  background: var(--primary-dark);
+}
+
+.selected-members {
+  margin-top: 10px;
+  border-radius: var(--radius-md);
+  border: 1px solid #e5e7eb;
+  overflow: hidden;
+}
+
+.selected-members table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+}
+
+.selected-members th,
+.selected-members td {
+  padding: 6px 7px;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: right;
+}
+
+.selected-members thead {
+  background: #f3f4f6;
+}
+
+.tag-guest {
+  font-size: 10px;
+  border-radius: 999px;
+  padding: 1px 6px;
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.btn-remove {
+  border-radius: 999px;
+  border: 1px solid #fecaca;
+  background: #fee2e2;
+  color: #b91c1c;
+  font-size: 10px;
+  padding: 2px 6px;
+  cursor: pointer;
+}
+
+/* مهمان خارج سازمان */
+.radio-group {
+  display: flex;
+  gap: 10px;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.guest-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.upload-mini {
+  font-size: 11px;
+}
+
+/* ===== کارت‌های داشبورد ===== */
+.page-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.page-title {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.page-title-sub {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.stats-card {
+  border-radius: 16px;
+  padding: 10px 12px;
+  background: #ffffff;
+  box-shadow: var(--shadow-soft);
+  border: 1px solid rgba(148, 163, 184, 0.25);
+}
+
+.stats-label {
+  font-size: 11px;
+  color: #6b7280;
+}
+
+.stats-value {
+  font-size: 20px;
+  font-weight: 600;
+  margin-top: 4px;
+  margin-bottom: 2px;
+}
+
+.stats-chip {
+  font-size: 11px;
+  border-radius: 999px;
+  padding: 2px 8px;
+  background: #ecfdf3;
+  color: #166534;
+}
+
+/* جدول هوشمند */
+.table-wrapper {
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-soft);
+  overflow: hidden;
+  background: #f9fafb;
+}
+
+.table-toolbar {
+  padding: 8px 10px;
+  background: #f3f4f6;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.table-toolbar-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.smart-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.smart-table th,
+.smart-table td {
+  padding: 7px 9px;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: right;
+}
+
+.smart-table thead {
+  background: #f3f4f6;
+}
+
+.smart-table tbody tr:nth-child(even) {
+  background: #f9fafb;
+}
+
+.smart-table tbody tr:hover {
+  background: #e0f2fe;
+}
+
+.col-fit {
+  white-space: nowrap;
+}
+
+/* ===== فوتر ===== */
+.page-footer {
+  padding: 6px 18px 12px;
+  font-size: 11px;
+  color: #6b7280;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* ===== ریسپانسیو ===== */
+@media (max-width: 1024px) {
+  .app-shell {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "main";
+  }
+
+  .app-sidebar {
+    display: none;
+    /* می‌تونی بعداً برای موبایل منوی کشویی بسازی */
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .form-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .page-wrapper {
+    padding-inline: 10px;
+  }
+
+  .top-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .stats-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .agenda-input-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .guest-form-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ===== لِی‌اوت صفحه ثبت جلسه ===== */
+.meeting-create-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 2.2fr) minmax(0, 1.4fr);
+  gap: 14px;
+}
+
+.meeting-create-actions {
+  margin-top: 10px;
+  text-align: left;
+}
+
+.meeting-create-actions .btn {
+  margin-inline: 4px;
+}
+
+@media (max-width: 1024px) {
+  .meeting-create-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .meeting-create-actions {
+    text-align: right;
+  }
+}
+
+/* ===== پنل اعضای جلسه ===== */
+.members-panel .panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.members-panel .panel-subtitle {
+  margin-top: 4px;
+}
+
+.members-search {
+  position: relative;
+  margin-top: 10px;
+}
+
+.members-search-input-wrapper {
+  position: relative;
+}
+
+.members-search-input-wrapper .search-input {
+  width: 100%;
+  border-radius: 999px;
+  padding-inline-start: 36px;
+  padding-inline-end: 12px;
+}
+
+[dir="rtl"] .members-search-input-wrapper .search-input {
+  padding-inline-start: 12px;
+  padding-inline-end: 36px;
+}
+
+.members-search-input-wrapper .search-icon {
+  position: absolute;
+  top: 50%;
+  inset-inline-end: 12px;
+  transform: translateY(-50%);
+  font-size: 0.85rem;
+  opacity: 0.7;
+}
+
+[dir="rtl"] .members-search-input-wrapper .search-icon {
+  inset-inline-end: auto;
+  inset-inline-start: 12px;
+}
+
+.members-dropdown-container {
+  position: absolute;
+  inset-inline: 0;
+  margin-top: 4px;
+  z-index: 30;
+}
+
+.members-dropdown {
+  background: #ffffff;
+  border-radius: 0.75rem;
+  box-shadow: 0 18px 50px rgba(15, 23, 42, 0.14);
+  max-height: 260px;
+  overflow-y: auto;
+  padding: 4px;
+}
+
+.member-dropdown-item {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  padding: 6px 8px;
+  border-radius: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.05s ease;
+}
+
+.member-dropdown-item:hover {
+  background: rgba(129, 140, 248, 0.05);
+  transform: translateY(-1px);
+}
+
+.member-photo {
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.5);
+  object-fit: cover;
+}
+
+.member-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.member-name {
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.member-position {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.no-results {
+  padding: 16px 10px;
+  text-align: center;
+  font-size: 0.8rem;
+  color: #6b7280;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: center;
+}
+
+/* کارت اعضای انتخاب شده */
+.selected-members-container {
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 430px;
+  overflow-y: auto;
+}
+
+.member-card {
+  border-radius: 0.9rem;
+  background: #f9fafb;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  padding: 8px 10px;
+  position: relative;
+  transition: box-shadow 0.15s ease, transform 0.06s ease, border-color 0.15s ease;
+}
+
+.member-card:hover {
+  border-color: rgba(79, 70, 229, 0.65);
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.12);
+  transform: translateY(-1px);
+}
+
+.member-card-main {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.member-avatar {
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.6);
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+}
+
+.member-meta {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.member-meta .name {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.member-meta .position {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.member-meta .subline {
+  font-size: 0.72rem;
+}
+
+.member-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-end;
+}
+
+.guest-ribbon {
+  position: absolute;
+  inset-inline-start: -3px;
+  top: 10px;
+  background: linear-gradient(135deg, #f97316, #fb923c);
+  color: #fff;
+  font-size: 0.7rem;
+  padding: 2px 8px;
+  border-radius: 0 999px 999px 0;
+}
+
+[dir="rtl"] .guest-ribbon {
+  border-radius: 999px 0 0 999px;
+}
+
+.presence-toggle {
+  display: inline-flex;
+  border-radius: 999px;
+  background: #e5e7eb;
+  overflow: hidden;
+  border: 1px solid rgba(148, 163, 184, 0.7);
+}
+
+.presence-toggle .option {
+  border: 0;
+  background: transparent;
+  padding: 2px 8px;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  cursor: pointer;
+}
+
+.presence-toggle .option.selected.green {
+  background: #16a34a;
+  color: #fff;
+}
+
+.presence-toggle .option.selected.red {
+  background: #dc2626;
+  color: #fff;
+}
+
+.presence-toggle .option.selected.gray {
+  background: #9ca3af;
+  color: #fff;
+}
+
+/* مودال مهمان - فقط کمی نرم‌تر */
+.modal .search-input {
+  border-radius: 999px;
+}
+
+.modal .members-dropdown-container.modal-dropdown {
+  position: absolute;
+  inset-inline: 0;
+  margin-top: 2px;
+  z-index: 40;
+}
+
+.preview-image {
+  border-radius: 999px;
+  object-fit: cover;
+}
+
+/* ===== پنل دستور جلسه در ایجاد جلسه ===== */
+
+.agenda-panel-body {
+  max-height: 340px;
+  overflow-y: auto;
+  padding-top: 10px;
+}
+
+.agenda-empty-state {
+  text-align: center;
+  padding: 32px 16px;
+  color: #6b7280;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+  justify-content: center;
+}
+
+.agenda-empty-state-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(129, 140, 248, 0.08);
+  font-size: 1.1rem;
+}
+
+.agenda-row {
+  position: relative;
+  padding: 0.8rem 0.9rem 0.9rem;
+  border-radius: 0.9rem;
+  margin-bottom: 0.75rem;
+  border: 1px solid rgba(148, 163, 184, 0.55);
+  background: #f9fafb;
+  transition: box-shadow 0.15s ease, transform 0.05s ease, border-color 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.agenda-row:hover {
+  border-color: rgba(79, 70, 229, 0.8);
+  background-color: #fefeff;
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.12);
+  transform: translateY(-1px);
+}
+
+.agenda-row-remove-btn {
+  position: absolute;
+  top: 8px;
+  inset-inline-start: 8px;
+  background: #f97373;
+  border: none;
+  border-radius: 999px;
+  width: 22px;
+  height: 22px;
+  font-size: 14px;
+  line-height: 22px;
+  text-align: center;
+  cursor: pointer;
+  color: #fff;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease, transform 0.05s ease;
+}
+
+[dir="rtl"] .agenda-row-remove-btn {
+  inset-inline-start: 8px;
+}
+
+.agenda-row-remove-btn:hover {
+  background: #ef4444;
+  transform: scale(1.03);
+}
+
+/* دکمه گوشه‌ای آپلود فایل (استفاده‌ی مشترک در چند کامپوننت) */
+.corner-counter-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 999px;
+  border: 1px dashed rgba(148, 163, 184, 0.9);
+  padding: 4px 12px;
+  background: #f9fafb;
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.05s ease;
+}
+
+.corner-counter-btn i {
+  font-size: 0.85rem;
+}
+
+.corner-counter-btn:hover {
+  background: #eef2ff;
+  border-color: rgba(79, 70, 229, 0.8);
+  transform: translateY(-1px);
+}
+
+.counter-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  background: #4f46e5;
+  color: #fff;
+  font-size: 0.7rem;
+  padding: 0 4px;
+}
+
+/* برای وقتی اسکرول زیاد می‌شود */
+.agenda-panel-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.agenda-panel-body::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.8);
+  border-radius: 999px;
+}
+
+.agenda-panel-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* ===== هدر صفحه جزئیات جلسه ===== */
+
+.meeting-details-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 14px;
+}
+
+.meeting-details-header-left {
+  flex: 1 1 auto;
+  min-width: 220px;
+}
+
+.meeting-details-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 4px;
+}
+
+.meeting-details-subtitle {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+/* تب‌ها */
+
+.meeting-tabs {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  gap: 4px;
+  padding: 6px 6px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.03);
+}
+
+.meeting-tabs .nav-link {
+  border-radius: 999px !important;
+  border: 0;
+  padding: 6px 14px;
+  font-size: 0.8rem;
+  color: #4b5563;
+  background: transparent;
+  white-space: nowrap;
+}
+
+.meeting-tabs .nav-link.active {
+  background: linear-gradient(135deg, #7c3aed, #4f46e5);
+  color: #fff;
+  box-shadow: 0 10px 25px rgba(79, 70, 229, 0.4);
+}
+
+/* استیتوس مراحل جلسه */
+
+.meeting-status-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: flex-end;
+}
+
+.meeting-status-steps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.meeting-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border-radius: 999px;
+  padding: 3px 9px;
+  font-size: 0.75rem;
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+.meeting-status-pill i {
+  font-size: 0.8rem;
+}
+
+.meeting-status-pill.active {
+  background: rgba(124, 58, 237, 0.08);
+  color: #4f46e5;
+  border: 1px solid rgba(124, 58, 237, 0.35);
+}
+
+.meeting-status-pill.draft {
+  background: rgba(251, 191, 36, 0.1);
+  color: #92400e;
+  border: 1px solid rgba(251, 191, 36, 0.35);
+}
+
+/* دکمه‌های بالای جزئیات */
+
+.meeting-details-actions {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.meeting-details-actions .btn {
+  font-size: 0.78rem;
+  padding-inline: 12px;
+}
+
+/* تب‌کانتنت کمی فاصله بگیرد */
+
+.meeting-details-tab-content {
+  margin-top: 6px;
+}
+
+/* ===== تب جزئیات جلسه (meeting-details-tab) ===== */
+
+.meeting-info-grid {
+  margin-top: 6px;
+}
+
+.meeting-info-item {
+  margin-bottom: 0.85rem;
+}
+
+.meeting-info-label {
+  font-size: 0.78rem;
+  color: #6b7280;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.meeting-info-label i {
+  font-size: 0.8rem;
+}
+
+.meeting-info-value {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #111827;
+  margin-top: 2px;
+}
+
+/* پنل اعضای جلسه در تب جزئیات */
+
+.meeting-members-panel-body {
+  padding: 0;
+}
+
+.meeting-members-table-wrapper {
+  max-height: 550px;
+  overflow-y: auto;
+}
+
+.meeting-members-table-wrapper::-webkit-scrollbar {
+  width: 6px;
+}
+
+.meeting-members-table-wrapper::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.8);
+  border-radius: 999px;
+}
+
+.meeting-members-table-wrapper::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.meeting-members-table thead tr {
+  background: #f3f4f6;
+}
+
+.meeting-members-table th,
+.meeting-members-table td {
+  font-size: 0.8rem;
+  vertical-align: middle;
+}
+
+/* حضور/غیاب سوئیچی – استفاده‌ی مشترک با کامپوننت‌های دیگر */
+
+.presence-toggle {
+  display: inline-flex;
+  border-radius: 999px;
+  background: #e5e7eb;
+  overflow: hidden;
+  border: 1px solid rgba(148, 163, 184, 0.7);
+}
+
+.presence-toggle .option {
+  border: 0;
+  background: transparent;
+  padding: 2px 8px;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  cursor: pointer;
+}
+
+.presence-toggle .option.selected.green {
+  background: #16a34a;
+  color: #fff;
+}
+
+.presence-toggle .option.selected.red {
+  background: #dc2626;
+  color: #fff;
+}
+
+.presence-toggle .option.selected.gray {
+  background: #9ca3af;
+  color: #fff;
+}
+
+/* ===== تب لیست دستورهای جلسه (meeting-agenda-tab) ===== */
+
+.agenda-tab-body {
+  max-height: 560px;
+  overflow-y: auto;
+  background-color: #f3f4f680;
+}
+
+.agenda-tab-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.agenda-tab-body::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.9);
+  border-radius: 999px;
+}
+
+.agenda-tab-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.agenda-tab-empty {
+  height: 25%;
+  margin-top: 10px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+}
+
+.agenda-tab-empty strong {
+  font-size: 0.9rem;
+}
+
+.agenda-drag-hint {
+  font-size: 0.8rem;
+  margin-bottom: 0.75rem;
+}
+
+.agenda-drag-hint i {
+  font-size: 0.9rem;
+}
+
+/* کارت‌های دستور جلسه در این تب */
+
+.agenda-card {
+  border-radius: 0.9rem;
+  border: 1px solid rgba(148, 163, 184, 0.65);
+  background: #ffffff;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
+  margin-bottom: 0.9rem;
+  overflow: hidden;
+  transition: transform 0.08s ease, box-shadow 0.12s ease, border-color 0.12s ease,
+    background-color 0.12s ease;
+}
+
+.agenda-card:first-child {
+  margin-top: 0.75rem;
+}
+
+.agenda-card:hover {
+  transform: translateY(-1px);
+  border-color: rgba(79, 70, 229, 0.85);
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.22);
+}
+
+.agenda-card-header {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid rgba(209, 213, 219, 0.9);
+  background: linear-gradient(135deg, #f9fafb, #eef2ff);
+}
+
+.agenda-card-header h5 {
+  font-size: 0.92rem;
+  margin: 0;
+  font-weight: 700;
+  color: #111827;
+}
+
+.agenda-card-body {
+  padding: 0.75rem 1rem 0.9rem;
+}
+
+.agenda-card-body p {
+  font-size: 0.85rem;
+  margin-bottom: 0.4rem;
+}
+
+.agenda-card-footer {
+  padding: 0.55rem 1rem 0.75rem;
+  background: #f9fafb;
+  border-top: 1px dashed rgba(209, 213, 219, 0.9);
+}
+
+/* چاپ بخش دستور جلسه – ساختار اصلی قبلی حفظ می‌شود */
+
+#printSection .header-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+#printSection .header-container img {
+  max-height: 60px;
+}
+
+#printSection .header-content {
+  text-align: right;
+}
+
+#printSection .header-content h2 {
+  font-size: 1.1rem;
+  margin: 4px 0;
+}
+
+/* ===== تب صورتجلسه و امضا (meeting-minutes-tab) ===== */
+
+.minutes-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.minutes-toolbar .btn {
+  min-width: 100px;
+}
+
+/* پیش‌نمایش صورتجلسه در صفحه (بخش #meeting-Minute) */
+#meeting-Minute {
+  background: #ffffff;
+  border-radius: 1rem;
+  padding: 1.5rem 1.75rem;
+  margin-top: 0.75rem;
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.16);
+  border: 1px solid rgba(148, 163, 184, 0.6);
+}
+
+#meeting-Minute header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px dashed rgba(209, 213, 219, 0.9);
+  padding-bottom: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+#meeting-Minute .right-side {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+#meeting-Minute .name-of-god {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #4b5563;
+}
+
+#meeting-Minute .meeting-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #111827;
+}
+
+#meeting-Minute .logo img {
+  max-width: 140px;
+}
+
+/* جدول اطلاعات جلسه */
+#meeting-Minute .metting-information table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1rem;
+  font-size: 0.8rem;
+}
+
+#meeting-Minute .metting-information th,
+#meeting-Minute .metting-information td {
+  border: 1px solid rgba(209, 213, 219, 0.9);
+  padding: 0.45rem 0.55rem;
+  text-align: center;
+}
+
+#meeting-Minute .metting-information th {
+  background: #f3f4f6;
+  font-weight: 600;
+}
+
+/* بخش‌های شرح، مصوبات، توضیحات، الحاقیه */
+#meeting-Minute .metting-summary,
+#meeting-Minute .metting-directives {
+  border-radius: 0.75rem;
+  border: 1px dashed rgba(209, 213, 219, 0.9);
+  padding: 0.75rem 0.9rem;
+  margin-bottom: 0.85rem;
+  background: #f9fafb;
+}
+
+#meeting-Minute .metting-summary .right-side span,
+#meeting-Minute .metting-directives .label {
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: #111827;
+  margin-bottom: 0.4rem;
+  display: inline-block;
+}
+
+#meeting-Minute .metting-summary .main,
+#meeting-Minute .metting-directives .main {
+  font-size: 0.82rem;
+}
+
+/* جدول مصوبات و توضیحات */
+#meeting-Minute .metting-directives table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0.4rem;
+  font-size: 0.8rem;
+}
+
+#meeting-Minute .metting-directives th,
+#meeting-Minute .metting-directives td {
+  border: 1px solid rgba(209, 213, 219, 0.9);
+  padding: 0.4rem 0.55rem;
+  text-align: center;
+}
+
+#meeting-Minute .metting-directives th {
+  background: #eef2ff;
+  font-weight: 600;
+}
+
+/* امضاها */
+.meeting-signatures {
+  margin-top: 1.2rem;
+}
+
+.meeting-signatures .top {
+  font-weight: 700;
+  font-size: 0.85rem;
+  margin-bottom: 0.5rem;
+}
+
+.meeting-signatures .main span {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.78rem;
+}
+
+/* ناحیه چاپ پیش‌نویس (print-area) کمی مرتب‌تر */
+.print-area header {
+  margin-bottom: 0.75rem;
+  border-bottom: 1px dashed rgba(209, 213, 219, 0.9);
+  padding-bottom: 0.5rem;
+}
+
+.print-area .name-of-god {
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.print-area .meeting-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+  margin-top: 0.25rem;
+}
+
+/* باکس امضای مدال */
+.sign-box {
+  position: relative;
+  display: inline-block;
+  border-radius: 0.75rem;
+  border: 1px dashed rgba(148, 163, 184, 0.9);
+  text-align: center;
+  width: 100%;
+  padding: 20px;
+  margin-top: 32px;
+  cursor: pointer;
+  min-height: 129px;
+  background: #f9fafb;
+}
+
+.sign-box:hover {
+  background: #eef2ff;
+}
+
+.sign-box .remove-icon {
+  font-size: 1.2rem;
+  background: #ffffff;
+  border-radius: 999px;
+  margin: 2px;
+}
+
+/* ===== صفحه لیست جلسات (meeting.list) ===== */
+
+.meetings-panel-header-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #7c3aed, #4f46e5);
+  color: #fff;
+  margin-left: 0.5rem;
+  box-shadow: 0 8px 20px rgba(79, 70, 229, 0.35);
+}
+
+.meetings-panel-header-icon i {
+  font-size: 1rem;
+}
+
+.meetings-panel-meta {
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+/* AG Grid ظرف کلی */
+.grid-container {
+  border-radius: 1rem;
+  overflow: hidden;
+  border: 1px solid rgba(148, 163, 184, 0.55);
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.18);
+}
+
+/* پابرگ گرید (اکشن‌ها) */
+.grid-actions {
+  padding-top: 0.75rem;
+  border-top: 1px dashed rgba(209, 213, 219, 0.9);
+}
+
+.grid-controls .btn {
+  min-width: 36px;
+}
+
+/* پیام خالی / بدون رکورد */
+.meetings-empty {
+  padding: 3rem 1rem;
+}
+
+.meetings-empty i {
+  opacity: 0.5;
+}
+
+/* استایل‌های AG Grid سفارشی‌تر (در صورت نیاز) */
+.ag-theme-material.ag-grid-custom {
+  --ag-foreground-color: #111827;
+  --ag-background-color: #ffffff;
+  --ag-header-foreground-color: #111827;
+  --ag-header-background-color: #f3f4f6;
+  --ag-odd-row-background-color: #f9fafb;
+  --ag-row-hover-color: #eef2ff;
+  --ag-font-size: 12px;
+  --ag-font-family: inherit;
+}
+
+/* ظرف کلی لیست مصوبات هیئت مدیره */
+.resolutions-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ناحیه محتوا داخل card-body */
+.resolutions-content {
+  height: 100%;
+  padding: 1rem;
+  background-color: #f8f9fa;
+  overflow: hidden;
+}
+
+/* چیدمان دو ستونه: لیست مصوبات + پنل پیش‌نمایش فایل */
+.content-layout {
+  display: flex;
+  gap: 1rem;
+  height: 100%;
+}
+
+/* پنل سمت لیست مصوبات */
+.resolutions-panel {
+  flex: 1 1 100%;
+  max-height: 100%;
+  overflow-y: auto;
+  padding-inline-end: 0.25rem;
+}
+
+/* وقتی پیش‌نمایش فعال است، پنل لیست کمی جمع‌تر می‌شود */
+.resolutions-panel.with-preview {
+  flex: 0 0 55%;
+}
+
+/* خود لیست مصوبات */
+.resolutions-list {
+  display: flex;
+  flex-direction: column;
+}
+
+/* پنل پیش‌نمایش فایل */
+.file-preview-panel {
+  flex: 0 0 45%;
+  max-height: 100%;
+  background-color: #ffffff;
+  border-radius: 0.5rem;
+  border: 1px solid #dee2e6;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* هدر پنل پیش‌نمایش */
+.preview-header {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #dee2e6;
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.preview-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.preview-actions {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.preview-action-btn {
+  border: none;
+  background-color: transparent;
+  padding: 0.25rem 0.35rem;
+  border-radius: 0.35rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.preview-action-btn:hover {
+  background-color: #e9ecef;
+}
+
+.preview-action-btn.close {
+  color: #dc3545;
+}
+
+/* محتوای iframe پیش‌نمایش */
+.preview-content {
+  flex: 1 1 auto;
+  overflow: hidden;
+}
+
+.preview-content .pdf-viewer {
+  width: 100%;
+  height: 100%;
+}
+
+/* حالت ریسپانسیو: در موبایل‌ها پیش‌نمایش زیر لیست بیاید */
+@media (max-width: 992px) {
+  .content-layout {
+    flex-direction: column;
+  }
+
+  .resolutions-panel,
+  .resolutions-panel.with-preview,
+  .file-preview-panel {
+    flex: 1 1 auto;
+    max-height: none;
+  }
+
+  .resolutions-panel {
+    overflow-y: visible;
+  }
+
+  .file-preview-panel {
+    margin-top: 0.75rem;
+  }
+}
+
+/* ===== کارت هر مصوبه ===== */
+
+.resolution-item {
+  background-color: #ffffff;
+  border-radius: 0.75rem;
+  border: 1px solid #e9ecef;
+  padding: 1rem 1.25rem;
+  margin-bottom: 0.75rem;
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.04);
+  transition: box-shadow 0.15s ease, transform 0.15s ease, border-color 0.15s ease;
+}
+
+.resolution-item:hover {
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+  border-color: #cfd4da;
+  transform: translateY(-1px);
+}
+
+/* هدر / ردیف اصلی هر مصوبه */
+.resolution-main {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+/* دایره شماره مصوبه */
+.resolution-number {
+  min-width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #4e73df, #2e59d9);
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+/* متن اصلی مصوبه */
+.resolution-content {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.resolution-title {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 0.35rem;
+  color: #212529;
+}
+
+.resolution-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.5rem;
+  font-size: 0.8rem;
+  color: #6c757d;
+}
+
+.meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  background-color: #f1f3f5;
+}
+
+.meta-item.financial {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.meta-item.contract {
+  background-color: #e2f0ff;
+  color: #0c5460;
+}
+
+/* اکشن‌های بالای هر مصوبه */
+.resolution-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  align-items: center;
+}
+
+.action-btn {
+  border: none;
+  border-radius: 0.35rem;
+  padding: 0.25rem 0.4rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.action-btn.edit {
+  background-color: #0d6efd;
+  color: #ffffff;
+}
+
+.action-btn.assign {
+  background-color: #17a2b8;
+  color: #ffffff;
+}
+
+.action-btn.print {
+  background-color: #ffc107;
+  color: #212529;
+}
+
+.action-btn.delete {
+  background-color: #dc3545;
+  color: #ffffff;
+}
+
+.action-btn:hover {
+  opacity: 0.9;
+}
+
+/* محتوای اضافی (مستندات / توضیحات / تصمیمات) */
+.additional-content {
+  margin-top: 0.75rem;
+  border-top: 1px dashed #e9ecef;
+  padding-top: 0.75rem;
+}
+
+.additional-content .section-header {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 0.35rem;
+  color: #495057;
+}
+
+.additional-content .content-text {
+  font-size: 0.86rem;
+  line-height: 1.8;
+  color: #343a40;
+}
+
+/* ===== فایل‌های ضمیمه هر مصوبه ===== */
+
+.files-section {
+  margin-top: 0.75rem;
+  border-top: 1px dashed #e9ecef;
+  padding-top: 0.75rem;
+}
+
+.files-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  margin-bottom: 0.5rem;
+}
+
+.files-header i {
+  color: #6c757d;
+}
+
+.files-count {
+  font-size: 0.8rem;
+  color: #6c757d;
+}
+
+.loading-spinner {
+  margin-right: auto;
+  font-size: 0.9rem;
+}
+
+/* لیست فایل‌ها */
+.files-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.no-files {
+  font-size: 0.85rem;
+  color: #6c757d;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.file-item {
+  border-radius: 0.5rem;
+  border: 1px solid #e9ecef;
+  padding: 0.35rem 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: background-color 0.1s ease, border-color 0.1s ease;
+}
+
+.file-item:hover {
+  background-color: #f8f9fa;
+  border-color: #cfd4da;
+}
+
+.file-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.file-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  background-color: #fce8e6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #e55353;
+}
+
+.file-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.file-name {
+  font-size: 0.86rem;
+  font-weight: 500;
+  max-width: 220px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.file-meta {
+  font-size: 0.75rem;
+  color: #6c757d;
+}
+
+/* اکشن‌های فایل */
+.file-actions {
+  display: flex;
+  gap: 0.25rem;
+  align-items: center;
+}
+
+.file-action-btn {
+  border-radius: 999px;
+  border: none;
+  background-color: #f1f3f5;
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.file-action-btn.view {
+  color: #0d6efd;
+}
+
+.file-action-btn.fullscreen {
+  color: #17a2b8;
+}
+
+.file-action-btn.download {
+  color: #198754;
+}
+
+.file-action-btn.delete {
+  color: #dc3545;
+}
+
+.file-action-btn.deleting {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.file-action-btn:hover {
+  background-color: #e9ecef;
+}
+
+/* ===== بخش تخصیص‌ها ===== */
+
+.assignments-section {
+  margin-top: 0.75rem;
+  border-top: 1px dashed #e9ecef;
+  padding-top: 0.75rem;
+}
+
+.assignments-header {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  margin-bottom: 0.5rem;
+}
+
+.assignments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.assignment {
+  border-radius: 0.5rem;
+  border: 1px solid #e9ecef;
+  padding: 0.4rem 0.6rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  align-items: flex-start;
+}
+
+.assignment-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.8rem;
+}
+
+.assignment-main {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  align-items: center;
+}
+
+.assignment-actor {
+  font-weight: 600;
+}
+
+.assignment-type {
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  background-color: #e2f0ff;
+  color: #0c5460;
+}
+
+.assignment-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  color: #6c757d;
+}
+
+.assignment-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.action-btn-sm {
+  border: none;
+  border-radius: 999px;
+  padding: 0.15rem 0.4rem;
+  font-size: 0.75rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.action-btn-sm.edit {
+  background-color: #ffc107;
+  color: #212529;
+}
+
+.action-btn-sm.delete {
+  background-color: #dc3545;
+  color: #ffffff;
+}
+
+.action-btn-sm:hover {
+  opacity: 0.9;
+}
+
+/* ===== Empty state (وقتی مصوبه‌ای نیست) ===== */
+
+.empty-state {
+  height: 100%;
+  min-height: 260px;
+  border-radius: 0.75rem;
+  border: 1px dashed #cfd4da;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 0.5rem;
+}
+
+.empty-icon {
+  font-size: 2rem;
+  color: #6c757d;
+  margin-bottom: 0.25rem;
+}
+
+.empty-state h3 {
+  font-size: 1rem;
+  margin: 0;
+}
+
+.empty-state p {
+  font-size: 0.85rem;
+  color: #6c757d;
+  margin: 0 0 0.5rem 0;
+}
+
+.empty-state .add-btn {
+  margin-top: 0.25rem;
+  padding-inline: 1.1rem;
+  border-radius: 999px;
+}
+
+/* کمی به meeting-info در هدر card نظم بده */
+.meeting-info .meeting-item i {
+  color: #6c757d;
+  font-size: 0.85rem;
+}
+
+.meeting-info .meeting-item span {
+  font-size: 0.85rem;
+}
+
+/* ===== کانتینر کلی سرچ مصوبات / جلسات ===== */
+.search-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* ===== کارت سرچ پیشرفته ===== */
+.search-card {
+  border-radius: 0.75rem;
+  border: 1px solid #e3e6ed;
+  background: #ffffff;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
+  overflow: hidden;
+  transition: box-shadow 0.2s ease, transform 0.15s ease, border-color 0.2s ease;
+}
+
+.search-card:hover {
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.09);
+  transform: translateY(-1px);
+}
+
+/* وقتی بسته است (کلاس collapsed از TS) */
+.search-card.collapsed .search-body {
+  max-height: 0;
+  opacity: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  overflow: hidden;
+}
+
+/* ===== هدر سرچ ===== */
+.search-header {
+  padding: 0.85rem 1.25rem;
+  background: linear-gradient(135deg, #4e73df, #2e59d9);
+  color: #ffffff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
+.search-header .header-content {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.search-header .search-icon {
+  font-size: 1.4rem;
+}
+
+.search-header .header-title {
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+/* دکمه باز/بستن */
+.collapse-btn {
+  border: none;
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  border-radius: 999px;
+  padding: 0.2rem 0.6rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+}
+
+/* ===== بدنه سرچ ===== */
+.search-body {
+  padding: 1.25rem 1.25rem 1rem;
+  background-color: #f8fafc;
+  transition: max-height 0.3s ease, opacity 0.25s ease, padding 0.25s ease;
+}
+
+.search-body.show {
+  opacity: 1;
+}
+
+/* ===== گرید فیلدهای سرچ ===== */
+.search-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem 1rem;
+}
+
+.input-group-modern {
+  min-width: 0;
+}
+
+/* برای موبایل / تبلت */
+@media (max-width: 1200px) {
+  .search-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .search-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ===== دکمه‌های پایین فرم سرچ ===== */
+.action-buttons {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.btn-modern {
+  border-radius: 999px;
+  border: none;
+  padding: 0.45rem 1.1rem;
+  font-size: 0.85rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  cursor: pointer;
+  transition: background-color 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
+}
+
+.btn-modern i {
+  font-size: 1rem;
+}
+
+.btn-modern:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.btn-modern.btn-clear {
+  background-color: #f1f5f9;
+  color: #64748b;
+}
+
+.btn-modern.btn-clear:hover:not(:disabled) {
+  background-color: #e2e8f0;
+}
+
+.btn-modern.btn-search {
+  background: linear-gradient(135deg, #0ea5e9, #2563eb);
+  color: #ffffff;
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
+}
+
+.btn-modern.btn-search:hover:not(:disabled) {
+  box-shadow: 0 8px 22px rgba(37, 99, 235, 0.5);
+  transform: translateY(-1px);
+}
+
+/* اسپینر کوچک داخل دکمه سرچ */
+.btn-modern .spinner {
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  border-top-color: #ffffff;
+  animation: btnSpin 0.7s linear infinite;
+}
+
+@keyframes btnSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ===== کارت نتایج جدول (ag-grid) ===== */
+.results-card {
+  border-radius: 0.75rem;
+  border: 1px solid #e3e6ed;
+  background-color: #ffffff;
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.06);
+  overflow: hidden;
+}
+
+.results-header {
+  padding: 0.75rem 1.25rem;
+  border-bottom: 1px solid #e9ecef;
+  background: #f8fafc;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.results-header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.results-header-left h5 {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.results-count {
+  font-size: 0.8rem;
+  background-color: #e0f2fe;
+  color: #0369a1;
+  border-radius: 999px;
+  padding: 0.1rem 0.6rem;
+}
+
+/* کانتینر خود ag-grid (برای هر دو سرچ) */
+.modern-grid {
+  width: 100%;
+  height: calc(100vh - 320px);
+  min-height: 360px;
+}
+
+/* اگر در یک صفحه خاص ارتفاع رو خودت تعیین کردی، همون می‌مونه */
+
+/* ===== Empty state مشترک برای سرچ‌ها ===== */
+.empty-state {
+  margin-top: 1rem;
+  border-radius: 0.75rem;
+  border: 1px dashed #cbd5e1;
+  background-color: #ffffff;
+  padding: 2.2rem 1.5rem;
+  text-align: center;
+  color: #64748b;
+}
+
+.empty-state .empty-icon {
+  font-size: 2.4rem;
+  margin-bottom: 0.5rem;
+  color: #94a3b8;
+}
+
+.empty-state h4 {
+  margin-bottom: 0.2rem;
+  font-size: 1rem;
+}
+
+.empty-state p {
+  font-size: 0.85rem;
+  margin-bottom: 0.8rem;
+}
+
+/* ===== Tooltip پیش‌نمایش سریع در resolution.search ===== */
+.quick-preview-tooltip {
+  position: fixed;
+  z-index: 1050;
+  min-width: 260px;
+  max-width: 360px;
+  background-color: #0f172a;
+  color: #e5e7eb;
+  padding: 0.75rem 0.9rem;
+  border-radius: 0.6rem;
+  font-size: 0.8rem;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.5);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(4px);
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.quick-preview-tooltip.visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.quick-preview-tooltip .preview-header {
+  margin-bottom: 0.35rem;
+}
+
+.quick-preview-tooltip .preview-badge {
+  background-color: rgba(59, 130, 246, 0.2);
+  color: #bfdbfe;
+  border-radius: 999px;
+  padding: 0.1rem 0.6rem;
+  font-size: 0.75rem;
+}
+
+.quick-preview-tooltip .preview-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.quick-preview-tooltip .preview-item strong {
+  font-weight: 600;
+}
+
+.quick-preview-tooltip .preview-footer {
+  margin-top: 0.3rem;
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+/* ===== اسلایدر جزئیات مصوبه در resolution.search ===== */
+.resolution-slider-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1050;
+  background-color: rgba(15, 23, 42, 0.6);
+  display: flex;
+  justify-content: flex-start;
+  align-items: stretch;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.resolution-slider-modal.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.slider-content {
+  background-color: #ffffff;
+  height: 100%;
+  width: 470px;
+  max-width: 100%;
+  margin-right: auto;
+  margin-left: 0;
+  box-shadow: -12px 0 30px rgba(15, 23, 42, 0.25);
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 1.25rem 0.75rem;
+  transform: translateX(100%);
+  transition: transform 0.25s ease;
+}
+
+.resolution-slider-modal.active .slider-content {
+  transform: translateX(0);
+}
+
+@media (max-width: 768px) {
+  .slider-content {
+    width: 100%;
+  }
+}
+
+.close-slider {
+  border: none;
+  background: transparent;
+  font-size: 1.4rem;
+  align-self: flex-start;
+  margin-inline-start: auto;
+}
+
+.slider-header {
+  margin-bottom: 0.75rem;
+}
+
+.slider-header .resolution-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.2rem 0.7rem;
+  border-radius: 999px;
+  background-color: #eff6ff;
+  color: #1d4ed8;
+  font-size: 0.8rem;
+}
+
+.slider-header .resolution-title {
+  margin-top: 0.5rem;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.slider-body {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding-right: 0.25rem;
+}
+
+/* کارت‌های داخل اسلایدر (info-card, actions-card) هم که تو HTML هستن
+   می‌تونن از استایل‌هایی که قبلاً برای assignment-management نوشتی استفاده کنن
+   یا اگر نداری، می‌تونم جدا برات بنویسم. برای طول جواب فعلاً همین‌ها کفایت می‌کنه. */
+
+/* ناوبری پایین اسلایدر */
+.slider-navigation {
+  padding-top: 0.6rem;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+}
+
+.nav-btn {
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+  background-color: #f9fafb;
+  padding: 0.25rem 0.7rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  cursor: pointer;
+}
+
+.nav-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.nav-center {
+  text-align: center;
+}
+
+.nav-indicator {
+  font-weight: 500;
+}
+
+.keyboard-hints {
+  display: flex;
+  gap: 0.35rem;
+  justify-content: center;
+  margin-top: 0.1rem;
+}
+
+.keyboard-hints .hint-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: #9ca3af;
+}
+
+.keyboard-hints kbd {
+  padding: 0.05rem 0.35rem;
+  border-radius: 0.25rem;
+  background-color: #111827;
+  color: #e5e7eb;
+  font-size: 0.7rem;
+}
+
+/* کارت اعلام حضور جلسه */
+.meeting-attendance-card {
+  /* می‌تونی این کلاس رو به div.card اصلی اضافه کنی یا از :has استفاده نکنی و فقط همینو بزاری روی همون card */
+}
+
+/* اگر نخوای HTML رو دست بزنی می‌تونی با parent بر اساس عنوان بگیری،
+   ولی تمیزتر اینه div.card رو کنی: <div class="card meeting-attendance-card"> */
+
+.meeting-attendance-card .card-header {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: #ffffff;
+  padding: 0.7rem 1rem;
+}
+
+.meeting-attendance-card .card-body {
+  padding-top: 1rem;
+}
+
+.meeting-attendance-card .form-check-input[type='radio'] {
+  cursor: pointer;
+}
+
+.meeting-attendance-card .form-check-label {
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.meeting-attendance-card .form-check-input:checked {
+  border-color: #16a34a;
+  background-color: #16a34a;
+}
+
+/* دکمه ثبت اعلام حضور */
+.meeting-attendance-card button.btn-primary {
+  border-radius: 999px;
+  padding-inline: 1.2rem;
+}
+
+/* ===========================
+   Search Shell + Tabs
+   =========================== */
+
+.search-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.search-tabs-bar {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.search-tabs {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+/* اگر در جای دیگری .tabs و .tab را نیاوردی، این‌ها را نگه دار */
+.tabs {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px;
+  border-radius: 999px;
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+}
+
+.tab {
+  border-radius: 999px;
+  padding: 5px 12px;
+  font-size: 12px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--text-muted);
+  background: transparent;
+}
+
+.tab span.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: #d1d5db;
+}
+
+.tab.active {
+  background: #ffffff;
+  border-color: var(--primary-border);
+  color: var(--primary);
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.12);
+}
+
+.tab.active span.dot {
+  background: var(--primary);
+}
+
+.search-tab-panels {
+  margin-top: 4px;
+}
+
+.tab-panel {
+  display: none;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.tab-panel.active {
+  display: block;
+}
+
+/* ===========================
+   Search Card
+   =========================== */
+
+.search-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  box-shadow: var(--shadow-soft);
+  padding: 10px 12px 12px;
+  transition: box-shadow 0.18s ease-out, transform 0.18s ease-out;
+}
+
+.search-card:hover {
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.16);
+  transform: translateY(-1px);
+}
+
+.search-card.collapsed {
+  box-shadow: var(--shadow-sm);
+}
+
+.search-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  cursor: pointer;
+  padding: 4px 2px 8px;
+  border-bottom: 1px dashed var(--border-soft);
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.search-icon {
+  font-size: 18px;
+  color: var(--primary);
+}
+
+.header-title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.header-subtitle {
+  margin: 2px 0 0;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.collapse-btn {
+  border: none;
+  background: transparent;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.collapse-btn i {
+  font-size: 16px;
+}
+
+.search-body {
+  padding-top: 8px;
+  max-height: 1200px;
+  opacity: 1;
+  transform: translateY(0);
+  transition: max-height 0.22s ease, opacity 0.2s ease, transform 0.2s ease;
+}
+
+.search-card.collapsed .search-body {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transform: translateY(-4px);
+}
+
+/* ===========================
+   Search Grid
+   =========================== */
+
+.search-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.input-group-modern {
+  display: flex;
+  flex-direction: column;
+}
+
+.input-group-modern custom-input,
+.input-group-modern custom-select {
+  width: 100%;
+}
+
+/* Responsive breakpoints */
+@media (max-width: 1200px) {
+  .search-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 992px) {
+  .search-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .search-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ===========================
+   Search Buttons
+   =========================== */
+
+.action-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.btn-modern {
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 12px;
+  border: 1px solid transparent;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.btn-modern:disabled {
+  opacity: 0.65;
+  cursor: default;
+}
+
+.btn-modern i {
+  font-size: 14px;
+}
+
+.btn-modern.btn-search {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #ffffff;
+  box-shadow: 0 10px 25px rgba(37, 99, 235, 0.35);
+}
+
+.btn-modern.btn-search:hover:not(:disabled) {
+  background: #1d4ed8;
+  border-color: #1d4ed8;
+  box-shadow: 0 14px 30px rgba(37, 99, 235, 0.4);
+  transform: translateY(-1px);
+}
+
+.btn-modern.btn-clear {
+  background: #f9fafb;
+  border-color: var(--border-soft);
+  color: var(--text-muted);
+}
+
+.btn-modern.btn-clear:hover:not(:disabled) {
+  background: #eff1f5;
+}
+
+/* Simple spinner inside button */
+.btn-modern .spinner {
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  border-top-color: #ffffff;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ===========================
+   Results Card + Empty State
+   =========================== */
+
+.results-card {
+  margin-top: 10px;
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  box-shadow: var(--shadow-soft);
+  padding: 10px 12px 12px;
+}
+
+.results-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.results-header-left h5 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.results-count {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #f3f4f6;
+  color: var(--text-muted);
+}
+
+.results-grid-wrapper {
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--border-soft);
+}
+
+/* Empty State */
+
+.empty-state {
+  margin-top: 14px;
+  padding: 24px 16px;
+  border-radius: var(--radius-lg);
+  border: 1px dashed var(--border-soft);
+  background: #f9fafb;
+  text-align: center;
+}
+
+.empty-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 999px;
+  margin: 0 auto 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--primary-soft);
+  color: var(--primary);
+  font-size: 22px;
+}
+
+.empty-state h4 {
+  margin: 0 0 4px;
+  font-size: 14px;
+}
+
+.empty-state p {
+  margin: 0 0 10px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* ===========================
+   Meeting Create Layout
+   =========================== */
+
+.meeting-header {
+  margin-bottom: 12px;
+}
+
+.meeting-header-left .page-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.meeting-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.meeting-panel {
+  min-width: 0;
+}
+
+.meeting-panel-main,
+.meeting-panel-side {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .meeting-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ===========================
+   Meeting Card
+   =========================== */
+
+.meeting-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  padding: 12px 14px 14px;
+  box-shadow: var(--shadow-soft);
+}
+
+.meeting-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.meeting-card-title {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.meeting-card-subtitle {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.section-block {
+  margin-top: 8px;
+}
+
+.section-body {
+  margin-top: 6px;
+}
+
+/* ===========================
+   Form Grid
+   =========================== */
+
+.meeting-form {
+  margin-top: 6px;
+}
+
+.meeting-form-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.form-group-modern {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group-full {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 1200px) {
+  .meeting-form-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .meeting-form-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ===========================
+   Switches & Helper Text
+   =========================== */
+
+.switch-label-modern {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-main);
+  cursor: pointer;
+}
+
+.switch-input {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  border: 1px solid var(--border-soft);
+  accent-color: var(--primary);
+}
+
+.switch-text {
+  font-size: 12px;
+}
+
+.helper-text {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.field-error {
+  margin-top: 4px;
+  font-size: 11px;
+  color: #ef4444;
+}
+
+/* ===========================
+   Info Banner
+   =========================== */
+
+.info-banner-soft {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  background: rgba(59, 130, 246, 0.08);
+  border: 1px dashed rgba(37, 99, 235, 0.35);
+  font-size: 11px;
+  color: #1d4ed8;
+}
+
+.info-banner-soft i {
+  margin-top: 1px;
+}
+
+/* ===========================
+   Meeting Actions Bar
+   =========================== */
+
+.meeting-actions-bar {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-soft);
+  background: #f9fafb;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.meeting-actions-bar .actions-left {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.meeting-actions-bar .btn {
+  min-height: 30px;
+}
+
+/* Helper card on the right */
+.actions-helper {
+  min-width: 0;
+  max-width: 420px;
+  padding: 8px 10px;
+  border-radius: 14px;
+  background: #ffffff;
+  border: 1px dashed var(--border-soft);
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+}
+
+.actions-helper .helper-title {
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.helper-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.helper-chip {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #e5e7eb;
+  color: #374151;
+  white-space: nowrap;
+}
+
+.helper-chip-primary {
+  background: var(--primary-soft);
+  color: var(--primary);
+  border: 1px solid var(--primary-border);
+}
+
+.helper-text {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* ===========================
+   Tag Soft (اگر قبلاً نداری)
+   =========================== */
+
+.tag-soft {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--primary-soft);
+  color: var(--primary);
+  border: 1px solid var(--primary-border);
+}
+
+/* badge-soft (اگر قبلاً نداری) */
+.badge-soft {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #f3f4f6;
+  color: var(--text-muted);
+}
+
+.badge-soft strong {
+  color: var(--text-main);
+}
+
+/* === سایدبار ثابت با اسکرول داخلی (فقط دسکتاپ) === */
+@media (min-width: 1025px) {
+
+  /* مطمئن می‌شیم بدنه افقی اسکرول نده */
+  body {
+    overflow-x: hidden;
+  }
+
+  /* دیگه از grid استفاده نکن، سایدبار رو fixed می‌کنیم */
+  .app-shell {
+    display: block;
+    position: relative;
+  }
+
+  .app-sidebar {
+    position: fixed !important;
+    top: 70px;
+    /* ارتفاع هدر (top-bar) – اگر هدر بزرگ‌تر/کوچک‌تر بود این رو تنظیم کن */
+    right: 0;
+    bottom: 0;
+    width: 240px;
+    /* همون عرضی که بالا تعریف کردی */
+    overflow-y: auto;
+    /* اسکرول داخل خود سایدبار */
+    max-height: calc(100vh - 70px);
+    z-index: 40;
+    /* زیر هدر (هدر z-index بالاتر دارد) */
+  }
+
+  /* محتوای اصلی از سمت راست جا باز کند که زیر سایدبار نرود */
+  .page-wrapper {
+    margin-right: 260px;
+    /* 240px عرض + 20px حاشیه امن */
+    padding-right: 30px;
+    /* همون پدینگ فعلی، می‌تونی تنظیمش کنی */
+  }
+}
+
+/* === ستون اعضا: ارتفاع ثابت و پر کردن ستون === */
+.meeting-layout {
+  align-items: stretch;
+  /* ستون‌ها رو هم‌ارتفاع می‌کنه تا حد ممکن */
+}
+
+/* ستون سمت اعضا کل ارتفاع در دسترس رو بگیره */
+.meeting-panel-side {
+  height: 100%;
+}
+
+/* خود کارت اعضا از ابتدا یک ارتفاع معقول داشته باشه */
+.meeting-panel-side .members-panel {
+  min-height: 420px;
+  /* هر عددی که دوست داری: 380, 400, 450 ... */
+  display: flex;
+  flex-direction: column;
+}
+
+/* اگر داخل members-panel چیزی مثل .panel-body داری، این باعث میشه بخش لیست اسکرول بخوره */
+.meeting-panel-side .members-panel .panel-body {
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* مکان و محل برگزاری در یک ردیف */
+.form-group-location .location-row {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  /* مکان کمی عریض‌تر از سالن */
+  gap: 8px;
+}
+
+/* روی موبایل زیر هم بیان که شلوغ نشه */
+@media (max-width: 768px) {
+  .form-group-location .location-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ===========================
+   تکمیل متغیرهای رنگی که در پایین استفاده شده
+   =========================== */
+:root {
+  --text-main: #111827;
+  --text-muted: #6b7280;
+  --primary-soft: #e4ecfb;
+  --primary-border: #c7d2fe;
+}
+
+/* ===========================
+   صفحه ثبت جلسه (meeting-create-page)
+   =========================== */
+
+.meeting-create-page .meeting-header {
+  margin-bottom: 12px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.meeting-create-page .meeting-header-left .page-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.meeting-create-page .page-title-sub {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.meeting-create-page .meeting-header-right {
+  display: flex;
+  align-items: center;
+}
+
+/* لِی‌اوت دو ستونه صفحه ثبت جلسه */
+.meeting-create-page .meeting-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  gap: 12px;
+  align-items: stretch;
+  /* ستون‌ها تا حد ممکن هم‌ارتفاع می‌شوند */
+}
+
+.meeting-create-page .meeting-panel {
+  min-width: 0;
+}
+
+.meeting-create-page .meeting-panel-main,
+.meeting-create-page .meeting-panel-side {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* ستون اعضا: ارتفاع ثابت و اسکرول داخلی */
+.meeting-create-page .meeting-panel-side {
+  height: 100%;
+}
+
+.meeting-create-page .members-panel {
+  min-height: 420px;
+  /* ارتفاع پیشنهادی، قابل تغییر */
+  display: flex;
+  flex-direction: column;
+}
+
+.meeting-create-page .members-panel-body {
+  flex: 1;
+  margin-top: 8px;
+  overflow-y: auto;
+}
+
+/* ریسپانسیو لِی‌اوت */
+@media (max-width: 1024px) {
+  .meeting-create-page .meeting-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .meeting-create-page .meeting-panel-side {
+    order: 2;
+  }
+}
+
+/* ===========================
+   کارت‌های صفحه ثبت جلسه
+   =========================== */
+
+.meeting-create-page .meeting-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  padding: 12px 14px 14px;
+  box-shadow: var(--shadow-soft);
+}
+
+.meeting-create-page .meeting-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.meeting-create-page .meeting-card-title {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.meeting-create-page .meeting-card-subtitle {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+/* ===========================
+   فرم اطلاعات جلسه
+   =========================== */
+
+.meeting-create-page .meeting-form {
+  margin-top: 6px;
+}
+
+.meeting-create-page .meeting-form-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.meeting-create-page .form-group-modern {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+}
+
+.meeting-create-page .form-group-modern label {
+  font-size: 12px;
+  color: #4b5563;
+}
+
+.meeting-create-page .form-group-full {
+  grid-column: 1 / -1;
+}
+
+.meeting-create-page .helper-text {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* ریسپانسیو فرم اطلاعات جلسه */
+@media (max-width: 1200px) {
+  .meeting-create-page .meeting-form-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .meeting-create-page .meeting-form-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ===========================
+   مکان + محل برگزاری در یک سطر
+   =========================== */
+
+.meeting-create-page .form-group-location .location-row {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  /* مکان کمی بزرگ‌تر از سالن */
+  gap: 8px;
+}
+
+/* روی موبایل زیر هم بیاید */
+@media (max-width: 768px) {
+  .meeting-create-page .form-group-location .location-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ===========================
+   دستور جلسه در فرم ایجاد
+   =========================== */
+
+.meeting-create-page .agenda-panel-body {
+  max-height: 340px;
+  overflow-y: auto;
+  padding-top: 10px;
+}
+
+.meeting-create-page .agenda-empty-state {
+  text-align: center;
+  padding: 32px 16px;
+  color: #6b7280;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+}
+
+.meeting-create-page .agenda-empty-state-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(129, 140, 248, 0.08);
+  font-size: 1.1rem;
+}
+
+/* ===========================
+   نوار اکشن پایین صفحه
+   =========================== */
+
+.meeting-create-page .meeting-actions-bar {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-soft);
+  background: #f9fafb;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.meeting-create-page .meeting-actions-bar .actions-left {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.meeting-create-page .meeting-actions-bar .btn {
+  min-height: 30px;
+}
+
+/* کارت راهنما در سمت راست اکشن‌ها */
+.meeting-create-page .actions-helper {
+  min-width: 0;
+  max-width: 420px;
+  padding: 8px 10px;
+  border-radius: 14px;
+  background: #ffffff;
+  border: 1px dashed var(--border-soft);
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+}
+
+.meeting-create-page .actions-helper .helper-title {
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.meeting-create-page .helper-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.meeting-create-page .helper-chip {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #e5e7eb;
+  color: #374151;
+  white-space: nowrap;
+}
+
+.meeting-create-page .helper-chip-primary {
+  background: var(--primary-soft);
+  color: var(--primary);
+  border: 1px solid var(--primary-border);
+}
+
+/* ریسپانسیو اکشن‌ها */
+@media (max-width: 768px) {
+  .meeting-create-page .meeting-actions-bar {
+    flex-direction: column;
+  }
+
+  .meeting-create-page .actions-helper {
+    width: 100%;
+  }
+}
+
+/* ستون اعضا از ابتدا هم‌ارتفاع و مرتب باشد */
+.meeting-layout {
+  align-items: stretch;
+}
+
+.meeting-panel-side {
+  display: flex;
+  flex-direction: column;
+}
+
+.meeting-panel-side .meeting-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 420px;
+  /* در صورت نیاز قابل تغییر است */
+}
+
+.meeting-panel-side .section-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* کمک می‌کند خود کامپوننت participants هم کش بیاید */
+.meeting-panel-side app-meeting-participants.flex-fill {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* مکان + محل برگزاری در یک سطر کنار هم */
+.form-group-location .location-row {
+  display: grid;
+  grid-template-columns: 1.1fr 1.6fr;
+  /* ستون نوع محل + ستون جزئیات محل */
+  gap: 10px;
+}
+
+.form-group-location .location-col {
+  min-width: 0;
+}
+
+/* در موبایل زیر هم */
+@media (max-width: 768px) {
+  .form-group-location .location-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* برای هدر صفحه: عنوان و تگ کنار هم */
+.meeting-header-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.meeting-header .page-title {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+/* ردیف دسته بندی + شماره + عنوان جلسه */
+.meeting-main-row {
+  display: grid;
+  gap: 10px;
+}
+
+/* اگر هیئت مدیره باشد: سه ستون برابر */
+.meeting-main-row--board {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+/* اگر جلسه عادی باشد: دسته‌بندی کوچک‌تر، عنوان عریض‌تر */
+.meeting-main-row--normal {
+  grid-template-columns: 1fr 2fr;
+}
+
+/* ستون‌ها برای اطمینان از کشیدن کامل کنترل‌ها */
+.mm-col {
+  min-width: 0;
+}
+
+.mm-col-title {
+  /* اگر بعدا خواستی، می‌تونی استایل خاص برای عنوان بدهی */
+}
+
+/* --- BUTTON RESET --- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 20px;
+  font-size: 0.92rem;
+  font-weight: 500;
+  border-radius: 8px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+/* --- PRIMARY (دکمه ثبت) --- */
+.btn-primary,
+.btn.btn-rounded-sm:not(.btn-secondary):not(.btn-ghost) {
+  background: #1973e8;
+  color: #fff;
+  border-color: #1973e8;
+}
+
+.btn-primary:hover,
+.btn.btn-rounded-sm:not(.btn-secondary):not(.btn-ghost):hover {
+  background: #0f5fcc;
+  border-color: #0f5fcc;
+}
+
+/* --- SECONDARY (برای ویرایش و ارسال) --- */
+.btn-secondary {
+  background: #4a4a4a;
+  color: white;
+  border-color: #4a4a4a;
+}
+
+.btn-secondary:hover {
+  background: #333;
+  border-color: #333;
+}
+
+/* --- GHOST (برای انصراف / پیش‌نویس) --- */
+.btn-ghost {
+  background: transparent;
+  border: 1px solid #d0d0d0;
+  color: #555;
+}
+
+.btn-ghost:hover {
+  background: #f5f5f5;
+  border-color: #c0c0c0;
+}
+
+/* --- helper chips --- */
+.helper-chip {
+  display: inline-block;
+  background: #e8e8e8;
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+}
+
+.helper-chip-primary {
+  background: #d9e6ff;
+  color: #1973e8;
+}

@@ -1,0 +1,28 @@
+<div id="wrapper">
+  <nav role="navigation">
+    <div id="menuToggle">
+      <div id="menu" class="tab-div-{{ tabId }}">
+          <div class="content">
+            <div class="container-fluid container-tab">
+              <ng-content></ng-content>
+            </div>
+          </div>
+        </div>
+      </div>
+  </nav>
+</div>
+
+
+<!-- usage -->
+
+<!-- <app-tab
+    #opsTab2
+    [tabConfig]="tabConfig"
+    [dummyData]="12"
+    (submited)="submit($event)"
+    (onTabHide)="tabClosed(12)"
+    class="tab app-tab2"
+  >
+    <h1>data</h1>
+
+  </app-tab> -->

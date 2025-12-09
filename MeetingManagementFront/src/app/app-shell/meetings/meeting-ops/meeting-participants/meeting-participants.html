@@ -1,0 +1,335 @@
+<div class="card flex-fill h-100 main-card">
+    <div class="card-header">
+        <div style="display: inline-block;">
+            <h5 class="mb-0 card-title">اعضای جلسه</h5>
+            <small class="text-white">
+                تعداد کل: {{ activeMembers().length }} نفر
+            </small>
+        </div>
+        <button class="btn btn-success btn-sm float-end add-guest-btn" (click)="showGuestModal()">افزودن مهمان</button>
+    </div>
+    <div class="card-body">
+        <!-- Search Container with proper positioning -->
+        <div class="search-container">
+            <!-- فیلد جستجو -->
+            <div class="search-input-wrapper1">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" class="form-control search-input" placeholder="جستجو کنید..."
+                    (input)="onSearch($event)" (keydown)="onSearchKeydown($event)" (focus)="showDropdown()"
+                    (blur)="hideDropdown()" #searchBox>
+            </div>
+
+            <!-- دراپ‌داون اعضا با position بهبود یافته -->
+            @if (shouldShowDropdown()) {
+            @if (availableMembers()) {
+            <div class="members-dropdown-container">
+                <div class="members-dropdown show">
+                    @for (member of availableMembers();let i =$index; track $index) {
+                    <button class="member-dropdown-item" (mousedown)="selectMember(member)">
+                        <img [src]="member.image" [alt]="member.name" class="member-photo"
+                            style="width: 50px; height: 50px;">
+                        <div class="member-info">
+                            <span class="member-name">{{member.name}}</span>
+                            <small class="member-position">{{member.position}}</small>
+                        </div>
+                    </button>
+                    }
+                    @empty {
+                    <div class="members-dropdown-container">
+                        <div class="members-dropdown show">
+                            <div class="no-results">
+                                <i class="fas fa-search text-muted"></i>
+                                <span>هیچ عضوی یافت نشد</span>
+                            </div>
+                        </div>
+                    </div>
+                    }
+                </div>
+            </div>
+            } @else {
+            <div class="members-dropdown-container">
+                <div class="members-dropdown show">
+                    <div class="no-results">
+                        <i class="fas fa-search text-muted"></i>
+                        <span>هیچ عضوی یافت نشد</span>
+                    </div>
+                </div>
+            </div>
+            }
+            }
+        </div>
+
+        <!-- لیست اعضای انتخاب شده -->
+        <div class="selected-members-container">
+            @for (member of activeMembers();let i=$index; track $index) {
+            <div class="selected-member" [ngStyle]="{'border':'1px solid '+getRoleColor(member.roleId), 'background-color': '#f9f9f9'}">
+                <!-- برچسب روبانی مهمان -->
+                @if (member.roleId===6) {
+                <div class="guest-ribbon">
+                    مهمان
+                </div>
+                }
+                <div class="d-flex align-items-center w-100 p-2">
+
+                    <img [src]="member.image" alt="member image" class="rounded-circle me-2" width="40" height="40">
+
+                    <div class="flex-grow-1">
+                        <span class="fw-bold">{{ member.name }}</span>
+                        <small class="text-muted d-block">{{member.position}}</small>
+                        @if (member.substitute) {
+                        <small class="text-muted d-block">جانشین({{ member.substitute }})</small>
+                        }
+                        @if (hasConflict(member,'Meeting')) {
+                        <small class="text-danger d-block">
+                            <i class="fas fa-exclamation-triangle me-1"></i>
+                            دعوت شده به جلسه همزمان
+                        </small>
+                        }
+
+                        @if (hasConflict(member,'Leave')) {
+                        <small class="text-danger d-block">
+                            <i class="fas fa-calendar-times me-1"></i>
+                            عدم حضور به دلیل مرخصی
+                        </small>
+                        }
+                    </div>
+                    @if (member.roleId !== 6) {
+                    <select class="form-select form-select-sm mb-2" [(ngModel)]="member.roleId" style="width: 140px;"
+                        (change)="changeRole(member, $event)" [disabled]="!!member.substitute">
+                        @for (item of roles(); track item.id) {
+                        @if (item.id !== 6) {
+                        <option [ngStyle]="{'color':getRoleColor(item.id ?? 0)}" [value]="item.id">
+                            {{ item.title }}
+                        </option>
+                        }
+                        }
+                    </select>
+                    }
+                    @else {
+                    <button class="btn btn-primary btn-sm ms-2" (click)="editMember(member)">ویرایش</button>
+                    }
+
+
+                    <button class="btn btn-danger btn-sm ms-2" (click)="removeMember(member.guid)">حذف</button>
+                </div>
+            
+            </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Modal برای مهمان -->
+<div class="modal fade" id="guestModal" tabindex="-1" aria-labelledby="guestModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="guestModalLabel">
+                    {{ guestForm.get('guid')?.value && guestForm.get('guid')?.value !== '' ? 'ویرایش مهمان' : 'افزودن مهمان' }}
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="guestForm" class="row g-3">
+                    <!-- انتخاب نوع مهمان -->
+                    <div class="col-12">
+                        <label class="form-label">نوع مهمان <span class="text-danger">*</span></label>
+                        <div class="d-flex gap-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="guestType" id="externalGuest"
+                                    formControlName="guestType" value="external"
+                                    (change)="onGuestTypeChange('external')">
+                                <label class="form-check-label" for="externalGuest">
+                                    مهمان خارج از سازمان
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="guestType" id="internalGuest"
+                                    formControlName="guestType" value="internal"
+                                    (change)="onGuestTypeChange('internal')">
+                                <label class="form-check-label" for="internalGuest">
+                                    عضو سازمان
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- انتخاب عضو داخلی -->
+                    @if (guestForm.get('guestType')?.value === 'internal') {
+                    <div class="col-12">
+                        <label for="internalMember" class="form-label">انتخاب عضو <span
+                                class="text-danger">*</span></label>
+                        <div class="search-container modal-search">
+                            <input type="text" class="form-control search-input" id="internalMember"
+                                formControlName="memberSearch" placeholder="جستجو و انتخاب عضو..."
+                                (input)="onInternalMemberSearch($event)" (focus)="showInternalMemberDropdown()"
+                                (blur)="hideInternalMemberDropdown()"
+                                [class.is-invalid]="isFormFieldInvalid('selectedMember')">
+
+                            <!-- دراپ‌داون اعضای داخلی -->
+                            @if (shouldShowInternalMemberDropdown()) {
+                            <div class="members-dropdown-container modal-dropdown">
+                                <div class="members-dropdown show">
+                                    @for(member of filteredAllUserInternalMembers(); track member.guid) {
+                                    <button type="button" class="member-dropdown-item"
+                                        (mousedown)="selectInternalMember(member)">
+                                        <img [src]="member.image" [alt]="member.name"
+                                            class="member-photo" style="width: 50px; height: 50px;">
+                                        <div class="member-info">
+                                            <span class="member-name">{{member.name}}</span>
+                                            <small class="member-position">{{member.position}}</small>
+                                        </div>
+                                    </button>
+                                    } @empty {
+                                    <div class="no-results">
+                                        <i class="fas fa-search text-muted"></i>
+                                        <span>هیچ عضوی یافت نشد</span>
+                                    </div>
+                                    }
+                                </div>
+                            </div>
+                            }
+                        </div>
+                        @if (isFormFieldInvalid('selectedMember')) {
+                        <div class="invalid-feedback d-block">
+                            {{ getFieldErrorMessage('selectedMember') }}
+                        </div>
+                        }
+                    </div>
+                    }
+
+                    <!-- باقی فیلدهای فرم... -->
+                    @if (guestForm.get('guestType')?.value === 'external') {
+                    <!-- نام و نام خانوادگی -->
+                    <div class="col-md-6">
+                        <label for="guestName" class="form-label">نام و نام خانوادگی <span
+                                class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="guestName" formControlName="name"
+                            [class.is-invalid]="isFormFieldInvalid('name')" placeholder="نام کامل مهمان را وارد کنید">
+                        @if (isFormFieldInvalid('name')) {
+                        <div class="invalid-feedback">
+                            {{ getFieldErrorMessage('name') }}
+                        </div>
+                        }
+                    </div>
+
+                    <!-- شماره موبایل -->
+                    <div class="col-md-6">
+                        <label for="guestMobile" class="form-label">شماره موبایل <span
+                                class="text-danger">*</span></label>
+                        <input type="tel" class="form-control" id="guestMobile" formControlName="mobile"
+                            [class.is-invalid]="isFormFieldInvalid('mobile')" placeholder="09xxxxxxxxx">
+                        @if (isFormFieldInvalid('mobile')) {
+                        <div class="invalid-feedback">
+                            {{ getFieldErrorMessage('mobile') }}
+                        </div>
+                        }
+                    </div>
+
+                    <!-- ایمیل -->
+                    <div class="col-md-6">
+                        <label for="guestEmail" class="form-label">آدرس ایمیل</label>
+                        <input type="email" class="form-control" id="guestEmail" formControlName="email"
+                            [class.is-invalid]="isFormFieldInvalid('email')" placeholder="example@domain.com">
+                        @if (isFormFieldInvalid('email')) {
+                        <div class="invalid-feedback">
+                            {{ getFieldErrorMessage('email') }}
+                        </div>
+                        }
+                    </div>
+
+                <div class="col-md-6">
+                    <label for="guestOrganization" class="form-label">نام سازمان <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="guestOrganization" formControlName="organization"
+                        [class.is-invalid]="isFormFieldInvalid('organization')" placeholder="نام سازمان یا شرکت">
+                    @if (isFormFieldInvalid('organization')) {
+                    <div class="invalid-feedback">
+                        {{ getFieldErrorMessage('organization') }}
+                    </div>
+                    }
+                </div>
+                
+                <!-- جنسیت - فیلد جدید -->
+                <div class="col-md-6">
+                    <label class="form-label">جنسیت <span class="text-danger">*</span></label>
+                    <div class="d-flex gap-3 align-items-center" style="height: 38px;">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="gender" id="genderMale" formControlName="gender"
+                                value="Male">
+                            <label class="form-check-label" for="genderMale">
+                                <i class="fas fa-male me-1"></i> آقا
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="gender" id="genderFemale" formControlName="gender"
+                                value="Female">
+                            <label class="form-check-label" for="genderFemale">
+                                <i class="fas fa-female me-1"></i> خانم
+                            </label>
+                        </div>
+                    </div>
+                    @if (isFormFieldInvalid('gender')) {
+                    <div class="text-danger small mt-1">
+                        {{ getFieldErrorMessage('gender') }}
+                    </div>
+                    }
+                </div>
+
+
+                    <!-- تصویر شخصی -->
+                    <div class="col-md-6">
+                        <label for="profileImage" class="form-label">تصویر شخصی</label>
+                        <input type="file" class="form-control" id="profile" accept="image/*"
+                            (change)="onFileSelected($event, 'profile')">
+                        <div class="form-text">فرمت‌های مجاز: JPG, PNG, GIF (حداکثر 2MB)</div>
+
+                        <!-- پیش‌نمایش تصویر -->
+                        @if (previewImage()) {
+                        <img [src]="previewImage()" alt="پیش‌نمایش" class="preview-image mt-2"
+                            style="width: 60px; height: 60px; object-fit: cover; border-radius: 50%;">
+                        }
+                    </div>
+
+                    <!-- تصویر امضا -->
+                    <div class="col-md-6">
+                        <label for="signatureImage" class="form-label">تصویر امضا</label>
+                        <input type="file" class="form-control" id="signature" accept="image/*"
+                            (change)="onFileSelected($event, 'signature')">
+                        <div class="form-text">فرمت‌های مجاز: JPG, PNG, GIF (حداکثر 2MB)</div>
+                    </div>
+                    }
+
+                    <!-- نمایش اطلاعات عضو انتخاب شده -->
+                    @if (guestForm.get('guestType')?.value === 'internal' && selectedInternalMember()) {
+                    <div class="col-12">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h6 class="card-title">عضو انتخاب شده:</h6>
+                                <div class="d-flex align-items-center">
+                                    <img [src]="selectedInternalMember()?.image"
+                                        [alt]="selectedInternalMember()!.name" class="rounded-circle me-3"
+                                        style="width: 50px; height: 50px;">
+                                    <div>
+                                        <h6 class="mb-1">{{selectedInternalMember()!.name}}</h6>
+                                        <small class="text-muted">{{selectedInternalMember()!.position}}</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    }
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" (click)="addGuest()">
+                    <i class="fas fa-save me-1"></i>
+                    {{ guestForm.get('guid')?.value && guestForm.get('guid')?.value !== '' ? 'بروزرسانی' : 'ذخیره' }}
+                </button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1"></i>
+                    بستن
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

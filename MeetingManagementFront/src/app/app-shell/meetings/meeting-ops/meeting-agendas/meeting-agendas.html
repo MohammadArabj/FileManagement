@@ -1,0 +1,65 @@
+<div class="card h-100 flex-fill">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">دستور جلسه</h5>
+        @if (agendaControls().length > 0) {
+        <button class="btn btn-success btn-sm" (click)="addAgendaItem()">افزودن دستور</button>
+        }
+    </div>
+    <div class="card-body" style="max-height: 322px;overflow-y: auto;">
+        <div class="agenda-instructions" id="agendaContainer" aria-live="polite" aria-atomic="false"
+            aria-relevant="additions removals">
+            <!-- نمایش پیغام در صورت خالی بودن لیست دستور جلسات -->
+            @if (agendaControls().length === 0) {
+            <div class="text-center p-4">
+                <p class="text-muted mb-3">دستور جلسه‌ای ثبت نشده است</p>
+                <button class="btn btn-success" (click)="addAgendaItem()">
+                    افزودن دستور جلسه
+                </button>
+            </div>
+            }
+
+            <!-- نمایش دستور جلسات در صورت وجود -->
+        <!-- ... بقیه HTML بدون تغییر ... -->
+        
+        @for (agenda of agendaControls(); track trackById($index, agenda); let i = $index) {
+        <div class="agenda-row" [formGroup]="agenda"
+            style="position: relative; padding: 1rem; border: 1px solid #ccc; border-radius: 8px; margin-bottom: 1rem;">
+        
+            <!-- دکمه حذف زیباتر -->
+            <button type="button" (click)="removeAgendaItem(i)" aria-label="حذف دستور جلسه" style="
+                        position: absolute;
+                        top: 8px;
+                        left: 8px;
+                        background: #f23345;
+                        border: none;
+                        border-radius: 50%;
+                        width: 24px;
+                        height: 24px;
+                        font-size: 14px;
+                        line-height: 24px;
+                        text-align: center;
+                        cursor: pointer;
+                        color: #fff;
+                        transition: background 0.3s ease;">
+                &times;
+            </button>
+        
+            <input type="hidden" formControlName="id">
+        
+            <custom-input label="متن دستور جلسه" formControlName="text" identity="text" size="col-12" [required]="true"
+                styleType="simple" type="textarea"></custom-input>
+            <app-file-uploader (fileUploadRequest)="onFileChange($event, i)"
+                [fileGuids]="agenda.get('fileGuid')?.value ? [agenda.get('fileGuid')?.value] : []" [replaceExisting]="true"
+                [type]="'default'" (filesRemoved)="deleteFile(i)" modalId="uploaderModal{{i}}"
+                previewModalId="previewModal{{i}}">
+            </app-file-uploader>
+            <button class="corner-counter-btn" (click)="openUploaderModal(i)">
+                <span class="counter-badge">{{ (agenda.get('fileGuid')?.value||agenda.get('file')?.value)? 1 : 0 }}</span>
+                <i class="fa fa-cloud-upload-alt"></i>
+                <span>بارگذاری فایل</span>
+            </button>
+        </div>
+        }
+        </div>
+    </div>
+</div>

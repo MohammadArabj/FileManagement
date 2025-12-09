@@ -1,0 +1,98 @@
+/* Agenda */
+.agenda-instructions {
+    margin-top: 10px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 26px;
+    user-select: none;
+}
+
+
+
+/* File upload controls */
+
+
+/* Add agenda button */
+button.add-agenda {
+    margin-top: 18px;
+    background-color: #4ac18e;
+    color: white;
+    border: none;
+    border-radius: 28px;
+    padding: 18px 0;
+    font-weight: 900;
+    font-size: 1.4rem;
+    transition: background-color 0.3s;
+    cursor: pointer;
+    user-select: none;
+    box-shadow: 0 8px 30px rgba(74, 193, 142, 0.8);
+    width: 100%;
+}
+
+button.add-agenda:hover {
+    background-color: #2b9a6b;
+}
+
+/* Remove agenda button */
+button.remove-agenda {
+    background-color: #e64a4a;
+    border: none;
+    color: white;
+    border-radius: 24px;
+    padding: 12px 32px;
+    transition: background-color 0.3s;
+    user-select: none;
+    align-self: flex-start;
+    box-shadow: 0 6px 20px rgba(230, 74, 74, 0.75);
+    cursor: pointer;
+}
+
+button.remove-agenda:hover {
+    background-color: #a63333;
+}
+
+
+.corner-counter-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px 10px 30px;
+    border: 1px solid #4a6bff;
+    border-radius: 6px;
+    background-color: white;
+    color: #4a6bff;
+    font-weight: 500;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    width: fit-content;
+}
+
+.corner-counter-btn:hover {
+    background-color: #f8f9ff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.counter-badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background-color: #ff4757;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: bold;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.corner-counter-btn i {
+    font-size: 15px;
+}

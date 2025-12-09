@@ -1,0 +1,25 @@
+<div class="card">
+    <div class="card-header">
+        <div class="button-list">
+            <app-label-button identifier="submitBtn" label="افزودن" variant="success" (clicked)="navigateToCreate()">
+            </app-label-button>
+            <app-label-button identifier="refreshBtn" label="بازخوانی" variant="primary" (clicked)="getList()">
+                @if (loading()) {
+                <span class="spinner-border spinner-border-sm me-1"></span>
+                }
+            </app-label-button>
+        </div>
+    </div>
+    <div class="card-body">
+        <ag-grid-angular #agGrid id="delegationGrid" [components]="components" class="ag-theme-material font-sahel"
+            style="height: 600px; width: 100%;" [rowData]="delegations()" [gridOptions]="gridOptions()"
+            [modules]="modules()" (gridReady)="onGridReady($event)">
+        </ag-grid-angular>
+
+        @if (delegations().length === 0 && !loading()) {
+        <div class="alert alert-info text-center mt-3">
+            هیچ موردی یافت نشد
+        </div>
+        }
+    </div>
+</div>

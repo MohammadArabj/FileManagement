@@ -1,0 +1,115 @@
+@if (isPermitted()) {
+<div class="row">
+  <div class="col-md-12">
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0 d-flex align-items-center">
+          <i class="fa fa-calendar-alt me-2 text-white"></i>
+          لیست جلسات
+          @if (loading()) {
+          <div class="spinner-border spinner-border-sm ms-2" role="status">
+            <span class="visually-hidden">در حال بارگذاری...</span>
+          </div>
+          }
+        </h5>
+
+        <div class="header-actions">
+          <!-- Filter Pills -->
+          <!-- <div class="btn-group me-3" role="group">
+              @for (filter of filterOptions; track filter.value) {
+                <input
+                  type="radio"
+                  class="btn-check"
+                  [id]="'filter-' + filter.value"
+                  [value]="filter.value"
+                  [checked]="filterType() === filter.value"
+                  (change)="onFilterChange(filter.value)">
+                <label
+                  class="btn btn-outline-primary btn-sm"
+                  [for]="'filter-' + filter.value">
+                  {{ filter.label }}
+                  @if (filter.count) {
+                    <span class="badge bg-primary ms-1">{{ filter.count }}</span>
+                  }
+                </label>
+              }
+            </div> -->
+
+          <app-label-button identifier="addMeetingBtn" label="ثبت جلسه" variant="success" (clicked)="addNewMeeting()"
+            permission="MT_Meetings_Add">
+            <i class="fa fa-plus me-1"></i>
+          </app-label-button>
+        </div>
+      </div>
+
+      <div class="card-body">
+        @if (loading()) {
+        <div class="text-center py-5">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">در حال بارگذاری...</span>
+          </div>
+          <p class="mt-3 text-muted">در حال بارگذاری جلسات...</p>
+        </div>
+        } @else if (!hasRecords()) {
+        <div class="text-center py-5">
+          <i class="fa fa-calendar-times fa-3x text-muted mb-3"></i>
+          <h5 class="text-muted">هیچ جلسه‌ای یافت نشد</h5>
+          <p class="text-muted">با فیلتر انتخاب شده جلسه‌ای وجود ندارد.</p>
+          <!-- <app-label-button identifier="addFirstMeetingBtn" label="ثبت اولین جلسه" variant="primary"
+            (clicked)="addNewMeeting()" permission="MT_Meetings_Add">
+          </app-label-button> -->
+        </div>
+        } @else {
+        <!-- AG Grid with enhanced styling -->
+        <div class="grid-container">
+          <ag-grid-angular #agGrid id="meetingsGrid" [components]="components"
+            class="ag-theme-material ag-grid-custom font-sahel" style="height: 640px; width: 100%;"
+            [rowData]="records()" [gridOptions]="gridOptions()" [modules]="modules()" (gridReady)="onGridReady($event)"
+            (firstDataRendered)="onFirstDataRendered($event)" [loadingOverlayComponent]="'customLoadingOverlay'"
+            [noRowsOverlayComponent]="'customNoRowsOverlay'">
+          </ag-grid-angular>
+        </div>
+
+        <!-- Grid Actions -->
+        <div class="grid-actions mt-3 d-flex justify-content-between align-items-center">
+          <!-- <div class="grid-info">
+                <small class="text-muted">
+                  نمایش {{ records().length }} جلسه
+                  @if (filterType() !== 'All') {
+                    با فیلتر: {{ getFilterLabel(filterType()) }}
+                  }
+                </small>
+              </div> -->
+
+          <div class="grid-controls btn-group btn-group-sm">
+
+            <button type="button" class="btn btn-outline-secondary" (click)="onExportExcel()" title="خروجی Excel">
+              <i class="fa fa-file-excel"></i>
+            </button>
+            <button type="button" class="btn btn-outline-secondary" (click)="removeAllFilters()" title="حذف فیلترها">
+              <i class="fa fa-filter"></i>
+            </button>
+          </div>
+        </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>
+} @else {
+<!-- No Permission State -->
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <div class="card text-center">
+      <div class="card-body py-5">
+        <i class="fa fa-lock fa-3x text-warning mb-3"></i>
+        <h5 class="text-muted">عدم دسترسی</h5>
+        <p class="text-muted">شما مجوز مشاهده این صفحه را ندارید.</p>
+        <app-label-button identifier="backBtn" label="بازگشت به داشبورد" variant="primary"
+          (clicked)="router.navigate(['/dashboard'])">
+        </app-label-button>
+      </div>
+    </div>
+  </div>
+</div>
+}

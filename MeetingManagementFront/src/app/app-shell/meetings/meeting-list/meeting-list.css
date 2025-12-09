@@ -1,0 +1,29 @@
+:host ::ng-deep .board-meeting-row {
+    background: rgb(243 225 95 / 15%) !important;
+    /* بنفش ملایم */
+    border-right: 4px solid #e1a852;
+}
+
+:host ::ng-deep .board-meeting-row.ag-row-hover {
+    background: rgba(139, 92, 246, 0.10) !important;
+}
+
+.ag-chart,
+.ag-dnd-ghost,
+.ag-popup,
+.ag-root-wrapper {
+    cursor: default;
+    line-height: normal;
+    white-space: normal;
+    -webkit-font-smoothing: antialiased;
+    font-family: 'Sahel' !important;
+    font-size: 'Sahel' !important;
+}
+
+.ag-center-cols-container {
+    max-width: 100% !important;
+}
+
+.ag-header {
+    font-family: 'Sahel' !important;
+}

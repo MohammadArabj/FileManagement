@@ -1,0 +1,159 @@
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+  <!-- تب‌ها -->
+  <ul class="nav nav-pills flex-nowrap overflow-auto rounded px-3 py-2" role="tablist">
+    @if(hasAccessToTab('meetingDetails')) {
+    <li class="nav-item" role="presentation">
+      <button type="button" class="nav-link active" role="tab" data-bs-toggle="tab"
+        data-bs-target="#navs-meetingDetails" aria-controls="navs-meetingDetails" aria-selected="true">
+        مشخصات جلسه
+      </button>
+    </li>
+    }
+
+    @if(hasAccessToTab('agendas')) {
+    <li class="nav-item" role="presentation">
+      <button type="button" class="nav-link" role="tab" data-bs-toggle="tab" data-bs-target="#navs-agendas"
+        aria-controls="navs-agendas" aria-selected="false">
+         دستور جلسه
+      </button>
+    </li>
+    }
+
+    @if(hasAccessToTab('attendance')) {
+    <li class="nav-item" role="presentation">
+      <button type="button" class="nav-link" role="tab" data-bs-toggle="tab"
+        data-bs-target="#navs-attendance-announcement" aria-controls="navs-attendance-announcement"
+        aria-selected="false">
+         اعلام حضور
+      </button>
+    </li>
+    }
+
+    @if(hasAccessToTab('content')) {
+    <li class="nav-item" role="presentation">
+      <button type="button" class="nav-link" role="tab" data-bs-toggle="tab" data-bs-target="#navs-meetingContent"
+        aria-controls="navs-meetingContent" aria-selected="false">
+        
+        @if(isBoardMeeting()&&statusId()===2){
+        پیش نویس جلسه
+        }
+        @else if(isBoardMeeting()&&statusId()>=3){
+        مصوبات جلسه
+        }
+        @else {
+        محتوای جلسه
+        }
+      </button>
+    </li>
+    }
+
+    @if(hasAccessToTab('adminAttendance')) {
+    <li class="nav-item" role="presentation">
+      <button type="button" class="nav-link" role="tab" data-bs-toggle="tab" data-bs-target="#navs-Members"
+        aria-controls="navs-Members" aria-selected="false">
+        حضور وغیاب
+      </button>
+    </li>
+    }
+
+    @if(hasAccessToTab('minutes')) {
+    <li class="nav-item" role="presentation">
+      <button type="button" class="nav-link" role="tab" data-bs-toggle="tab" data-bs-target="#navs-Minutes"
+        aria-controls="navs-Minutes" aria-selected="false">
+        صورتجلسه و امضا
+      </button>
+    </li>
+    }
+  </ul>
+
+  <!-- بردکرامب + دکمه بازگشت -->
+  <div class="d-flex align-items-center gap-2">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb bg-light rounded px-3 py-2 shadow-sm mb-0">
+        @if(statusId() === 1) {
+        <li class="breadcrumb-item active d-flex align-items-center gap-1" aria-current="page">
+          <i class="fa fa-pencil-square text-primary"></i>
+          <span class="text-primary fw-semibold">پیش نویس</span>
+        </li>
+        } @else {
+        @if(isBoardMeeting()){
+        @for(step of boardMeetingsteps; track $index) {
+        <li class="breadcrumb-item d-flex align-items-center gap-1" [class.active]="statusId() === step.id"
+          [attr.aria-current]="statusId() === step.id ? 'page' : null">
+          <i [class]="step.icon + (statusId() === step.id ? ' text-primary' : ' text-muted')"></i>
+          <span [class.text-primary]="statusId() === step.id" [class.fw-semibold]="statusId() === step.id">{{ step.label
+            }}</span>
+        </li>
+        }
+        }
+        @else {
+        @for(step of steps; track $index) {
+        <li class="breadcrumb-item d-flex align-items-center gap-1" [class.active]="statusId() === step.id"
+          [attr.aria-current]="statusId() === step.id ? 'page' : null">
+          <i [class]="step.icon + (statusId() === step.id ? ' text-primary' : ' text-muted')"></i>
+          <span [class.text-primary]="statusId() === step.id" [class.fw-semibold]="statusId() === step.id">{{
+            step.label}}</span>
+        </li>
+        }
+        }
+
+        }
+      </ol>
+    </nav>
+    @if(showButton()) {
+    <button class="btn btn-info" title="{{buttonText()}}" (click)="changeStatus(buttonStatus())">
+      {{buttonText()}}
+    </button>
+    }
+    <a class="btn btn-warning" (click)="goBack()">
+      بازگشت
+    </a>
+  </div>
+</div>
+
+<div class="tab-content">
+  @if(showMainTab()&&_loaded()){
+  <div class="tab-pane fade active show" id="navs-meetingDetails" role="tabpanel">
+    @switch (visibleMainTab()) {
+    @case('ops'){
+    <app-meeting-ops [createType]="createType"></app-meeting-ops>
+
+    }
+    @case('details'){
+    <app-meeting-details-tab [meetingGuid]="meetingGuid()"></app-meeting-details-tab>
+
+    }
+    }
+  </div>
+  }
+
+  @if(getTabVisibility('attendance')&&_loaded()) {
+  <div class="tab-pane fade" id="navs-attendance-announcement" role="tabpanel">
+    <app-meeting-attendance-announcement-tab></app-meeting-attendance-announcement-tab>
+  </div>
+  }
+
+  @if(getTabVisibility('agenda')&&_loaded()) {
+  <div class="tab-pane fade" id="navs-agendas" role="tabpanel">
+    <app-meeting-agenda-tab></app-meeting-agenda-tab>
+  </div>
+  }
+
+  @if(getTabVisibility('content')&&_loaded()) {
+  <div class="tab-pane fade" id="navs-meetingContent" role="tabpanel">
+    <app-meeting-content-tab></app-meeting-content-tab>
+  </div>
+  }
+
+  @if(getTabVisibility('adminAttendance')&&_loaded()) {
+  <div class="tab-pane fade" id="navs-Members" role="tabpanel">
+    <app-meeting-members-tab [meetingGuid]="meetingGuid()"></app-meeting-members-tab>
+  </div>
+  }
+
+  @if(getTabVisibility('minutes')&&_loaded()) {
+  <div class="tab-pane fade" id="navs-Minutes" role="tabpanel">
+    <app-meeting-minutes-tab [meetingGuid]="meetingGuid()"></app-meeting-minutes-tab>
+  </div>
+  }
+</div>

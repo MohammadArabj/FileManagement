@@ -1,0 +1,18 @@
+<div class="page-header-breadcrumb">
+  <ul class="breadcrumb-title breadcrumb-style1">
+    <li class="breadcrumb-item">
+      <a routerLink="/dashboard"> <i class="bx bxs-dashboard"></i> </a>
+    </li>
+    @for(item of breadcrumb();track $index; let last=$last){
+    <li class="breadcrumb-item" [ngClass]="{'active': last}">
+      @if(!last){
+      <a [routerLink]="item.routerLink">{{ item.label }}</a>
+      }
+      @else{
+      <span>{{ item.label }}</span>
+      }
+    </li>
+    }
+
+  </ul>
+</div>

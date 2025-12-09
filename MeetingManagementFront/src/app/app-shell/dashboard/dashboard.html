@@ -1,0 +1,335 @@
+<div class="dashboard-container">
+  <!-- Period Selector -->
+  <div class="card chart-statistics">
+    <div class="d-flex justify-content-center mb-4">
+      <div class="period-selector">
+        <button (click)="changePeriod('Weekly')" class="period-btn" [class.active]="selectedPeriod() === 'Weekly'">
+          هفتگی
+        </button>
+        <button (click)="changePeriod('Monthly')" class="period-btn" [class.active]="selectedPeriod() === 'Monthly'">
+          ماهانه
+        </button>
+        <button (click)="changePeriod('Yearly')" class="period-btn" [class.active]="selectedPeriod() === 'Yearly'">
+          سالانه
+        </button>
+      </div>
+    </div>
+
+    <!-- Chart اصلی -->
+    <apx-chart [series]="chartSeries" [chart]="chartLineOptions.chart||{type:'line'}" [xaxis]="xaxis" [yaxis]="yaxis"
+      [dataLabels]="dataLabels" [title]="title" [tooltip]="tooltip">
+    </apx-chart>
+  </div>
+
+  <!-- Main Dashboard Grid - 4 کارت -->
+  <div class="dashboard-grid">
+
+    <!-- 1. آمار جلسات -->
+    <div class="stats-card">
+      <h5>
+        جلسات من
+      </h5>
+
+      @if(chartOptions()?.series){
+      <div class="chart-container">
+        <apx-chart appChartAutoResize [series]="chartOptions()?.series||[]"
+          [chart]="chartOptions()?.chart||{type:'donut'}" [labels]="chartOptions()?.labels||[]"
+          [responsive]="chartOptions()?.responsive||[]" [legend]="chartOptions()?.legend||{show:true}"
+          [tooltip]="chartOptions()?.tooltip||{enabled:true}" [dataLabels]="chartOptions()?.dataLabels||{enabled:true}"
+          [plotOptions]="chartOptions()?.plotOptions||{}" [colors]="chartOptions()?.colors||[]">
+        </apx-chart>
+      </div>
+      }
+
+      <ul class="stats-list">
+        <li class="stats-item" [routerLink]="['/meetings/list']" [queryParams]="{ filter: 'Signature' }">
+          <div class="stats-icon" style="background: #0dcaf0;">
+          </div>
+          <div class="stats-info">
+            <span class="stats-label">جهت امضا</span>
+            <span class="stats-count">{{ signatureMeetingsCount() }}</span>
+          </div>
+        </li>
+        <li class="stats-item" [routerLink]="['/meetings/list']" [queryParams]="{ filter: 'Attendance' }">
+          <div class="stats-icon" style="background: #ffc107;">
+          </div>
+          <div class="stats-info">
+            <span class="stats-label">جهت اعلام حضور</span>
+            <span class="stats-count">{{ attendanceMeetingsCount() }}</span>
+          </div>
+        </li>
+        <li class="stats-item" [routerLink]="['/meetings/list']" [queryParams]="{ filter: 'Draft' }">
+          <div class="stats-icon" style="background: #6610f2;">
+          </div>
+          <div class="stats-info">
+            <span class="stats-label">پیش نویس</span>
+            <span class="stats-count">{{ draftMeetingsCount() }}</span>
+          </div>
+        </li>
+        <li class="stats-item" [routerLink]="['/meetings/list']" [queryParams]="{ filter: 'Upcoming' }">
+          <div class="stats-icon" style="background: #6c757d;">
+          </div>
+          <div class="stats-info">
+            <span class="stats-label">جلسات آینده</span>
+            <span class="stats-count">{{ upcomingMeetingsCount() }}</span>
+          </div>
+        </li>
+        <li class="stats-item" [routerLink]="['/meetings/list']" [queryParams]="{ filter: 'Canceled' }">
+          <div class="stats-icon" style="background: #dc3545;">
+          </div>
+          <div class="stats-info">
+            <span class="stats-label">جلسات لغو شده</span>
+            <span class="stats-count">{{ canceledMeetingsCount() }}</span>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <!-- 2. اقدامات اصلی -->
+    <div class="stats-card">
+      <h5>
+        اقدامات من
+      </h5>
+
+      @if(actionChartOptions()?.series){
+      <div class="chart-container">
+        <apx-chart appChartAutoResize [series]="actionChartOptions()?.series??[]"
+          [chart]="actionChartOptions()?.chart||{type:'donut'}" [labels]="actionChartOptions()?.labels||[]"
+          [responsive]="actionChartOptions()?.responsive||[]" [legend]="actionChartOptions()?.legend||{show:true}"
+          [tooltip]="actionChartOptions()?.tooltip||{enabled:true}"
+          [dataLabels]="actionChartOptions()?.dataLabels||{enabled:true}"
+          [plotOptions]="actionChartOptions()?.plotOptions||{}" [colors]="actionChartOptions()?.colors||[]">
+        </apx-chart>
+      </div>
+      }
+
+      <ul class="stats-list">
+        <li class="stats-item" (click)="navigateToPendingActions()">
+          <div class="stats-icon" style="background: #0dcaf0;">
+          </div>
+          <div class="stats-info">
+            <span class="stats-label">در انتظار اقدام</span>
+            <span class="stats-count">{{ counts().action.pending }}</span>
+          </div>
+        </li>
+        <li class="stats-item" (click)="navigateToInProgressActions()">
+          <div class="stats-icon" style="background: #198754;">
+          </div>
+          <div class="stats-info">
+            <span class="stats-label">در حال انجام</span>
+            <span class="stats-count">{{ counts().action.inProgress }}</span>
+          </div>
+        </li>
+
+        <li class="stats-item" (click)="navigateToNotDoneActions()">
+          <div class="stats-icon" style="background: #ffc107;">
+          </div>
+          <div class="stats-info">
+            <span class="stats-label">پایان یافته</span>
+            <span class="stats-count">{{ counts().action.end }}</span>
+          </div>
+        </li>
+        <li class="stats-item" (click)="navigateToReceivedReferrals()">
+          <div class="stats-icon" style="background: #20c997;">
+          </div>
+          <div class="stats-info">
+            <span class="stats-label">دریافت شده از دیگری</span>
+            <span class="stats-count">{{ counts().receivedReferrals.total || 0 }}</span>
+          </div>
+        </li>
+        <li class="stats-item" (click)="navigateToSentReferrals()">
+          <div class="stats-icon" style="background: #fd7e14;">
+          </div>
+          <div class="stats-info">
+            <span class="stats-label">ارسال شده به دیگری</span>
+            <span class="stats-count">{{ counts().sentReferrals.total || 0 }}</span>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <!-- 3. پیگیری‌های من -->
+    <div class="stats-card">
+      <h5>
+        پیگیری‌های من
+      </h5>
+
+      @if(followChartOptions()?.series){
+      <div class="chart-container">
+        <apx-chart appChartAutoResize [series]="followChartOptions()?.series??[]"
+          [chart]="followChartOptions()?.chart||{type:'donut'}" [labels]="followChartOptions()?.labels||[]"
+          [responsive]="followChartOptions()?.responsive||[]" [legend]="followChartOptions()?.legend||{show:true}"
+          [tooltip]="followChartOptions()?.tooltip||{enabled:true}"
+          [dataLabels]="followChartOptions()?.dataLabels||{enabled:true}"
+          [plotOptions]="followChartOptions()?.plotOptions||{}" [colors]="followChartOptions()?.colors||[]">
+        </apx-chart>
+      </div>
+      }
+
+      <ul class="stats-list">
+        <li class="stats-item" (click)="navigateToFollowingUpReferrals()">
+          <div class="stats-icon" style="background: #198754;">
+          </div>
+          <div class="stats-info">
+            <span class="stats-label">در حال پیگیری</span>
+            <span class="stats-count">{{ counts().follow.inProgress }}</span>
+          </div>
+        </li>
+        <li class="stats-item" (click)="navigateToNotFollowedUpReferrals()">
+          <div class="stats-icon" style="background: #0dcaf0;">
+          </div>
+          <div class="stats-info">
+            <span class="stats-label">در انتظار پیگیری / پیگیری نشده</span>
+            <span class="stats-count">{{ counts().follow.pending }}</span>
+          </div>
+        </li>
+        <li class="stats-item" (click)="navigateToFollowUpEnd()">
+          <div class="stats-icon" style="background: #6c757d;">
+          </div>
+          <div class="stats-info">
+            <span class="stats-label">پایان یافته</span>
+            <span class="stats-count">{{ counts().follow.end }}</span>
+          </div>
+        </li>
+        <li class="stats-item" (click)="navigateToFollowerPendingActorActions()">
+          <div class="stats-icon" style="background:#0dcaf0;"></div>
+          <div class="stats-info">
+            <span class="stats-label">اقدامات اقدام‌کنندگان (در انتظار اقدام)</span>
+            <span class="stats-count">{{ counts().followerActorsActions.pending }}</span>
+          </div>
+        </li>
+
+        <li class="stats-item" (click)="navigateToFollowerInProgressActorActions()">
+          <div class="stats-icon" style="background:#198754;"></div>
+          <div class="stats-info">
+            <span class="stats-label">اقدامات اقدام‌کنندگان (در حال انجام)</span>
+            <span class="stats-count">{{ counts().followerActorsActions.inProgress }}</span>
+          </div>
+        </li>
+
+      </ul>
+    </div>
+
+    <!-- 4. Timeline جلسات امروز و فردا - Vertical -->
+    <div class="timeline-card">
+      <h4>
+        جلسات هفته
+      </h4>
+
+      <div class="vertical-timeline">
+        <!-- ستون جلسات امروز -->
+        <div class="timeline-column today">
+          <div class="timeline-column-header">
+            <div class="timeline-column-info">
+              <div class="timeline-column-title">جلسات امروز</div>
+              <div class="timeline-column-count">{{ todayMeetings().length }} جلسه</div>
+            </div>
+          </div>
+
+          @if(todayMeetings().length > 0) {
+          <div class="vertical-track">
+            <div class="meeting-points-vertical">
+              @for (meeting of todayMeetings(); track trackByMeeting($index, meeting)) {
+              <div class="meeting-point-vertical" [style.top.%]="getMeetingVerticalPosition(meeting.time)">
+                <div class="meeting-dot-vertical">
+                  <span class="meeting-time-label">{{ getStartTime(meeting.time) }}</span>
+                </div>
+                <div class="meeting-tooltip-vertical">
+                  <div class="tooltip-header">
+                    <span class="tooltip-title">{{ meeting.title }}</span>
+                    <span class="tooltip-number">{{ meeting.number }}</span>
+                  </div>
+                  <div class="tooltip-body">
+                    <div class="tooltip-item">
+                      <i class="fas fa-clock"></i>
+                      <strong>زمان:</strong>
+                      <span>{{ meeting.time }}</span>
+                    </div>
+                    <div class="tooltip-item">
+                      <i class="fas fa-map-marker-alt"></i>
+                      <strong>محل:</strong>
+                      <span>{{ meeting.room }}</span>
+                    </div>
+                  </div>
+                  <div class="tooltip-footer">
+                    <a class="tooltip-btn" [routerLink]="['/meetings/details', meeting.guid]">
+                      مشاهده جزئیات
+                    </a>
+                  </div>
+                </div>
+              </div>
+              }
+            </div>
+          </div>
+          } @else {
+          <div class="empty-timeline">
+            <i class="fas fa-calendar-check"></i>
+            <p>جلسه‌ای برای امروز تعریف نشده است</p>
+          </div>
+          }
+        </div>
+
+        <!-- ستون جلسات فردا -->
+        <div class="timeline-column tomorrow">
+          <div class="timeline-column-header">
+            <div class="timeline-column-info">
+              <div class="timeline-column-title">جلسات فردا</div>
+              <div class="timeline-column-count">{{ tomorrowMeetings().length }} جلسه</div>
+            </div>
+          </div>
+
+          @if(tomorrowMeetings().length > 0) {
+          <div class="vertical-track">
+            <div class="meeting-points-vertical">
+              @for (meeting of tomorrowMeetings(); track trackByMeeting($index, meeting)) {
+              <div class="meeting-point-vertical" [style.top.%]="getMeetingVerticalPosition(meeting.time)">
+                <div class="meeting-dot-vertical">
+                  <span class="meeting-time-label">{{ getStartTime(meeting.time) }}</span>
+                </div>
+                <div class="meeting-tooltip-vertical">
+                  <div class="tooltip-header">
+                    <span class="tooltip-title">{{ meeting.title }}</span>
+                    <span class="tooltip-number">{{ meeting.number }}</span>
+                  </div>
+                  <div class="tooltip-body">
+                    <div class="tooltip-item">
+                      <i class="fas fa-clock"></i>
+                      <strong>زمان:</strong>
+                      <span>{{ meeting.time }}</span>
+                    </div>
+                    <div class="tooltip-item">
+                      <i class="fas fa-map-marker-alt"></i>
+                      <strong>محل:</strong>
+                      <span>{{ meeting.room }}</span>
+                    </div>
+                  </div>
+                  <div class="tooltip-footer">
+                    <a class="tooltip-btn" [routerLink]="['/meetings/details', meeting.guid]">
+                      مشاهده جزئیات
+                    </a>
+                  </div>
+                </div>
+              </div>
+              }
+            </div>
+          </div>
+          } @else {
+          <div class="empty-timeline">
+            <i class="fas fa-calendar-plus"></i>
+            <p>جلسه‌ای برای فردا تعریف نشده است</p>
+          </div>
+          }
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Loading Spinner -->
+  @if(!isDataLoaded()){
+  <div class="loading-spinner">
+    <div class="spinner"></div>
+    <p>در حال بارگذاری اطلاعات داشبورد...</p>
+  </div>
+  }
+</div>

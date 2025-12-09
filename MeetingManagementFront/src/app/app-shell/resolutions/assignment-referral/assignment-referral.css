@@ -1,0 +1,660 @@
+/* Assignment Referral Component Enhanced Styles */
+.assignment-referral-container {
+    font-family: 'Sahel', sans-serif;
+    direction: rtl;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/* Main Card */
+.main-card {
+    border: none;
+    border-radius: 25px;
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.95);
+}
+
+.main-card .card-header {
+    background: linear-gradient(135deg, #17a2b8 0%, #20c997 100%);
+    border: none;
+    padding: 25px;
+    position: relative;
+    overflow: hidden;
+}
+
+.main-card .card-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    animation: shimmer 3s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+    0% {
+        left: -100%;
+    }
+
+    100% {
+        left: 100%;
+    }
+}
+
+.main-card .card-header h6 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin: 0;
+    position: relative;
+    z-index: 1;
+}
+
+.header-actions {
+    display: flex;
+    gap: 10px;
+    position: relative;
+    z-index: 1;
+}
+
+.action-header-btn {
+    border-radius: 20px;
+    padding: 8px 16px;
+    font-weight: 500;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    overflow: hidden;
+}
+
+.action-header-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    transform: translate(-50%, -50%);
+}
+
+.action-header-btn:hover {
+    transform: scale(1.05);
+}
+
+.action-header-btn:hover::before {
+    width: 100px;
+    height: 100px;
+}
+
+/* Loading Container */
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+    background: linear-gradient(135deg, rgba(248, 249, 250, 0.8) 0%, rgba(255, 255, 255, 0.9) 100%);
+    border-radius: 20px;
+}
+
+.loading-spinner {
+    text-align: center;
+}
+
+.loading-text {
+    margin-top: 20px;
+    color: #6c757d;
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+/* Referral Form Card */
+.referral-form-card {
+    border: none;
+    border-radius: 20px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    overflow: hidden;
+    animation: slideInDown 0.5s ease-out;
+}
+
+@keyframes slideInDown {
+    0% {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.referral-form-card .card-header {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    border: none;
+    padding: 20px 25px;
+}
+
+.referral-form-card .card-body {
+    padding: 30px;
+}
+
+/* Form Styles */
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-label {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #2c3e50;
+}
+
+.custom-ng-select {
+    border-radius: 15px;
+}
+
+.custom-ng-select .ng-select-container {
+    border: 2px solid #e9ecef;
+    border-radius: 15px;
+    min-height: 50px;
+    background: white;
+    transition: all 0.3s ease;
+}
+
+.custom-ng-select .ng-select-container:hover {
+    border-color: #17a2b8;
+    box-shadow: 0 0 0 0.1rem rgba(23, 162, 184, 0.25);
+}
+
+.custom-ng-select.ng-select-focused .ng-select-container {
+    border-color: #17a2b8;
+    box-shadow: 0 0 0 0.25rem rgba(23, 162, 184, 0.25);
+    transform: translateY(-2px);
+}
+
+.custom-input,
+.custom-textarea {
+    border: 2px solid #e9ecef;
+    border-radius: 15px;
+    padding: 15px 20px;
+    font-size: 1rem;
+    font-family: 'Sahel', sans-serif;
+    background: white;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.custom-input:focus,
+.custom-textarea:focus {
+    border-color: #17a2b8;
+    box-shadow: 0 0 0 0.25rem rgba(23, 162, 184, 0.25);
+    transform: translateY(-2px);
+    outline: none;
+}
+
+.custom-textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+.form-actions {
+    margin-top: 30px;
+    text-align: right;
+}
+
+.form-actions .btn {
+    padding: 12px 25px;
+    border-radius: 25px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+/* Tree View Card */
+.tree-view-card {
+    border: none;
+    border-radius: 20px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    overflow: hidden;
+    animation: fadeInUp 0.5s ease-out;
+}
+
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.tree-view-card .card-header {
+    background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+    border: none;
+    padding: 20px 25px;
+}
+
+.assignment-tree {
+    padding: 20px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    border-radius: 15px;
+}
+
+.tree-node {
+    position: relative;
+}
+
+.main-node {
+    background: linear-gradient(135deg, rgba(13, 110, 253, 0.1) 0%, rgba(255, 255, 255, 0.9) 100%);
+    border: 2px solid #0d6efd;
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.node-content {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.node-icon {
+    font-size: 2rem;
+    color: #0d6efd;
+}
+
+.node-info {
+    flex-grow: 1;
+}
+
+.node-name {
+    font-size: 1.1rem;
+    color: #2c3e50;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.node-badge {
+    font-size: 0.8rem;
+    padding: 4px 12px;
+    border-radius: 15px;
+}
+
+.node-status {
+    flex-shrink: 0;
+}
+
+.tree-children {
+    position: relative;
+    margin-top: 20px;
+}
+
+.tree-child {
+    position: relative;
+    margin-bottom: 15px;
+    padding-right: 40px;
+}
+
+.child-connector {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 30px;
+    height: 30px;
+    border-right: 2px solid #28a745;
+    border-bottom: 2px solid #28a745;
+    border-bottom-right-radius: 15px;
+}
+
+.child-content {
+    background: linear-gradient(135deg, rgba(40, 167, 69, 0.1) 0%, rgba(255, 255, 255, 0.9) 100%);
+    border: 2px solid #28a745;
+    border-radius: 12px;
+    padding: 15px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    transition: all 0.3s ease;
+}
+
+.child-content:hover {
+    transform: translateX(-5px);
+    box-shadow: 0 5px 20px rgba(40, 167, 69, 0.2);
+}
+
+.child-icon {
+    color: #28a745;
+    font-size: 1.2rem;
+    margin-top: 2px;
+}
+
+.child-info {
+    flex-grow: 1;
+}
+
+.child-name {
+    font-size: 1rem;
+    color: #2c3e50;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.child-meta {
+    margin-bottom: 8px;
+}
+
+.child-note {
+    background: rgba(40, 167, 69, 0.1);
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    color: #155724;
+    border-right: 3px solid #28a745;
+}
+
+.child-status {
+    flex-shrink: 0;
+    margin-top: 5px;
+}
+
+/* Referrals Table */
+.referrals-table-container {
+    background: white;
+    border-radius: 20px;
+    padding: 25px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+}
+
+.table-header h6 {
+    color: #2c3e50;
+    font-weight: 700;
+}
+
+.referrals-table {
+    border-radius: 15px;
+    overflow: hidden;
+    border: none;
+    box-shadow: 0 3px 15px rgba(0, 0, 0, 0.05);
+}
+
+.referrals-table thead th {
+    background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+    color: white;
+    font-weight: 600;
+    border: none;
+    padding: 15px 12px;
+    font-size: 0.9rem;
+}
+
+.referral-row {
+    transition: all 0.3s ease;
+}
+
+.referral-row:hover {
+    background: linear-gradient(90deg, rgba(23, 162, 184, 0.05) 0%, rgba(255, 255, 255, 1) 100%);
+    transform: scale(1.01);
+}
+
+.referral-row td {
+    padding: 15px 12px;
+    vertical-align: middle;
+    border-color: rgba(0, 0, 0, 0.05);
+}
+
+.row-number {
+    background: #6c757d;
+    color: white;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.actor-info,
+.referrer-info {
+    display: flex;
+    align-items: center;
+    color: #2c3e50;
+    font-weight: 500;
+}
+
+.position-badge {
+    background: rgba(108, 117, 125, 0.1);
+    padding: 6px 12px;
+    border-radius: 15px;
+    font-size: 0.85rem;
+    color: #6c757d;
+    border: 1px solid rgba(108, 117, 125, 0.2);
+}
+
+.date-badge,
+.due-date-badge {
+    background: rgba(23, 162, 184, 0.1);
+    color: #17a2b8;
+    padding: 6px 12px;
+    border-radius: 15px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.stats-badges {
+    display: flex;
+    gap: 5px;
+}
+
+.stats-badges .badge {
+    font-size: 0.8rem;
+    padding: 6px 10px;
+    border-radius: 12px;
+}
+
+.referral-note-tooltip {
+    cursor: help;
+    max-width: 150px;
+}
+
+.note-preview {
+    display: block;
+    margin-top: 3px;
+    color: #6c757d;
+    font-size: 0.8rem;
+}
+
+.action-buttons .btn {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.action-buttons .btn:hover {
+    transform: scale(1.1);
+}
+
+/* Empty State */
+.empty-referrals-state {
+    text-align: center;
+    padding: 60px 20px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    border-radius: 20px;
+    border: 2px dashed #dee2e6;
+}
+
+.empty-icon {
+    font-size: 4rem;
+    color: #adb5bd;
+    margin-bottom: 20px;
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+.empty-title {
+    color: #6c757d;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.empty-description {
+    color: #adb5bd;
+    font-size: 0.95rem;
+    max-width: 400px;
+    margin: 0 auto;
+    line-height: 1.5;
+}
+
+/* Status Badge Classes */
+.badge.bg-success {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%) !important;
+}
+
+.badge.bg-danger {
+    background: linear-gradient(135deg, #dc3545 0%, #e83e8c 100%) !important;
+}
+
+.badge.bg-warning {
+    background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%) !important;
+    color: #212529 !important;
+}
+
+.badge.bg-info {
+    background: linear-gradient(135deg, #17a2b8 0%, #6610f2 100%) !important;
+}
+
+.badge.bg-secondary {
+    background: linear-gradient(135deg, #6c757d 0%, #495057 100%) !important;
+}
+
+.badge.bg-light {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
+    color: #495057 !important;
+    border: 1px solid #dee2e6;
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+    .header-actions {
+        flex-wrap: wrap;
+        gap: 5px;
+    }
+
+    .action-header-btn {
+        font-size: 0.85rem;
+        padding: 6px 12px;
+    }
+
+    .tree-child {
+        padding-right: 30px;
+    }
+
+    .child-connector {
+        width: 25px;
+    }
+}
+
+@media (max-width: 768px) {
+    .assignment-referral-container {
+        padding: 15px;
+    }
+
+    .referral-form-card .card-body,
+    .tree-view-card .card-body,
+    .referrals-table-container {
+        padding: 20px;
+    }
+
+    .form-actions {
+        text-align: center;
+    }
+
+    .form-actions .btn {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .table-responsive {
+        font-size: 0.9rem;
+    }
+
+    .referrals-table thead th {
+        padding: 10px 8px;
+        font-size: 0.8rem;
+    }
+
+    .referral-row td {
+        padding: 10px 8px;
+    }
+
+    .child-content {
+        padding: 12px;
+    }
+
+    .stats-badges {
+        flex-direction: column;
+        gap: 3px;
+    }
+}
+
+@media (max-width: 576px) {
+
+    .node-content,
+    .child-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+    }
+
+    .node-status,
+    .child-status {
+        margin-top: 10px;
+    }
+
+    .empty-referrals-state {
+        padding: 40px 15px;
+    }
+
+    .empty-icon {
+        font-size: 3rem;
+    }
+}
+
+/* Animation for new elements */
+.fade-in {
+    animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}

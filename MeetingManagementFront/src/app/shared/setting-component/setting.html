@@ -1,0 +1,49 @@
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <form id="submitForm">
+                    <div class="row">
+                        <ng-container *ngFor="let setting of userManagementSettings" [ngSwitch]="setting.fieldType">
+                            <custom-input *ngSwitchCase="'string'" [label]="setting.description"
+                                [(ngModel)]="setting.value" [ngModelOptions]="{standalone: true}"
+                                [identity]="setting.id" type="text" size="col-6">
+                            </custom-input>
+                            <custom-input *ngSwitchCase="'int'" [label]="setting.description"
+                                [(ngModel)]="setting.value" [ngModelOptions]="{standalone: true}"
+                                [identity]="setting.id" type="number" size="col-6" [min]="setting.minValue??1"
+                                [max]="setting.maxValue??1000">
+                            </custom-input>
+                            <custom-select *ngSwitchCase="'bit'" [label]="setting.description"
+                                [(ngModel)]="setting.value" [ngModelOptions]="{standalone: true}"
+                                [identity]="setting.id" type="select" [options]="bitOptions" size="col-6">
+                            </custom-select>
+                            <!-- <ng-container *ngSwitchCase="'list'">
+                                <custom-select *ngIf="setting.listName == 'user'" [label]="setting.description"
+                                    [(ngModel)]="setting.value" [ngModelOptions]="{standalone: true}"
+                                    [identity]="setting.id" type="select-ajax" [ajaxUrl]="partyAjaxUrl"
+                                    [searchTerm]="customerSearchTerm" size="col-6"
+                                    [selectedItem]="{id: setting.value, name: setting.valueLabel}">
+                                </custom-select>
+                                <custom-select *ngIf="setting.listName == 'totalAccount'" [label]="setting.description"
+                                    [(ngModel)]="setting.value" [ngModelOptions]="{standalone: true}"
+                                    [identity]="setting.id" type="select-ajax" [ajaxUrl]="accountTreeAjaxUrl"
+                                    [searchTerm]="accountTreeSearchTerm" size="col-6"
+                                    [selectedItem]="{id: setting.value, name: setting.valueLabel}">
+                                </custom-select>
+                            </ng-container> -->
+                        </ng-container>
+                    </div>
+                </form>
+            </div>
+
+            <div class="card-footer">
+                <button (click)="submitUsermanagement()" type="button"
+                    class="btn btn-success waves-effect waves-light mr-1">
+                    <span class="btn-label"><i class="fas fa-check-double"></i></span>ذخیره تغییرات
+                </button>
+            </div>
+        </div>
+    </div>
+
+</div>

@@ -1,0 +1,249 @@
+<div class="row">
+    <div class="col-md-7 flex-fill">
+        <div class="card mb-3 h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <div>
+                    <h5 class="mb-0">جزئیات</h5>
+                </div>
+                <div class="form-group text-center">
+                    <b><i class="fa fa-pen"></i> ثبت کننده:</b>
+                    <b class="text-primary mx-3">{{ meeting().creator }}</b>
+                </div>
+                <div>
+                    @if(canEditMeeting()) {
+                    <button class="btn btn-sm btn-primary" (click)="openEditModal()">ویرایش</button>
+                    }
+                </div>
+            </div>
+            <div class="card-body mt-4">
+                <div class="row">
+                    @for(item of [
+                    { icon: 'fa-hashtag', label: 'شماره جلسه:', value: meeting().number },
+                    { icon: 'fa-file', label: 'عنوان جلسه:', value: meeting().title },
+                    { icon: 'fa-list-alt', label: 'دسته بندی:', value: meeting().category },
+                    { icon: 'fa-calendar', label: 'تاریخ:', value: meeting().mtDate },
+                    { icon: 'fa-clock', label: 'ساعت شروع:', value: meeting().startTime },
+                    { icon: 'fa-clock', label: 'ساعت پایان:', value: meeting().endTime },
+                    { icon: 'fa-map-marker', label: 'مکان برگزاری:', value: meeting().location },
+                    { icon: 'fa-user-group', label: 'جلسه پیشین:', value: meeting().followMeeting }
+                    ]; track $index) {
+                    @if(item.value) {
+                    <div class="col-md-6 mb-4">
+                        <div class="form-group">
+                            <b><i class="fa" [ngClass]="item.icon"></i> {{ item.label }}</b>
+                            <span class="text-primary mx-2">{{ item.value }}</span>
+                        </div>
+                    </div>
+                    }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-5 flex-fill">
+        <div class="card mb-3 h-100 w-100 shadow-sm rounded">
+            <div class="card-header d-flex justify-content-between align-items-center fw-bold">
+                <h5 class="mb-0">اعضای جلسه</h5>
+                @if(canChangeAttendance()) {
+                <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-sm btn-success" (click)="setAllPresence(true)">
+                        <i class="fa fa-check"></i> حضور همه
+                    </button>
+                    <button type="button" class="btn btn-sm btn-danger" (click)="setAllPresence(false)">
+                        <i class="fa fa-times"></i> غیاب همه
+                    </button>
+                </div>
+                }
+
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive" style="max-height: 550px; overflow-y: auto;">
+                    <table #memberTableContainer class="table table-hover align-middle m-0">
+                        <thead class="table-light">
+                            <tr class="text-center">
+                                <th style="width: 55%"></th>
+                                <th>نقش</th>
+                                <th>اعلام حضور</th>
+                                <th>حضور</th>
+                                <th>امضا</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for(member of members(); track $index) {
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <img [src]="member.image" alt="Profile" class="rounded-circle border me-2"
+                                            width="40" height="40">
+                                        <div>
+                                            <span class="fw-semibold">{{ member.name }}</span>
+                                            <div class="small text-muted">{{ member.role }}</div>
+                                            @if(member.substitute) {
+                                            <div class="text-muted small">جانشین: {{ member.substitute }}</div>
+                                            }
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="fw-medium">{{ member.role }}</span>
+                                </td>
+                                <td>
+                                    @if(member.isAttendance) {
+                                    <i class="fa fa-circle-check text-success fs-5"></i>
+                                    } @else {
+                                    <i class="fa fa-circle-xmark text-danger fs-5"></i>
+                                    }
+                                </td>
+                                <td>
+                                    @if(canChangeAttendance()) {
+                                    <div class="presence-toggle">
+                                        <button type="button" class="option"
+                                            [class.selected]="member.isPresent === false"
+                                            [class.red]="member.isPresent === false"
+                                            (click)="togglePresence(member, false)">
+                                            <i class="fa fa-times"></i>
+                                        </button>
+                                        <button type="button" class="option" style="width: 38px" disabled
+                                            [class.selected]="member.isPresent === null"
+                                            [class.gray]="member.isPresent === null">
+                                            @if(member.isPresent===null){
+                                            <i class="fa fa-question"></i>
+                                            }
+                                        </button>
+                                        <button type="button" class="option"
+                                            [class.selected]="member.isPresent === true"
+                                            [class.green]="member.isPresent === true"
+                                            (click)="togglePresence(member, true)">
+                                            <i class="fa fa-check"></i>
+                                        </button>
+                                    </div>
+                                    } @else {
+                                    @if(member.isPresent) {
+                                    <i class="fa fa-circle-check text-success fs-5"></i>
+                                    } @else {
+                                    <i class="fa fa-circle-xmark text-danger fs-5"></i>
+                                    }
+                                    }
+                                </td>
+                                <td>
+                                    @if(member.isSign) {
+                                    <i class="fa fa-circle-check text-success fs-5"></i>
+                                    } @else {
+                                    <i class="fa fa-circle-xmark text-danger fs-5"></i>
+                                    }
+                                </td>
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="editModal" data-bs-backdrop="static" tabindex="-1" aria-modal="true" role="dialog">
+    <div class="modal-dialog" style="max-width: 40rem;">
+        <form class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalTitle">ویرایش جلسه</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="meetingForm" class="row">
+                    <custom-input type="text" label="عنوان جلسه" identity="title" formControlName="title"
+                        size="col-12"></custom-input>
+                    <custom-select [options]="categories()" identity="categoryGuid" formControlName="categoryGuid"
+                        label="دسته بندی" size="col-12"></custom-select>
+                    <custom-input type="date" label="تاریخ" identity="date" formControlName="date"
+                        size="col-12"></custom-input>
+                    <div class="col-md-6">
+                        <custom-input label="ساعت شروع" formControlName="startTime" type="time" identity="startTime"
+                            [required]="true"></custom-input>
+                        @if(meetingForm.errors?.['timeInvalid']){
+                        <div class="text-danger">
+                            ساعت شروع باید کوچکتر از ساعت پایان باشد.
+                        </div>
+                        }
+
+                    </div>
+
+                    <div class="col-md-6">
+                        <custom-input label="ساعت پایان" formControlName="endTime" type="time" identity="endTime"
+                            [required]="true"></custom-input>
+                    </div>
+                    <custom-select label="مکان" formControlName="locationType" [options]="locationTypes()"
+                        identity="locationType" [required]="true" (change)="onLocationTypeChange($event)"
+                        size="col-12"></custom-select>
+                    @if(meetingForm.get('locationType')?.value === 'internal') {
+                    <div>
+                        <custom-select label="محل برگزاری" formControlName="roomGuid" [options]="rooms()"
+                            identity="roomGuid" [required]="true" (change)="onRoomChange()"></custom-select>
+                    </div>
+                    }
+                    @if(meetingForm.get('locationType')?.value === 'external') {
+                    <div>
+                        <custom-input label="آدرس مکان" formControlName="roomName" type="textarea" identity="roomName"
+                            [required]="true"></custom-input>
+                    </div>
+                    }
+                    @if(meetingForm.get('locationType')?.value === 'online') {
+                    <div>
+                        <custom-input label="لینک جلسه" formControlName="roomLink" type="text" identity="roomLink"
+                            [required]="true"></custom-input>
+                    </div>
+                    }
+                    <div class="col-md-12">
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="isFollowUp"
+                                (change)="onCheckboxChange($event)">
+                            <label class="form-check-label" for="isFollowUp">پیرو جلسه دیگری است</label>
+                        </div>
+                        @if(isFollowUpChecked()) {
+                        <custom-select label="جلسه پیشین" formControlName="followGuid" [options]="meetings()"
+                            identity="followGuid" [required]="false" size="col-12"></custom-select>
+                        }
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" (click)="saveMeeting()">ذخیره </button>
+                <button type="button" class="btn btn-warning" data-bs-dismiss="modal">انصراف </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- مدال نمایش فایل -->
+<div class="modal fade" id="fileViewerModal" tabindex="-1" aria-labelledby="fileViewerModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">{{ fileName() }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <!-- نمایش تصویر -->
+                @if(fileType() === 'image') {
+                <img [src]="fileUrl()" class="img-fluid" alt="فایل پیوست">
+                }
+
+                <!-- نمایش متن -->
+                @if(fileType() === 'text') {
+                <pre class="p-3 bg-light border rounded">{{ fileContent() }}</pre>
+                }
+
+                <!-- نمایش فایل‌های دیگر -->
+                @if(fileType() === 'other') {
+                <p class="text-muted">
+                    فرمت فایل پشتیبانی نمی‌شود. لطفاً از دکمه دانلود استفاده کنید.
+                </p>
+                }
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-success" [href]="downloadUrl()" download>دانلود فایل</a>
+                <button type="button" class="btn btn-warning" data-bs-dismiss="modal">بستن</button>
+            </div>
+        </div>
+    </div>
+</div>

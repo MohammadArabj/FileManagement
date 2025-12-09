@@ -1,0 +1,299 @@
+<div class="assignment-referral-container">
+    <div class="card main-card">
+        <div class="card-header bg-gradient-info text-white">
+            <div class="d-flex justify-content-between align-items-center">
+                <h6 class="mb-0">
+                    <i class="fa fa-share me-2"></i>
+                    مدیریت ارجاعات
+                </h6>
+                <div class="header-actions">
+                    @if (canRefer()) {
+                    <button class="btn btn-light btn-sm action-header-btn" (click)="toggleReferralForm()">
+                        <i class="fa" [class.bi-plus]="!showReferralForm()" [class.bi-x]="showReferralForm()" me-1></i>
+                        {{ showReferralForm() ? 'لغو' : 'ارجاع جدید' }}
+                    </button>
+                    }
+                    <button class="btn btn-outline-light btn-sm action-header-btn" (click)="loadAssignmentTree()">
+                        <i class="fa fa-diagram-3 me-1"></i> نمای درختی
+                    </button>
+                    <button class="btn btn-outline-light btn-sm action-header-btn" (click)="onClose.emit()">
+                        <i class="fa fa-x-lg me-1"></i> بستن
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body">
+            @if (loading()) {
+            <div class="loading-container">
+                <div class="loading-spinner">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">در حال بارگذاری...</span>
+                    </div>
+                    <p class="loading-text">در حال بارگذاری اطلاعات...</p>
+                </div>
+            </div>
+            }
+
+            <!-- Referral Form -->
+            @if (showReferralForm() && !loading()) {
+            <div class="card referral-form-card mb-4">
+                <div class="card-header bg-gradient-success text-white">
+                    <h6 class="mb-0">
+                        <i class="fa fa-plus-circle me-2"></i>
+                        ایجاد ارجاع جدید
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <form (ngSubmit)="createReferral()">
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label fw-bold">
+                                        <i class="fa fa-person me-1"></i>
+                                        انتخاب کاربر:
+                                        <span class="text-danger ms-1">*</span>
+                                    </label>
+                                    <ng-select bindValue="guid" [(ngModel)]="selectedUser" [ngModelOptions]="{standalone: true}" bindLabel="name"
+                                        [items]="availableUsers()" [ngModelOptions]="{standalone: true}"
+                                        placeholder="کاربر مورد نظر را انتخاب کنید..." class="custom-ng-select">
+                                    </ng-select>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label fw-bold">
+                                        <i class="fa fa-calendar3 me-1"></i>
+                                        مهلت جدید:
+                                        <span class="text-danger ms-1">*</span>
+                                    </label>
+                                    <input type="text" data-jdp class="form-control custom-input"
+                                        [(ngModel)]="newDueDate" name="newDueDate" placeholder="انتخاب تاریخ..."
+                                        required autocomplete="off" />
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="form-label fw-bold">
+                                        <i class="fa fa-chat-text me-1"></i>
+                                        یادداشت ارجاع:
+                                        <span class="text-danger ms-1">*</span>
+                                    </label>
+                                    <textarea class="form-control custom-textarea" rows="4" [(ngModel)]="referralNote"
+                                        name="referralNote" placeholder="دلیل و توضیحات ارجاع را وارد کنید..."
+                                        required></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-outline-secondary me-2" (click)="toggleReferralForm()">
+                                <i class="fa fa-x-circle me-1"></i> انصراف
+                            </button>
+                            <button type="submit" class="btn btn-success">
+                                <i class="fa fa-check-circle me-1"></i> ایجاد ارجاع
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            }
+
+            <!-- Tree View -->
+            @if (showTreeView() && assignmentTree() && !loading()) {
+            <div class="card tree-view-card mb-4">
+                <div class="card-header bg-gradient-warning text-dark">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0">
+                            <i class="fa fa-diagram-3 me-2"></i>
+                            درخت ارجاعات
+                        </h6>
+                        <button class="btn btn-sm btn-outline-dark" (click)="showTreeView.set(false)">
+                            <i class="fa fa-x me-1"></i> بستن
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="assignment-tree">
+                        <div class="tree-node main-node">
+                            <div class="node-content">
+                                <div class="node-icon">
+                                    <i class="fa fa-person-circle"></i>
+                                </div>
+                                <div class="node-info">
+                                    <strong class="node-name">{{ assignmentTree().actorName }}</strong>
+                                    <small class="node-badge badge bg-primary">اصلی</small>
+                                </div>
+                                <div class="node-status">
+                                    <span [class]="getStatusBadgeClass(assignmentTree().actionStatus)">
+                                        {{ assignmentTree().actionStatus }}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="tree-children">
+                                @for (child of assignmentTree().children; track child.id) {
+                                <div class="tree-child" [style.margin-right.px]="child.level * 20">
+                                    <div class="child-connector"></div>
+                                    <div class="child-content">
+                                        <div class="child-icon">
+                                            <i class="fa fa-arrow-down-right"></i>
+                                        </div>
+                                        <div class="child-info">
+                                            <strong class="child-name">{{ child.actorName }}</strong>
+                                            <div class="child-meta">
+                                                <small class="text-muted">
+                                                    ارجاع از: <span class="fw-bold">{{ child.referrerName }}</span>
+                                                    <span class="mx-2">|</span>
+                                                    <i class="fa fa-calendar3 me-1"></i>{{ child.referralDate }}
+                                                </small>
+                                            </div>
+                                            @if (child.referralNote) {
+                                            <div class="child-note">
+                                                <i class="fa fa-chat-quote me-1"></i>
+                                                <em>{{ child.referralNote }}</em>
+                                            </div>
+                                            }
+                                        </div>
+                                        <div class="child-status">
+                                            <span [class]="getStatusBadgeClass(child.actionStatus)">
+                                                {{ child.actionStatus }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            }
+
+            <!-- Referrals List -->
+            @if (!showReferralForm() && !showTreeView() && !loading()) {
+            <div class="referrals-table-container">
+                <div class="table-header">
+                    <h6 class="mb-3">
+                        <i class="fa fa-list-ul me-2"></i>
+                        فهرست ارجاعات
+                        <span class="badge bg-info ms-2">{{ referrals().length }}</span>
+                    </h6>
+                </div>
+
+                @if (referrals().length > 0) {
+                <div class="table-responsive">
+                    <table class="table table-hover referrals-table">
+                        <thead>
+                            <tr>
+                                <th width="50">ردیف</th>
+                                <th>مجری</th>
+                                <th>پست سازمانی</th>
+                                <th>ارجاع دهنده</th>
+                                <th>تاریخ ارجاع</th>
+                                <th>مهلت</th>
+                                <th>وضعیت اقدام</th>
+                                <th>وضعیت پیگیری</th>
+                                <th>آمار</th>
+                                <th>یادداشت</th>
+                                <th width="120">عملیات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (referral of referrals(); track referral.id; let i = $index) {
+                            <tr class="referral-row">
+                                <td>
+                                    <span class="row-number">{{ i + 1 }}</span>
+                                </td>
+                                <td>
+                                    <div class="actor-info">
+                                        <i class="fa fa-person-circle me-2"></i>
+                                        <strong>{{ referral.actorName }}</strong>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="position-badge">{{ referral.actorPositionTitle }}</span>
+                                </td>
+                                <td>
+                                    <div class="referrer-info">
+                                        <i class="fa fa-person-up me-1"></i>
+                                        {{ referral.referrerName }}
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="date-badge">
+                                        <i class="fa fa-calendar3 me-1"></i>
+                                        {{ referral.referralDate }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="due-date-badge">
+                                        <i class="fa fa-clock me-1"></i>
+                                        {{ referral.dueDate }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span [class]="getStatusBadgeClass(referral.actionStatus)">
+                                        {{ referral.actionStatus }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span [class]="getStatusBadgeClass(referral.followStatus)">
+                                        {{ referral.followStatus }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="stats-badges">
+                                        <span class="badge bg-primary me-1" title="تعداد اقدامات">
+                                            <i class="fa fa-check-circle me-1"></i>{{ referral.actionsCount }}
+                                        </span>
+                                        <span class="badge bg-success" title="تعداد پیگیری‌ها">
+                                            <i class="fa fa-eye me-1"></i>{{ referral.followupsCount }}
+                                        </span>
+                                    </div>
+                                </td>
+                                <td>
+                                    @if (referral.referralNote) {
+                                    <div class="referral-note-tooltip" [title]="referral.referralNote">
+                                        <i class="fa fa-chat-square-text text-info"></i>
+                                        <small class="note-preview">{{ referral.referralNote | slice:0:20 }}...</small>
+                                    </div>
+                                    } @else {
+                                    <span class="text-muted">-</span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn btn-sm btn-outline-danger"
+                                            (click)="deleteReferral(referral.id)" title="حذف ارجاع">
+                                            <i class="fa fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                } @else {
+                <div class="empty-referrals-state">
+                    <div class="empty-icon">
+                        <i class="fa fa-inbox"></i>
+                    </div>
+                    <h5 class="empty-title">هیچ ارجاعی ایجاد نشده است</h5>
+                    <p class="empty-description">
+                        @if (canRefer()) {
+                        برای ایجاد اولین ارجاع، روی دکمه "ارجاع جدید" کلیک کنید.
+                        } @else {
+                        در حال حاضر هیچ ارجاعی برای این تخصیص وجود ندارد.
+                        }
+                    </p>
+                </div>
+                }
+            </div>
+            }
+        </div>
+    </div>
+</div>

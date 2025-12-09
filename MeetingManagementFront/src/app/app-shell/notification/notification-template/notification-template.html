@@ -1,0 +1,176 @@
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">لیست تمپلیت‌های اعلان</h5>
+        <div class="header-actions">
+          @if (isLoading()) {
+          <div class="spinner-border spinner-border-sm text-primary me-2" role="status">
+            <span class="visually-hidden">در حال بارگذاری...</span>
+          </div>
+          }
+          <app-label-button identifier="addBtn" label="افزودن" variant="success" (clicked)="openOpsModal()"
+            permission="MT_NotificationTemplates_Add">
+          </app-label-button>
+        </div>
+      </div>
+
+      <div class="card-body">
+        @if (isLoading()) {
+        <div class="text-center py-4">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">در حال بارگذاری...</span>
+          </div>
+          <p class="mt-2 text-muted">در حال بارگذاری داده‌ها...</p>
+        </div>
+        } @else if (!hasRecords()) {
+        <div class="text-center py-5">
+          <i class="fa fa-bell fa-3x text-muted mb-3"></i>
+          <h5 class="text-muted">هیچ تمپلیتی یافت نشد</h5>
+          <p class="text-muted">برای شروع، یک تمپلیت جدید اضافه کنید.</p>
+          <app-label-button identifier="addFirstBtn" label="افزودن اولین تمپلیت" variant="primary"
+            (clicked)="openOpsModal()" permission="MT_NotificationTemplates_Add">
+          </app-label-button>
+        </div>
+        } @else {
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover align-middle">
+            <thead class="table-info">
+              <tr>
+                <th scope="col">عنوان</th>
+                <th scope="col">نوع</th>
+                <th scope="col">محتوای مختصر</th>
+                <th scope="col">تاریخ ایجاد</th>
+                <th scope="col" class="text-center">وضعیت</th>
+                <th scope="col" class="text-center">عملیات</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              @for (item of records(); track item.id) {
+              <tr [class.table-warning]="item.isActive !== 1">
+                <td>
+                  <strong>{{ item.title }}</strong>
+                </td>
+                <td>
+                  @switch (item.type) {
+                  @case ('EMAIL') { <span class="badge bg-danger">ایمیل</span> }
+                  @case ('SMS') { <span class="badge bg-success">پیامک</span> }
+                  @case ('SYSTEM') { <span class="badge bg-primary">سیستمی</span> }
+                  @case ('PUSH') { <span class="badge bg-warning text-dark">نوتیفیکیشن</span> }
+                  }
+                </td>
+                <td>
+                  <small class="text-muted">{{ item.content }}...</small>
+                </td>
+                <td>
+                  <small class="text-muted">{{ item.created }}</small>
+                </td>
+                <td class="text-center">
+                  @if (item.isActive === 1) {
+                  <span class="badge bg-success">
+                    <i class="fa fa-check me-1"></i>فعال
+                  </span>
+                  } @else {
+                  <span class="badge bg-danger">
+                    <i class="fa fa-times me-1"></i>غیرفعال
+                  </span>
+                  }
+                </td>
+                <td class="text-center">
+                  <div class="btn-group btn-group-sm" role="group">
+                    @if (item.isActive === 1) {
+                    <app-icon-button identifier="editBtn{{ $index }}" label="ویرایش" icon="fa fa-edit"
+                      variant="primary" (clicked)="openOpsModal(item.id)"
+                      permission="MT_NotificationTemplates_Edit">
+                    </app-icon-button>
+
+                    <app-icon-button identifier="deactivateBtn{{ $index }}" label="غیرفعال" icon="fa fa-pause"
+                      variant="warning" (clicked)="deactivate(item.id?.toString() ?? '')"
+                      permission="MT_NotificationTemplates_ToggleActive">
+                    </app-icon-button>
+                    } @else {
+                    <app-icon-button identifier="activateBtn{{ $index }}" label="فعال‌سازی" icon="fa fa-play"
+                      variant="success" (clicked)="activate(item.id?.toString() ?? '')"
+                      permission="MT_NotificationTemplates_ToggleActive">
+                    </app-icon-button>
+                    }
+
+                    <app-icon-button identifier="deleteBtn{{ $index }}" label="حذف" icon="fa fa-trash"
+                      variant="danger" (clicked)="delete(item.id)" permission="MT_NotificationTemplates_Delete">
+                    </app-icon-button>
+                  </div>
+                </td>
+              </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Main Modal for CRUD operations -->
+<app-modal #opsModal [config]="modalConfig()" (submited)="submit($event)" (onModalHide)="modalClosed()">
+
+  @if (form(); as currentForm) {
+  <form [formGroup]="currentForm" id="submitForm" class="row g-3" novalidate>
+    <!-- Title Field -->
+    <div class="col-12">
+      <custom-input label="عنوان" formControlName="title" identity="title" size="col-12" [required]="true"
+        styleType="simple">
+      </custom-input>
+    </div>
+
+    <!-- Type Field -->
+    <div class="col-md-6">
+      <div class="form-group">
+        <label for="type" class="form-label">
+          نوع اعلان
+          <span class="text-danger ms-1">*</span>
+        </label>
+        <select id="type" formControlName="type" class="form-select" [class.is-invalid]="isFieldInvalid('type')">
+          <option value="" disabled selected>انتخاب کنید</option>
+          @for (type of templateTypes(); track type.value) {
+          <option [value]="type.value">{{ type.label }}</option>
+          }
+        </select>
+        @if (isFieldInvalid('type')) {
+        <div class="invalid-feedback d-block">
+          {{ getFieldError('type') }}
+        </div>
+        }
+      </div>
+    </div>
+
+    <!-- Content Field -->
+    <div class="col-12">
+      <div class="form-group">
+        <label for="content" class="form-label">
+          محتوا
+          <span class="text-danger ms-1">*</span>
+        </label>
+        <textarea id="content" formControlName="content" class="form-control" rows="5"
+          [class.is-invalid]="isFieldInvalid('content')" placeholder="متن کامل اعلان را وارد نمایید..."></textarea>
+        @if (isFieldInvalid('content')) {
+        <div class="invalid-feedback d-block">
+          {{ getFieldError('content') }}
+        </div>
+        }
+      </div>
+    </div>
+
+    <!-- Form Status Indicator -->
+    <div class="col-12">
+      @if (!isFormValid()) {
+      <div class="alert alert-warning alert-sm d-flex align-items-center">
+        <i class="fa fa-exclamation-triangle me-2"></i>
+        لطفاً تمام فیلدهای الزامی را تکمیل کنید
+      </div>
+      }
+    </div>
+  </form>
+  }
+</app-modal>

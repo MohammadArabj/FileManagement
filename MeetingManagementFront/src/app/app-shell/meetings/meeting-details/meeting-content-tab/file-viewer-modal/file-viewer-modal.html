@@ -1,0 +1,35 @@
+<div class="modal-header">
+  <h5 class="modal-title">{{ displayFileName() }}</h5>
+  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="closeModal()"></button>
+</div>
+<div class="modal-body text-center">
+  @switch(displayFileType()) {
+  @case ('image') {
+  <!-- نمایش تصویر -->
+  <img [src]="displayFileUrl()" class="img-fluid" alt="فایل پیوست">
+  }
+  @case ('pdf') {
+  @if(displayFileUrl()) {
+  <!-- نمایش PDF با ngx-extended-pdf-viewer -->
+  <div class="pdf-preview">
+      <iframe  class="w-100 h-100" [src]="displayFileUrl()"></iframe>
+
+  </div>
+  }
+  }
+  @case ('text') {
+  <!-- نمایش متن -->
+  <pre class="p-3 bg-light border rounded">{{ displayFileContent() }}</pre>
+  }
+  @case ('other') {
+  <!-- نمایش فایل‌های دیگر -->
+  <p class="text-muted">
+    فرمت فایل پشتیبانی نمی‌شود. لطفاً از دکمه دانلود استفاده کنید.
+  </p>
+  }
+  }
+</div>
+<div class="modal-footer">
+  <a class="btn btn-success" (click)="downloadFile()" download>دانلود فایل</a>
+  <button type="button" class="btn btn-warning" data-bs-dismiss="modal" (click)="closeModal()">بستن</button>
+</div>
