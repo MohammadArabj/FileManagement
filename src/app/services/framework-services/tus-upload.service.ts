@@ -1,6 +1,7 @@
 import { Injectable, inject, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Subject, firstValueFrom, of } from 'rxjs';
+import { Subject, firstValueFrom, forkJoin, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import * as tus from 'tus-js-client';
 import { environment } from '../../../environments/environment';
@@ -102,7 +103,6 @@ export class TusUploadService {
   private readonly uploadApiUrl = environment.fileManagementEndpoint + '/api/Upload';
   private readonly tusEndpoint = environment.fileManagementEndpoint + '/api/Upload/tus';
   private readonly attachmentUrl = environment.fileManagementEndpoint + '/api/Attachment';
-  private readonly previewCache = new Map<string, string>();
 
   // State - همه فایل‌ها در یک Map
   private readonly _files = signal<Map<string, FileItem>>(new Map());
@@ -179,6 +179,7 @@ export class TusUploadService {
         }
       }
 
+      // اضافه کردن cache شده‌ها
       for (const file of cached) {
         this.addExistingFileToState(file);
       }
@@ -198,6 +199,13 @@ export class TusUploadService {
 
             fileInfoCache.set(existing.guid, existing);
             this.addExistingFileToState(existing);
+      // لود موازی فایل‌های جدید
+      if (toLoad.length > 0) {
+        const results = await this.batchLoadFileInfo(toLoad);
+        for (const file of results) {
+          if (file) {
+            fileInfoCache.set(file.guid, file);
+            this.addExistingFileToState(file);
           }
         }
       }
@@ -220,6 +228,14 @@ export class TusUploadService {
           catchError(() => of(guids.map(() => null)))
         )
     );
+  private async batchLoadFileInfo(guids: string[]): Promise<(ExistingFile | null)[]> {
+    const requests = guids.map(guid =>
+      this.http.get<ExistingFile>(`${this.attachmentUrl}/GetFile/${guid}`).pipe(
+        map(file => ({ ...file, guid })),
+        catchError(() => of(null))
+      )
+    );
+    return firstValueFrom(forkJoin(requests));
   }
 
   private addExistingFileToState(file: ExistingFile): void {
@@ -236,7 +252,7 @@ export class TusUploadService {
       remainingTime: 0,
       fileGuid: file.guid,
       isExisting: true,
-      previewUrl: undefined
+      previewUrl: this.getPreviewUrl(file.guid)
     };
 
     this._files.update(files => {
@@ -503,10 +519,6 @@ export class TusUploadService {
 
     if (file.tusUpload) file.tusUpload.abort();
     if (file.previewUrl && !file.isExisting) URL.revokeObjectURL(file.previewUrl);
-    if (file.fileGuid) {
-      const cached = this.previewCache.get(file.fileGuid);
-      if (cached) URL.revokeObjectURL(cached);
-    }
 
     this._files.update(files => {
       const newMap = new Map(files);
@@ -538,10 +550,6 @@ export class TusUploadService {
     for (const file of this.files()) {
       if (file.tusUpload) file.tusUpload.abort();
       if (file.previewUrl && !file.isExisting) URL.revokeObjectURL(file.previewUrl);
-      if (file.fileGuid) {
-        const cached = this.previewCache.get(file.fileGuid);
-        if (cached) URL.revokeObjectURL(cached);
-      }
     }
     this._files.set(new Map());
   }
@@ -573,8 +581,6 @@ export class TusUploadService {
             this.http.post(`${this.attachmentUrl}/Delete/${file.fileGuid}`, {})
           );
           fileInfoCache.delete(file.fileGuid);
-          const cachedUrl = this.previewCache.get(file.fileGuid);
-          if (cachedUrl) URL.revokeObjectURL(cachedUrl);
         } catch (err) {
           console.error(`Error deleting file ${file.fileGuid}:`, err);
         }
@@ -606,53 +612,7 @@ export class TusUploadService {
 
   getPreviewUrl(guid: string): string {
     return this.getDownloadUrl(guid);
-  }
-
-  async resolveAuthorizedPreview(guid: string, fileId?: string): Promise<string | null> {
-    if (this.previewCache.has(guid)) {
-      const cached = this.previewCache.get(guid)!;
-      if (fileId) this.updatePreviewUrl(fileId, cached);
-      return cached;
-    }
-
-    const token = this.getAccessToken();
-    if (!token) return null;
-
-    try {
-      const blob = await firstValueFrom(
-        this.http.get(this.getDownloadUrl(guid), {
-          responseType: 'blob',
-          headers: { Authorization: `Bearer ${token}` },
-        })
-      );
-
-      const url = URL.createObjectURL(blob);
-      this.previewCache.set(guid, url);
-
-      if (fileId) {
-        this.updatePreviewUrl(fileId, url);
-      }
-
-      return url;
-    } catch {
-      return null;
-    }
-  }
-
-  async downloadWithAuth(guid: string): Promise<Blob | null> {
-    const token = this.getAccessToken();
-    if (!token) return null;
-
-    try {
-      return await firstValueFrom(
-        this.http.get(this.getDownloadUrl(guid), {
-          responseType: 'blob',
-          headers: { Authorization: `Bearer ${token}` },
-        })
-      );
-    } catch {
-      return null;
-    }
+    return `${this.attachmentUrl}/Preview/${guid}`;
   }
 
   // ============================================
@@ -671,13 +631,6 @@ export class TusUploadService {
     const file = this._files().get(id);
     if (file) {
       this.updateFile({ ...file, status, errorMessage });
-    }
-  }
-
-  updatePreviewUrl(id: string, previewUrl: string): void {
-    const file = this._files().get(id);
-    if (file) {
-      this.updateFile({ ...file, previewUrl });
     }
   }
 

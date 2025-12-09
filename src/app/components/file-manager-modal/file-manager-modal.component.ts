@@ -72,6 +72,7 @@ type ViewMode = 'grid' | 'list';
           <!-- Body -->
           <div class="modal-body">
             <div class="body-shell" [class.preview-open]="showPreview() && selectedFile()">
+            <div class="body-shell">
               <div
                 class="file-area"
                 [class.drag-over]="isDragOver()"
@@ -206,9 +207,9 @@ type ViewMode = 'grid' | 'list';
                                 }
                                 @case (Status.Completed) {
                                   @if (file.fileGuid) {
-                                    <button class="action-btn" (click)="downloadFile(file)" title="دانلود">
+                                    <a [href]="service.getDownloadUrl(file.fileGuid)" class="action-btn" download title="دانلود">
                                       <i class="fas fa-download"></i>
-                                    </button>
+                                    </a>
                                   }
                                   @if (!disabled) {
                                     <button class="action-btn delete" (click)="deleteFile(file)" title="حذف">
@@ -260,6 +261,7 @@ type ViewMode = 'grid' | 'list';
                                 </td>
                                 <td>
                               <div class="file-name-cell" (click)="togglePreview(file, $event)">
+                                  <div class="file-name-cell" (click)="togglePreview(file, $event)">
                                     <span class="name">{{ file.name }}</span>
                                     @if (file.isExisting) {
                                       <span class="badge bg-info">موجود</span>
@@ -314,9 +316,9 @@ type ViewMode = 'grid' | 'list';
                                       }
                                       @case (Status.Completed) {
                                         @if (file.fileGuid) {
-                                          <button class="btn btn-sm btn-outline-primary" (click)="downloadFile(file)">
+                                          <a [href]="service.getDownloadUrl(file.fileGuid)" class="btn btn-sm btn-outline-primary" download>
                                             <i class="fas fa-download"></i>
-                                          </button>
+                                          </a>
                                         }
                                         @if (!disabled) {
                                           <button class="btn btn-sm btn-outline-danger" (click)="deleteFile(file)">
@@ -439,10 +441,13 @@ type ViewMode = 'grid' | 'list';
 
                     <div class="preview-actions">
                       @if (file.fileGuid) {
-                        <button class="btn btn-primary w-100 mb-2" (click)="downloadFile(file)">
+                        <a
+                          [href]="service.getDownloadUrl(file.fileGuid)"
+                          class="btn btn-primary w-100 mb-2"
+                          download>
                           <i class="fas fa-download ms-2"></i>
                           دانلود
-                        </button>
+                        </a>
                       }
                       @if (file.status === Status.Completed && !disabled) {
                         <button class="btn btn-outline-danger w-100" (click)="deleteFile(file)">
@@ -509,6 +514,13 @@ type ViewMode = 'grid' | 'list';
         padding: 16px 24px;
         border-top-left-radius: 16px;
         border-top-right-radius: 16px;
+      }
+
+      .modal-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #fff;
+        border: none;
+        padding: 16px 24px;
       }
 
       .header-right {
@@ -608,6 +620,9 @@ type ViewMode = 'grid' | 'list';
 
       .body-shell.preview-open {
         grid-template-columns: 1fr 360px;
+        grid-template-columns: 1fr 360px;
+        min-height: 520px;
+        max-height: 70vh;
       }
 
       .file-area {
@@ -1026,6 +1041,10 @@ type ViewMode = 'grid' | 'list';
         width: 0;
         opacity: 0;
         pointer-events: none;
+        transition: transform 0.25s ease;
+        box-shadow: -6px 0 24px rgba(0, 0, 0, 0.06);
+        position: relative;
+        z-index: 2;
       }
 
       .preview-sidebar.visible {
@@ -1328,13 +1347,12 @@ export class FileManagerModalComponent implements OnInit, OnDestroy {
 
   selectFile(file: FileItem): void {
     this.selectedFile.set(file);
+    this.showPreview.set(true);
     this.currentPreviewIndex.set(this.service.files().indexOf(file));
   }
 
-  async togglePreview(file: FileItem, event?: Event): Promise<void> {
+  togglePreview(file: FileItem, event?: Event): void {
     event?.stopPropagation();
-    await this.ensurePreviewReady(file);
-
     if (this.selectedFile()?.id !== file.id) {
       this.selectFile(file);
       this.showPreview.set(true);
@@ -1345,41 +1363,28 @@ export class FileManagerModalComponent implements OnInit, OnDestroy {
   }
 
   closePreviewSidebar(): void {
+    if (this.selectedFile()?.id === file.id && this.showPreview()) {
+      this.closePreviewSidebar();
+    } else {
+      this.selectFile(file);
+    }
+  }
+
+  closePreviewSidebar(): void {
+    this.selectedFile.set(null);
     this.showPreview.set(false);
   }
 
   getPreviewSrc(file: FileItem): string {
-    if (file.previewUrl) return file.previewUrl;
-    if (file.fileGuid) return this.service.getPreviewUrl(file.fileGuid);
-    return '';
+    if (file.fileGuid) {
+      return this.service.getPreviewUrl(file.fileGuid);
+    }
+    return file.previewUrl || '';
   }
 
   getSafePdfUrl(file: FileItem): SafeResourceUrl {
     const url = this.getPreviewSrc(file);
     return this.sanitizer.bypassSecurityTrustResourceUrl(url);
-  }
-
-  private async ensurePreviewReady(file: FileItem): Promise<void> {
-    if (file.previewUrl || !file.fileGuid) return;
-    const resolved = await this.service.resolveAuthorizedPreview(file.fileGuid, file.id);
-    if (resolved && this.selectedFile()?.id === file.id) {
-      this.selectedFile.set({ ...file, previewUrl: resolved });
-    }
-  }
-
-  async downloadFile(file: FileItem): Promise<void> {
-    if (!file.fileGuid) return;
-    const blob = await this.service.downloadWithAuth(file.fileGuid);
-    if (!blob) return;
-
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = file.name;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
   }
 
   onDragOver(event: DragEvent): void {
