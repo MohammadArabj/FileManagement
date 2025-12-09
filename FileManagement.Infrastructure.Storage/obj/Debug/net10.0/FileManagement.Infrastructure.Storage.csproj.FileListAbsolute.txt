@@ -1,0 +1,17 @@
+D:\FullStack\StockManagement\FileManagement\FileManagement.Infrastructure.Storage\bin\Debug\net10.0\FileManagement.Infrastructure.Storage.deps.json
+D:\FullStack\StockManagement\FileManagement\FileManagement.Infrastructure.Storage\bin\Debug\net10.0\FileManagement.Infrastructure.Storage.dll
+D:\FullStack\StockManagement\FileManagement\FileManagement.Infrastructure.Storage\bin\Debug\net10.0\FileManagement.Infrastructure.Storage.pdb
+D:\FullStack\StockManagement\FileManagement\FileManagement.Infrastructure.Storage\bin\Debug\net10.0\FileManagement.Common.dll
+D:\FullStack\StockManagement\FileManagement\FileManagement.Infrastructure.Storage\bin\Debug\net10.0\FileManagement.Domain.dll
+D:\FullStack\StockManagement\FileManagement\FileManagement.Infrastructure.Storage\bin\Debug\net10.0\FileManagement.Domain.pdb
+D:\FullStack\StockManagement\FileManagement\FileManagement.Infrastructure.Storage\bin\Debug\net10.0\FileManagement.Common.pdb
+D:\FullStack\StockManagement\FileManagement\FileManagement.Infrastructure.Storage\obj\Debug\net10.0\FileManagement.Infrastructure.Storage.csproj.AssemblyReference.cache
+D:\FullStack\StockManagement\FileManagement\FileManagement.Infrastructure.Storage\obj\Debug\net10.0\FileManagement.Infrastructure.Storage.GeneratedMSBuildEditorConfig.editorconfig
+D:\FullStack\StockManagement\FileManagement\FileManagement.Infrastructure.Storage\obj\Debug\net10.0\FileManagement.Infrastructure.Storage.AssemblyInfoInputs.cache
+D:\FullStack\StockManagement\FileManagement\FileManagement.Infrastructure.Storage\obj\Debug\net10.0\FileManagement.Infrastructure.Storage.AssemblyInfo.cs
+D:\FullStack\StockManagement\FileManagement\FileManagement.Infrastructure.Storage\obj\Debug\net10.0\FileManagement.Infrastructure.Storage.csproj.CoreCompileInputs.cache
+D:\FullStack\StockManagement\FileManagement\FileManagement.Infrastructure.Storage\obj\Debug\net10.0\FileMana.54460730.Up2Date
+D:\FullStack\StockManagement\FileManagement\FileManagement.Infrastructure.Storage\obj\Debug\net10.0\FileManagement.Infrastructure.Storage.dll
+D:\FullStack\StockManagement\FileManagement\FileManagement.Infrastructure.Storage\obj\Debug\net10.0\refint\FileManagement.Infrastructure.Storage.dll
+D:\FullStack\StockManagement\FileManagement\FileManagement.Infrastructure.Storage\obj\Debug\net10.0\FileManagement.Infrastructure.Storage.pdb
+D:\FullStack\StockManagement\FileManagement\FileManagement.Infrastructure.Storage\obj\Debug\net10.0\ref\FileManagement.Infrastructure.Storage.dll

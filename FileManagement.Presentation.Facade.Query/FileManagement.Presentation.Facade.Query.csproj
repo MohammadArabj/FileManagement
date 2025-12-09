@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FileManagement.Application.Contract\FileManagement.Application.Contract.csproj" />
+    <ProjectReference Include="..\FileManagement.Infrastructure.Query.Contract\FileManagement.Infrastructure.Query.Contract.csproj" />
+    <ProjectReference Include="..\FileManagement.Presentation.Facade.Contracts\FileManagement.Presentation.Facade.Contracts.csproj" />
+  </ItemGroup>
+
+</Project>

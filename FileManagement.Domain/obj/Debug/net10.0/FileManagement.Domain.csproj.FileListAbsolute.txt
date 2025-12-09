@@ -1,0 +1,15 @@
+D:\FullStack\StockManagement\FileManagement\FileManagement.Domain\bin\Debug\net10.0\FileManagement.Domain.deps.json
+D:\FullStack\StockManagement\FileManagement\FileManagement.Domain\bin\Debug\net10.0\FileManagement.Domain.dll
+D:\FullStack\StockManagement\FileManagement\FileManagement.Domain\bin\Debug\net10.0\FileManagement.Domain.pdb
+D:\FullStack\StockManagement\FileManagement\FileManagement.Domain\obj\Debug\net10.0\FileManagement.Domain.csproj.AssemblyReference.cache
+D:\FullStack\StockManagement\FileManagement\FileManagement.Domain\obj\Debug\net10.0\FileManagement.Domain.GeneratedMSBuildEditorConfig.editorconfig
+D:\FullStack\StockManagement\FileManagement\FileManagement.Domain\obj\Debug\net10.0\FileManagement.Domain.AssemblyInfoInputs.cache
+D:\FullStack\StockManagement\FileManagement\FileManagement.Domain\obj\Debug\net10.0\FileManagement.Domain.AssemblyInfo.cs
+D:\FullStack\StockManagement\FileManagement\FileManagement.Domain\obj\Debug\net10.0\FileManagement.Domain.csproj.CoreCompileInputs.cache
+D:\FullStack\StockManagement\FileManagement\FileManagement.Domain\obj\Debug\net10.0\FileManagement.Domain.dll
+D:\FullStack\StockManagement\FileManagement\FileManagement.Domain\obj\Debug\net10.0\refint\FileManagement.Domain.dll
+D:\FullStack\StockManagement\FileManagement\FileManagement.Domain\obj\Debug\net10.0\FileManagement.Domain.pdb
+D:\FullStack\StockManagement\FileManagement\FileManagement.Domain\obj\Debug\net10.0\ref\FileManagement.Domain.dll
+D:\FullStack\StockManagement\FileManagement\FileManagement.Domain\bin\Debug\net10.0\FileManagement.Common.dll
+D:\FullStack\StockManagement\FileManagement\FileManagement.Domain\bin\Debug\net10.0\FileManagement.Common.pdb
+D:\FullStack\StockManagement\FileManagement\FileManagement.Domain\obj\Debug\net10.0\FileMana.6D0C0B36.Up2Date

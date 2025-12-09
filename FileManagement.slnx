@@ -1,0 +1,26 @@
+<Solution>
+  <Folder Name="/Application/">
+    <Project Path="FileManagement.Application.Contract/FileManagement.Application.Contract.csproj" />
+    <Project Path="FileManagement.Application/FileManagement.Application.csproj" />
+  </Folder>
+  <Folder Name="/Common/">
+    <Project Path="FileManagement.Common/FileManagement.Common.csproj" Id="2e3a062d-1fd3-4539-a6c4-3082401d1bfb" />
+  </Folder>
+  <Folder Name="/Domain/">
+    <Project Path="FileManagement.Domain/FileManagement.Domain.csproj" />
+  </Folder>
+  <Folder Name="/Infrastructure/">
+    <Project Path="FileManagement.Infrastructure.Acl/FileManagement.Infrastructure.Acl.csproj" />
+    <Project Path="FileManagement.Infrastructure.Configuration/FileManagement.Infrastructure.Configuration.csproj" />
+    <Project Path="FileManagement.Infrastructure.Persistence/FileManagement.Infrastructure.Persistence.csproj" />
+    <Project Path="FileManagement.Infrastructure.Query.Contract/FileManagement.Infrastructure.Query.Contract.csproj" />
+    <Project Path="FileManagement.Infrastructure.Query/FileManagement.Infrastructure.Query.csproj" />
+    <Project Path="FileManagement.Infrastructure.Tus/FileManagement.Infrastructure.Tus.csproj" Id="28259b4f-f21b-4209-a97d-c3bccc14e605" />
+  </Folder>
+  <Folder Name="/Presentation/">
+    <Project Path="FileManagement.Presentation.Api/FileManagement.Presentation.Api.csproj" />
+    <Project Path="FileManagement.Presentation.Facade.Command/FileManagement.Presentation.Facade.Command.csproj" />
+    <Project Path="FileManagement.Presentation.Facade.Contracts/FileManagement.Presentation.Facade.Contracts.csproj" />
+    <Project Path="FileManagement.Presentation.Facade.Query/FileManagement.Presentation.Facade.Query.csproj" />
+  </Folder>
+</Solution>

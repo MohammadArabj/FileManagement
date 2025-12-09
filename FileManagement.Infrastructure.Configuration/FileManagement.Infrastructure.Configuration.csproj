@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Autofac" Version="9.0.0" />
+    <PackageReference Include="Autofac.Extras.DynamicProxy" Version="7.1.0" />
+    <PackageReference Include="Epc.Application" Version="2.0.0" />
+    <PackageReference Include="Epc.Autofac" Version="2.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FileManagement.Application\FileManagement.Application.csproj" />
+    <ProjectReference Include="..\FileManagement.Domain\FileManagement.Domain.csproj" />
+    <ProjectReference Include="..\FileManagement.Infrastructure.Acl\FileManagement.Infrastructure.Acl.csproj" />
+    <ProjectReference Include="..\FileManagement.Infrastructure.Persistence\FileManagement.Infrastructure.Persistence.csproj" />
+    <ProjectReference Include="..\FileManagement.Infrastructure.Query\FileManagement.Infrastructure.Query.csproj" />
+    <ProjectReference Include="..\FileManagement.Infrastructure.Tus\FileManagement.Infrastructure.Tus.csproj" />
+    <ProjectReference Include="..\FileManagement.Presentation.Facade.Command\FileManagement.Presentation.Facade.Command.csproj" />
+    <ProjectReference Include="..\FileManagement.Presentation.Facade.Query\FileManagement.Presentation.Facade.Query.csproj" />
+  </ItemGroup>
+
+</Project>

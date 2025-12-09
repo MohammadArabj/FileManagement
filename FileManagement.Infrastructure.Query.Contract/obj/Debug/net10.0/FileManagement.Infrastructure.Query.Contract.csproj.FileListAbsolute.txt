@@ -1,0 +1,15 @@
+D:\FullStack\StockManagement\FileManagement\FileManagement.Infrastructure.Query.Contract\bin\Debug\net10.0\FileManagement.Infrastructure.Query.Contract.deps.json
+D:\FullStack\StockManagement\FileManagement\FileManagement.Infrastructure.Query.Contract\bin\Debug\net10.0\FileManagement.Infrastructure.Query.Contract.dll
+D:\FullStack\StockManagement\FileManagement\FileManagement.Infrastructure.Query.Contract\bin\Debug\net10.0\FileManagement.Infrastructure.Query.Contract.pdb
+D:\FullStack\StockManagement\FileManagement\FileManagement.Infrastructure.Query.Contract\obj\Debug\net10.0\FileManagement.Infrastructure.Query.Contract.csproj.AssemblyReference.cache
+D:\FullStack\StockManagement\FileManagement\FileManagement.Infrastructure.Query.Contract\obj\Debug\net10.0\FileManagement.Infrastructure.Query.Contract.GeneratedMSBuildEditorConfig.editorconfig
+D:\FullStack\StockManagement\FileManagement\FileManagement.Infrastructure.Query.Contract\obj\Debug\net10.0\FileManagement.Infrastructure.Query.Contract.AssemblyInfoInputs.cache
+D:\FullStack\StockManagement\FileManagement\FileManagement.Infrastructure.Query.Contract\obj\Debug\net10.0\FileManagement.Infrastructure.Query.Contract.AssemblyInfo.cs
+D:\FullStack\StockManagement\FileManagement\FileManagement.Infrastructure.Query.Contract\obj\Debug\net10.0\FileManagement.Infrastructure.Query.Contract.csproj.CoreCompileInputs.cache
+D:\FullStack\StockManagement\FileManagement\FileManagement.Infrastructure.Query.Contract\obj\Debug\net10.0\FileManagement.Infrastructure.Query.Contract.dll
+D:\FullStack\StockManagement\FileManagement\FileManagement.Infrastructure.Query.Contract\obj\Debug\net10.0\refint\FileManagement.Infrastructure.Query.Contract.dll
+D:\FullStack\StockManagement\FileManagement\FileManagement.Infrastructure.Query.Contract\obj\Debug\net10.0\FileManagement.Infrastructure.Query.Contract.pdb
+D:\FullStack\StockManagement\FileManagement\FileManagement.Infrastructure.Query.Contract\obj\Debug\net10.0\ref\FileManagement.Infrastructure.Query.Contract.dll
+D:\FullStack\StockManagement\FileManagement\FileManagement.Infrastructure.Query.Contract\bin\Debug\net10.0\FileManagement.Common.dll
+D:\FullStack\StockManagement\FileManagement\FileManagement.Infrastructure.Query.Contract\bin\Debug\net10.0\FileManagement.Common.pdb
+D:\FullStack\StockManagement\FileManagement\FileManagement.Infrastructure.Query.Contract\obj\Debug\net10.0\FileMana.FEEE6849.Up2Date

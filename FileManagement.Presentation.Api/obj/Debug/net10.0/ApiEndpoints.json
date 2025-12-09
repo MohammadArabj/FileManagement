@@ -1,0 +1,294 @@
+[
+  {
+    "ContainingType": "FileManagement.Presentation.Api.Controllers.AttachmentController",
+    "Method": "Download",
+    "RelativePath": "api/Attachment/Download/{guid}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "guid",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FileManagement.Presentation.Api.Controllers.AttachmentController",
+    "Method": "GetFileName",
+    "RelativePath": "api/Attachment/GetFileName/{guid}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "guid",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FileManagement.Presentation.Api.Controllers.AttachmentController",
+    "Method": "GetForOtherSystems",
+    "RelativePath": "api/Attachment/GetForOtherSystems",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "SystemGuid",
+        "Type": "System.Guid",
+        "IsRequired": false
+      },
+      {
+        "Name": "Type",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "Term",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FileManagement.Presentation.Api.Controllers.AttachmentController",
+    "Method": "GetAll",
+    "RelativePath": "api/Attachment/GetList",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "ClassificationId",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FileManagement.Presentation.Api.Controllers.AttachmentController",
+    "Method": "GetMeta",
+    "RelativePath": "api/Attachment/GetMeta/{guid}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "guid",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FileManagement.Presentation.Api.Controllers.AttachmentController",
+    "Method": "GetMetas",
+    "RelativePath": "api/Attachment/GetMetas",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "guids",
+        "Type": "System.Collections.Generic.List\u00601[[System.Guid, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FileManagement.Presentation.Api.Controllers.ClassificationController",
+    "Method": "Delete",
+    "RelativePath": "api/Classification/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "FileManagement.Presentation.Api.Controllers.ClassificationController",
+    "Method": "Post",
+    "RelativePath": "api/Classification/Create",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "command",
+        "Type": "FileManagement.Application.Contracts.Classification.CreateClassification",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FileManagement.Presentation.Api.Controllers.ClassificationController",
+    "Method": "Put",
+    "RelativePath": "api/Classification/Edit",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "command",
+        "Type": "FileManagement.Application.Contracts.Classification.EditClassification",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "FileManagement.Presentation.Api.Controllers.ClassificationController",
+    "Method": "GetBy",
+    "RelativePath": "api/Classification/GetBy/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FileManagement.Presentation.Api.Controllers.ClassificationController",
+    "Method": "GetForCombo",
+    "RelativePath": "api/Classification/GetForCombo/{condition}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "condition",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FileManagement.Presentation.Api.Controllers.ClassificationController",
+    "Method": "GetForTree",
+    "RelativePath": "api/Classification/GetForTree",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FileManagement.Presentation.Api.Controllers.ClassificationController",
+    "Method": "GetAll",
+    "RelativePath": "api/Classification/GetList",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FileManagement.Presentation.Api.Controllers.UploadController",
+    "Method": "Cancel",
+    "RelativePath": "api/Upload/Cancel/{sessionGuid}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "sessionGuid",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FileManagement.Presentation.Api.Controllers.UploadController",
+    "Method": "Complete",
+    "RelativePath": "api/Upload/Complete",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "FileManagement.Application.Contract.Upload.CompleteUpload",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FileManagement.Presentation.Api.Controllers.UploadController",
+    "Method": "DebugFile",
+    "RelativePath": "api/Upload/Debug/File/{tusFileId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "tusFileId",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FileManagement.Presentation.Api.Controllers.UploadController",
+    "Method": "DebugStatus",
+    "RelativePath": "api/Upload/Debug/Status",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FileManagement.Presentation.Api.Controllers.UploadController",
+    "Method": "Initiate",
+    "RelativePath": "api/Upload/Initiate",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "FileManagement.Application.Contract.Upload.InitiateUpload",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  }
+]

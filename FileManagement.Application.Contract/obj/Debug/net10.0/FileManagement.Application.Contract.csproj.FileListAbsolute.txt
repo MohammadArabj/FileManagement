@@ -1,0 +1,15 @@
+D:\FullStack\StockManagement\FileManagement\FileManagement.Application.Contract\bin\Debug\net10.0\FileManagement.Application.Contract.deps.json
+D:\FullStack\StockManagement\FileManagement\FileManagement.Application.Contract\bin\Debug\net10.0\FileManagement.Application.Contract.dll
+D:\FullStack\StockManagement\FileManagement\FileManagement.Application.Contract\bin\Debug\net10.0\FileManagement.Application.Contract.pdb
+D:\FullStack\StockManagement\FileManagement\FileManagement.Application.Contract\obj\Debug\net10.0\FileManagement.Application.Contract.csproj.AssemblyReference.cache
+D:\FullStack\StockManagement\FileManagement\FileManagement.Application.Contract\obj\Debug\net10.0\FileManagement.Application.Contract.GeneratedMSBuildEditorConfig.editorconfig
+D:\FullStack\StockManagement\FileManagement\FileManagement.Application.Contract\obj\Debug\net10.0\FileManagement.Application.Contract.AssemblyInfoInputs.cache
+D:\FullStack\StockManagement\FileManagement\FileManagement.Application.Contract\obj\Debug\net10.0\FileManagement.Application.Contract.AssemblyInfo.cs
+D:\FullStack\StockManagement\FileManagement\FileManagement.Application.Contract\obj\Debug\net10.0\FileManagement.Application.Contract.csproj.CoreCompileInputs.cache
+D:\FullStack\StockManagement\FileManagement\FileManagement.Application.Contract\obj\Debug\net10.0\FileManagement.Application.Contract.dll
+D:\FullStack\StockManagement\FileManagement\FileManagement.Application.Contract\obj\Debug\net10.0\refint\FileManagement.Application.Contract.dll
+D:\FullStack\StockManagement\FileManagement\FileManagement.Application.Contract\obj\Debug\net10.0\FileManagement.Application.Contract.pdb
+D:\FullStack\StockManagement\FileManagement\FileManagement.Application.Contract\obj\Debug\net10.0\ref\FileManagement.Application.Contract.dll
+D:\FullStack\StockManagement\FileManagement\FileManagement.Application.Contract\bin\Debug\net10.0\FileManagement.Common.dll
+D:\FullStack\StockManagement\FileManagement\FileManagement.Application.Contract\bin\Debug\net10.0\FileManagement.Common.pdb
+D:\FullStack\StockManagement\FileManagement\FileManagement.Application.Contract\obj\Debug\net10.0\FileMana.E33B4C79.Up2Date

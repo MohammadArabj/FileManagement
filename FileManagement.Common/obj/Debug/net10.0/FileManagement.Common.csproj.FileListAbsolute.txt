@@ -1,0 +1,11 @@
+D:\FullStack\StockManagement\FileManagement\FileManagement.Common\bin\Debug\net10.0\FileManagement.Common.deps.json
+D:\FullStack\StockManagement\FileManagement\FileManagement.Common\bin\Debug\net10.0\FileManagement.Common.dll
+D:\FullStack\StockManagement\FileManagement\FileManagement.Common\bin\Debug\net10.0\FileManagement.Common.pdb
+D:\FullStack\StockManagement\FileManagement\FileManagement.Common\obj\Debug\net10.0\FileManagement.Common.GeneratedMSBuildEditorConfig.editorconfig
+D:\FullStack\StockManagement\FileManagement\FileManagement.Common\obj\Debug\net10.0\FileManagement.Common.AssemblyInfoInputs.cache
+D:\FullStack\StockManagement\FileManagement\FileManagement.Common\obj\Debug\net10.0\FileManagement.Common.AssemblyInfo.cs
+D:\FullStack\StockManagement\FileManagement\FileManagement.Common\obj\Debug\net10.0\FileManagement.Common.csproj.CoreCompileInputs.cache
+D:\FullStack\StockManagement\FileManagement\FileManagement.Common\obj\Debug\net10.0\FileManagement.Common.dll
+D:\FullStack\StockManagement\FileManagement\FileManagement.Common\obj\Debug\net10.0\refint\FileManagement.Common.dll
+D:\FullStack\StockManagement\FileManagement\FileManagement.Common\obj\Debug\net10.0\FileManagement.Common.pdb
+D:\FullStack\StockManagement\FileManagement\FileManagement.Common\obj\Debug\net10.0\ref\FileManagement.Common.dll
