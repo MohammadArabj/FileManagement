@@ -1,0 +1,91 @@
+body {
+  font-family: Arial, sans-serif;
+  padding: 2rem;
+  background: #f4f6f8;
+}
+
+button {
+  cursor: pointer;
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.modal.open {
+  display: flex;
+}
+
+.modal-content {
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 12px;
+  width: 600px;
+  max-width: 90vw;
+  box-shadow: 0 15px 60px rgba(0, 0, 0, 0.15);
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.modal-body {
+  display: grid;
+  gap: 1rem;
+}
+
+.file-grid {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+}
+
+.file-card {
+  background: #f7fafc;
+  border: 1px solid #e2e8f0;
+  padding: 0.75rem;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.file-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.file-actions a,
+.file-actions button {
+  flex: 1;
+  padding: 0.4rem 0.5rem;
+  border-radius: 6px;
+  border: none;
+  text-align: center;
+}
+
+.file-actions a {
+  background: #2563eb;
+  color: #fff;
+  text-decoration: none;
+}
+
+.file-actions button {
+  background: #f56565;
+  color: #fff;
+}
+
+.input-label {
+  font-weight: 600;
+  display: block;
+  margin-bottom: 0.25rem;
+}
