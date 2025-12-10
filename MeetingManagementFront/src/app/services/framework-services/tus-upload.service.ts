@@ -412,9 +412,11 @@ export class TusUploadService {
                   progress: 100,
                   uploadedBytes: currentFile.size,
                   realTusFileId,
-                  fileGuid: result.fileGuid,
-                  previewUrl: this.getPreviewUrl(result.fileGuid)
+                  fileGuid: result.fileGuid
                 });
+
+                // Pre-fetch an authorized preview to avoid 401s when the UI tries to load thumbnails directly
+                void this.resolveAuthorizedPreview(result.fileGuid, fileId);
               }
 
               this._fileCompleted$.next(this._files().get(fileId)!);
