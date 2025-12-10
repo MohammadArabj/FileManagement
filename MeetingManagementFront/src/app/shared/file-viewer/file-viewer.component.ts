@@ -4,7 +4,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { TusUploadService } from '../services/framework-services/tus-upload.service';
@@ -658,12 +658,41 @@ export class FileViewerComponent implements OnInit, OnChanges {
   private async loadTextContent(guid: string): Promise<void> {
     try {
       const response = await firstValueFrom(
-        this.http.get(`${this.attachmentUrl}/Preview/${guid}`, { responseType: 'text' })
+        this.http.get(`${this.attachmentUrl}/Preview/${guid}`, {
+          responseType: 'text',
+          ...this.buildAuthOptions()
+        })
       );
       this.textContent.set(response);
     } catch {
       this.textContent.set('خطا در بارگذاری محتوا');
     }
+  }
+
+  private buildAuthOptions(): Record<string, any> {
+    const headers = this.buildAuthHeaders();
+    return {
+      withCredentials: true,
+      headers,
+    };
+  }
+
+  private buildAuthHeaders(token = this.getAccessToken()): HttpHeaders {
+    if (!token) return new HttpHeaders();
+    return new HttpHeaders({ Authorization: `Bearer ${token}` });
+  }
+
+  private getAccessToken(): string {
+    const direct = localStorage.getItem(ACCESS_TOKEN_NAME) ?? '';
+    const fallback = sessionStorage.getItem(ACCESS_TOKEN_NAME) ?? '';
+    const legacy =
+      localStorage.getItem('accessToken') ||
+      sessionStorage.getItem('accessToken') ||
+      localStorage.getItem('token') ||
+      sessionStorage.getItem('token') ||
+      '';
+
+    return direct || fallback || legacy;
   }
 
   // ============================================
