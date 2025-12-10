@@ -518,10 +518,10 @@ export class TusUploadService {
     if (!file) return;
 
     if (file.tusUpload) file.tusUpload.abort();
-    if (file.previewUrl && !file.isExisting) URL.revokeObjectURL(file.previewUrl);
+    if (file.previewUrl && !file.isExisting) this.revokeIfBlob(file.previewUrl);
     if (file.fileGuid) {
       const cached = this.previewCache.get(file.fileGuid);
-      if (cached) URL.revokeObjectURL(cached);
+      if (cached) this.revokeIfBlob(cached);
     }
 
     this._files.update(files => {
@@ -557,10 +557,10 @@ export class TusUploadService {
   clearAll(): void {
     for (const file of this.files()) {
       if (file.tusUpload) file.tusUpload.abort();
-      if (file.previewUrl && !file.isExisting) URL.revokeObjectURL(file.previewUrl);
+      if (file.previewUrl && !file.isExisting) this.revokeIfBlob(file.previewUrl);
       if (file.fileGuid) {
         const cached = this.previewCache.get(file.fileGuid);
-        if (cached) URL.revokeObjectURL(cached);
+        if (cached) this.revokeIfBlob(cached);
       }
     }
     this._files.set(new Map());
@@ -571,7 +571,7 @@ export class TusUploadService {
       const newMap = new Map(files);
       for (const [id, file] of newMap) {
         if (file.status === UploadStatus.Completed && !file.isExisting) {
-          if (file.previewUrl) URL.revokeObjectURL(file.previewUrl);
+          if (file.previewUrl) this.revokeIfBlob(file.previewUrl);
           newMap.delete(id);
         }
       }
@@ -598,7 +598,7 @@ export class TusUploadService {
           );
           fileInfoCache.delete(file.fileGuid);
           const cachedUrl = this.previewCache.get(file.fileGuid);
-          if (cachedUrl) URL.revokeObjectURL(cachedUrl);
+          if (cachedUrl) this.revokeIfBlob(cachedUrl);
         } catch (err) {
           console.error(`Error deleting file ${file.fileGuid}:`, err);
         }
@@ -655,10 +655,11 @@ export class TusUploadService {
         this.updatePreviewUrl(fileId, url);
       }
 
-      return url;
-    } catch {
-      return null;
+    if (fileId) {
+      this.updatePreviewUrl(fileId, inlineUrl);
     }
+
+    return inlineUrl;
   }
 
   async downloadWithAuth(guid: string): Promise<Blob | null> {
@@ -713,6 +714,21 @@ export class TusUploadService {
       headers,
       ...extra,
     };
+  }
+
+  private buildInlineAuthorizedUrl(url: string): string {
+    const token = this.getAccessToken();
+    if (!token) return url;
+
+    const separator = url.includes('?') ? '&' : '?';
+    return `${url}${separator}access_token=${encodeURIComponent(token)}`;
+  }
+
+  private revokeIfBlob(url: string | null | undefined): void {
+    if (!url) return;
+    if (url.startsWith('blob:')) {
+      URL.revokeObjectURL(url);
+    }
   }
 
   private getAccessToken(): string {
