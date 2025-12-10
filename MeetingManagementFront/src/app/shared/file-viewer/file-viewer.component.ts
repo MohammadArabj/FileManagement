@@ -1,4 +1,4 @@
-import { 
+import {
   Component, Input, Output, EventEmitter, inject, signal, computed,
   OnInit, OnChanges, SimpleChanges
 } from '@angular/core';
@@ -7,6 +7,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { TusUploadService } from '../services/framework-services/tus-upload.service';
 
 declare var bootstrap: any;
 
@@ -514,6 +515,7 @@ export class FileViewerComponent implements OnInit, OnChanges {
   // Services
   private readonly http = inject(HttpClient);
   private readonly sanitizer = inject(DomSanitizer);
+  private readonly uploadService = inject(TusUploadService);
 
   // API URLs
   private readonly attachmentUrl = environment.fileManagementEndpoint + '/api/Attachment';
@@ -537,7 +539,7 @@ export class FileViewerComponent implements OnInit, OnChanges {
   readonly previewUrl = computed(() => {
     const file = this.currentFile();
     if (!file) return '';
-    return `${this.attachmentUrl}/Preview/${file.guid}`;
+    return file.previewUrl || '';
   });
 
   readonly isLargePreview = computed(() => {
@@ -601,8 +603,11 @@ export class FileViewerComponent implements OnInit, OnChanges {
       // ✅ بارگذاری همزمان همه فایل‌ها برای سرعت بیشتر
       const promises = this.fileGuids.map(guid => this.loadFileInfo(guid));
       const results = await Promise.all(promises);
-      
-      this.files.set(results.filter(f => f !== null) as FileInfo[]);
+
+      const loadedFiles = results.filter(f => f !== null) as FileInfo[];
+      this.files.set(loadedFiles);
+
+      await Promise.all(loadedFiles.map(file => this.ensurePreviewUrl(file.guid)));
       
       // بارگذاری محتوای text اگر نیاز است
       const current = this.currentFile();
@@ -626,11 +631,28 @@ export class FileViewerComponent implements OnInit, OnChanges {
         ...response,
         guid,
         downloadUrl: `${this.attachmentUrl}/Download/${guid}`,
-        previewUrl: `${this.attachmentUrl}/Preview/${guid}`
+        previewUrl: undefined
       };
     } catch {
       return null;
     }
+  }
+
+  private async ensurePreviewUrl(guid: string): Promise<void> {
+    const file = this.files().find(f => f.guid === guid);
+    if (!file || file.previewUrl) return;
+
+    const resolved = await this.uploadService.resolveAuthorizedPreview(guid);
+    if (!resolved) return;
+
+    this.files.update(list => {
+      const next = [...list];
+      const index = next.findIndex(f => f.guid === guid);
+      if (index >= 0) {
+        next[index] = { ...next[index], previewUrl: resolved };
+      }
+      return next;
+    });
   }
 
   private async loadTextContent(guid: string): Promise<void> {
