@@ -627,7 +627,7 @@ export class TusUploadService {
   }
 
   getPreviewUrl(guid: string): string {
-    return this.getDownloadUrl(guid);
+    return `${this.attachmentUrl}/Preview/${guid}`;
   }
 
   async resolveAuthorizedPreview(guid: string, fileId?: string): Promise<string | null> {
@@ -639,7 +639,7 @@ export class TusUploadService {
 
     try {
       const blob = await firstValueFrom(
-        this.http.get(this.getDownloadUrl(guid), {
+        this.http.get(this.getPreviewUrl(guid), {
           responseType: 'blob',
           headers: this.buildAuthHeaders(),
           withCredentials: true,
