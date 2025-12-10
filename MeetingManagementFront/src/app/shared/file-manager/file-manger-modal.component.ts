@@ -14,6 +14,8 @@ import {
 import { CommonModule } from '@angular/common';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { TusUploadService, UploadStatus, FileItem } from '../../services/framework-services/tus-upload.service';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 declare const Swal: any;
 declare const bootstrap: any;
@@ -1233,6 +1235,7 @@ export class FileManagerModalComponent implements OnInit, OnDestroy {
 
     private modalInstance: any;
     private initialFileGuids: string[] = [];
+    private readonly destroy$ = new Subject<void>();
 
     readonly hasFiles = computed(() => this.service.files().length > 0);
     readonly canAddMore = computed(() => {
@@ -1242,25 +1245,27 @@ export class FileManagerModalComponent implements OnInit, OnDestroy {
     });
 
     constructor() {
-        this.service.fileCompleted$.subscribe((file: FileItem) => {
-            this.fileUploaded.emit(file);
-            this.emitFilesChanged();
-        });
+        this.service.fileCompleted$
+            .pipe(takeUntil(this.destroy$))
+            .subscribe((file: FileItem) => {
+                this.fileUploaded.emit(file);
+                this.emitFilesChanged();
+            });
     }
 
     ngOnInit(): void {
-        this.initialFileGuids = [...this.existingFileGuids];
-        if (this.existingFileGuids?.length > 0) {
-            this.service.loadExistingFiles(this.existingFileGuids);
-        }
+        this.initializeState();
     }
 
     ngOnDestroy(): void {
         this.modalInstance?.dispose();
+        this.destroy$.next();
+        this.destroy$.complete();
+        this.service.clearAll();
     }
 
     open(): void {
-        this.initialFileGuids = [...this.existingFileGuids];
+        this.initializeState();
         const modalElement = document.getElementById(this.modalId);
         if (modalElement) {
             this.modalInstance = new bootstrap.Modal(modalElement);
@@ -1306,7 +1311,7 @@ export class FileManagerModalComponent implements OnInit, OnDestroy {
                 this.onConfirm();
                 return;
             } else if (result.isDenied) {
-                await this.cleanup();
+                await this.resetAfterClose(true);
                 this.cancelled.emit();
                 this.close();
                 return;
@@ -1316,10 +1321,11 @@ export class FileManagerModalComponent implements OnInit, OnDestroy {
         }
 
         this.cancelled.emit();
+        await this.resetAfterClose(true);
         this.close();
     }
 
-    onConfirm(): void {
+    async onConfirm(): Promise<void> {
         if (this.service.isUploading()) {
             Swal.fire({
                 icon: 'warning',
@@ -1331,7 +1337,7 @@ export class FileManagerModalComponent implements OnInit, OnDestroy {
 
         const fileGuids = this.service.getAllFileGuids();
         this.confirmed.emit(fileGuids);
-        this.close();
+        await this.finalizeClose(false);
     }
 
     selectFile(file: FileItem): void {
@@ -1535,8 +1541,35 @@ export class FileManagerModalComponent implements OnInit, OnDestroy {
         await this.service.cleanupUploadedFiles();
     }
 
-    reset(): void {
+    async reset(): Promise<void> {
+        await this.resetAfterClose(false);
+    }
+
+    private initializeState(): void {
         this.service.clearAll();
-        this.closePreviewSidebar();
+        this.selectedFile.set(null);
+        this.showPreview.set(false);
+        this.isDragOver.set(false);
+        this.initialFileGuids = [...this.existingFileGuids];
+        if (this.existingFileGuids?.length > 0) {
+            this.service.loadExistingFiles(this.existingFileGuids);
+        }
+    }
+
+    private async resetAfterClose(cleanupNewUploads: boolean): Promise<void> {
+        if (cleanupNewUploads) {
+            await this.service.cleanupUploadedFiles();
+        } else {
+            this.service.clearAll();
+        }
+
+        this.selectedFile.set(null);
+        this.showPreview.set(false);
+        this.isDragOver.set(false);
+    }
+
+    private async finalizeClose(cleanupNewUploads: boolean): Promise<void> {
+        this.close();
+        await this.resetAfterClose(cleanupNewUploads);
     }
 }
