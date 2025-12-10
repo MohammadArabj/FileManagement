@@ -1029,11 +1029,13 @@ export class FileManagerComponent implements OnInit, OnDestroy, OnChanges {
 
     // ===================== پیش‌نمایش =====================
 
-    openPreview(file: FileItem): void {
+    async openPreview(file: FileItem): Promise<void> {
         if (!file.fileGuid && !file.previewUrl) return;
         if (!this.canPreview(file.type) && !file.previewUrl) return;
 
-        this.previewFile.set(file);
+        const readyFile = await this.ensurePreviewReady(file);
+
+        this.previewFile.set(readyFile);
         this.currentPreviewIndex.set(this.service.files().indexOf(file));
 
         const modalElement = document.getElementById(this.previewModalId);
@@ -1044,15 +1046,23 @@ export class FileManagerComponent implements OnInit, OnDestroy, OnChanges {
     }
 
     getPreviewSrc(file: FileItem): string {
-        if (file.fileGuid) {
-            return this.service.getPreviewUrl(file.fileGuid);
-        }
         return file.previewUrl || '';
     }
 
     getSafePdfUrl(file: FileItem): SafeResourceUrl {
         const url = this.getPreviewSrc(file);
         return this.sanitizer.bypassSecurityTrustResourceUrl(url);
+    }
+
+    private async ensurePreviewReady(file: FileItem): Promise<FileItem> {
+        if (file.previewUrl || !file.fileGuid) return file;
+
+        const resolved = await this.service.resolveAuthorizedPreview(file.fileGuid, file.id);
+        if (resolved) {
+            return { ...file, previewUrl: resolved };
+        }
+
+        return file;
     }
 
     // ===================== Helper =====================
