@@ -1,12 +1,14 @@
-import { 
+import {
   Component, Input, Output, EventEmitter, inject, signal, computed,
   OnInit, OnChanges, SimpleChanges
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { TusUploadService } from '../services/framework-services/tus-upload.service';
+import { ACCESS_TOKEN_NAME } from '../../core/types/configuration';
 
 declare var bootstrap: any;
 
@@ -514,6 +516,7 @@ export class FileViewerComponent implements OnInit, OnChanges {
   // Services
   private readonly http = inject(HttpClient);
   private readonly sanitizer = inject(DomSanitizer);
+  private readonly uploadService = inject(TusUploadService);
 
   // API URLs
   private readonly attachmentUrl = environment.fileManagementEndpoint + '/api/Attachment';
@@ -537,7 +540,7 @@ export class FileViewerComponent implements OnInit, OnChanges {
   readonly previewUrl = computed(() => {
     const file = this.currentFile();
     if (!file) return '';
-    return `${this.attachmentUrl}/Preview/${file.guid}`;
+    return file.previewUrl || '';
   });
 
   readonly isLargePreview = computed(() => {
@@ -598,11 +601,23 @@ export class FileViewerComponent implements OnInit, OnChanges {
     this.error.set(null);
 
     try {
-      // ✅ بارگذاری همزمان همه فایل‌ها برای سرعت بیشتر
-      const promises = this.fileGuids.map(guid => this.loadFileInfo(guid));
-      const results = await Promise.all(promises);
-      
-      this.files.set(results.filter(f => f !== null) as FileInfo[]);
+      const metas = await firstValueFrom(
+        this.http.post<FileInfo[]>(
+          `${this.attachmentUrl}/GetMetas`,
+          this.fileGuids,
+          this.buildAuthOptions()
+        )
+      );
+
+      const loadedFiles = (metas || []).map(meta => ({
+        ...meta,
+        guid: meta.guid,
+        downloadUrl: `${this.attachmentUrl}/Download/${meta.guid}`,
+        previewUrl: undefined,
+      } satisfies FileInfo));
+      this.files.set(loadedFiles);
+
+      await Promise.all(loadedFiles.map(file => this.ensurePreviewUrl(file.guid, file.guid)));
       
       // بارگذاری محتوای text اگر نیاز است
       const current = this.currentFile();
@@ -617,31 +632,61 @@ export class FileViewerComponent implements OnInit, OnChanges {
     }
   }
 
-  private async loadFileInfo(guid: string): Promise<FileInfo | null> {
-    try {
-      const response = await firstValueFrom(
-        this.http.get<FileInfo>(`${this.attachmentUrl}/GetFile/${guid}`)
-      );
-      return {
-        ...response,
-        guid,
-        downloadUrl: `${this.attachmentUrl}/Download/${guid}`,
-        previewUrl: `${this.attachmentUrl}/Preview/${guid}`
-      };
-    } catch {
-      return null;
-    }
+  private async ensurePreviewUrl(guid: string, fileId?: string): Promise<void> {
+    const file = this.files().find(f => f.guid === guid);
+    if (!file || file.previewUrl) return;
+
+    const resolved = await this.uploadService.resolveAuthorizedPreview(guid, fileId);
+    if (!resolved) return;
+
+    this.files.update(list => {
+      const next = [...list];
+      const index = next.findIndex(f => f.guid === guid);
+      if (index >= 0) {
+        next[index] = { ...next[index], previewUrl: resolved };
+      }
+      return next;
+    });
   }
 
   private async loadTextContent(guid: string): Promise<void> {
     try {
       const response = await firstValueFrom(
-        this.http.get(`${this.attachmentUrl}/Preview/${guid}`, { responseType: 'text' })
+        this.http.get(`${this.attachmentUrl}/Preview/${guid}`, {
+          responseType: 'text',
+          ...this.buildAuthOptions()
+        })
       );
       this.textContent.set(response);
     } catch {
       this.textContent.set('خطا در بارگذاری محتوا');
     }
+  }
+
+  private buildAuthOptions(): Record<string, any> {
+    const headers = this.buildAuthHeaders();
+    return {
+      withCredentials: true,
+      headers,
+    };
+  }
+
+  private buildAuthHeaders(token = this.getAccessToken()): HttpHeaders {
+    if (!token) return new HttpHeaders();
+    return new HttpHeaders({ Authorization: `Bearer ${token}` });
+  }
+
+  private getAccessToken(): string {
+    const direct = localStorage.getItem(ACCESS_TOKEN_NAME) ?? '';
+    const fallback = sessionStorage.getItem(ACCESS_TOKEN_NAME) ?? '';
+    const legacy =
+      localStorage.getItem('accessToken') ||
+      sessionStorage.getItem('accessToken') ||
+      localStorage.getItem('token') ||
+      sessionStorage.getItem('token') ||
+      '';
+
+    return direct || fallback || legacy;
   }
 
   // ============================================
