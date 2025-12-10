@@ -629,8 +629,7 @@ export class TusUploadService {
   }
 
   getPreviewUrl(guid: string): string {
-    // Preview endpoint is disabled; use the authorized Download endpoint for inline previews
-    return this.getDownloadUrl(guid);
+    return `${this.attachmentUrl}/Preview/${guid}`;
   }
 
   async resolveAuthorizedPreview(guid: string, fileId?: string): Promise<string | null> {

@@ -8,7 +8,6 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { TusUploadService } from '../services/framework-services/tus-upload.service';
-import { ACCESS_TOKEN_NAME } from '../../core/types/configuration';
 
 declare var bootstrap: any;
 
@@ -601,23 +600,14 @@ export class FileViewerComponent implements OnInit, OnChanges {
     this.error.set(null);
 
     try {
-      const metas = await firstValueFrom(
-        this.http.post<FileInfo[]>(
-          `${this.attachmentUrl}/GetMetas`,
-          this.fileGuids,
-          this.buildAuthOptions()
-        )
-      );
+      // ✅ بارگذاری همزمان همه فایل‌ها برای سرعت بیشتر
+      const promises = this.fileGuids.map(guid => this.loadFileInfo(guid));
+      const results = await Promise.all(promises);
 
-      const loadedFiles = (metas || []).map(meta => ({
-        ...meta,
-        guid: meta.guid,
-        downloadUrl: `${this.attachmentUrl}/Download/${meta.guid}`,
-        previewUrl: undefined,
-      } satisfies FileInfo));
+      const loadedFiles = results.filter(f => f !== null) as FileInfo[];
       this.files.set(loadedFiles);
 
-      await Promise.all(loadedFiles.map(file => this.ensurePreviewUrl(file.guid, file.guid)));
+      await Promise.all(loadedFiles.map(file => this.ensurePreviewUrl(file.guid)));
       
       // بارگذاری محتوای text اگر نیاز است
       const current = this.currentFile();
@@ -632,11 +622,27 @@ export class FileViewerComponent implements OnInit, OnChanges {
     }
   }
 
-  private async ensurePreviewUrl(guid: string, fileId?: string): Promise<void> {
+  private async loadFileInfo(guid: string): Promise<FileInfo | null> {
+    try {
+      const response = await firstValueFrom(
+        this.http.get<FileInfo>(`${this.attachmentUrl}/GetFile/${guid}`)
+      );
+      return {
+        ...response,
+        guid,
+        downloadUrl: `${this.attachmentUrl}/Download/${guid}`,
+        previewUrl: undefined
+      };
+    } catch {
+      return null;
+    }
+  }
+
+  private async ensurePreviewUrl(guid: string): Promise<void> {
     const file = this.files().find(f => f.guid === guid);
     if (!file || file.previewUrl) return;
 
-    const resolved = await this.uploadService.resolveAuthorizedPreview(guid, fileId);
+    const resolved = await this.uploadService.resolveAuthorizedPreview(guid);
     if (!resolved) return;
 
     this.files.update(list => {
