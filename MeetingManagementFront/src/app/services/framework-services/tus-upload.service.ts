@@ -639,8 +639,21 @@ export class TusUploadService {
       return cached;
     }
 
-    const inlineUrl = this.buildInlineAuthorizedUrl(this.getPreviewUrl(guid));
-    this.previewCache.set(guid, inlineUrl);
+    try {
+      const blob = await firstValueFrom(
+        this.http.get(this.getPreviewUrl(guid), {
+          responseType: 'blob',
+          headers: this.buildAuthHeaders(),
+          withCredentials: true,
+        })
+      );
+
+      const url = URL.createObjectURL(blob);
+      this.previewCache.set(guid, url);
+
+      if (fileId) {
+        this.updatePreviewUrl(fileId, url);
+      }
 
     if (fileId) {
       this.updatePreviewUrl(fileId, inlineUrl);
