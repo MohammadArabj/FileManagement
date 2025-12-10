@@ -412,9 +412,11 @@ export class TusUploadService {
                   progress: 100,
                   uploadedBytes: currentFile.size,
                   realTusFileId,
-                  fileGuid: result.fileGuid,
-                  previewUrl: this.getPreviewUrl(result.fileGuid)
+                  fileGuid: result.fileGuid
                 });
+
+                // Pre-fetch an authorized preview to avoid 401s when the UI tries to load thumbnails directly
+                void this.resolveAuthorizedPreview(result.fileGuid, fileId);
               }
 
               this._fileCompleted$.next(this._files().get(fileId)!);
@@ -627,6 +629,7 @@ export class TusUploadService {
   }
 
   getPreviewUrl(guid: string): string {
+    // Preview endpoint is disabled; use the authorized Download endpoint for inline previews
     return this.getDownloadUrl(guid);
   }
 
@@ -639,7 +642,7 @@ export class TusUploadService {
 
     try {
       const blob = await firstValueFrom(
-        this.http.get(this.getDownloadUrl(guid), {
+        this.http.get(this.getPreviewUrl(guid), {
           responseType: 'blob',
           headers: this.buildAuthHeaders(),
           withCredentials: true,

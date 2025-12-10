@@ -1156,11 +1156,13 @@ export class FileUploaderComponent implements OnInit, OnDestroy, OnChanges {
     // Preview Modal
     // ============================================
 
-    openPreview(file: FileItem): void {
+    async openPreview(file: FileItem): Promise<void> {
         if (!file.fileGuid && !file.previewUrl) return;
         if (!this.canPreview(file.type) && !file.previewUrl) return;
 
-        this.previewFile.set(file);
+        const readyFile = await this.ensurePreviewReady(file);
+
+        this.previewFile.set(readyFile);
         this.currentPreviewIndex.set(this.service.files().indexOf(file));
 
         const modalElement = document.getElementById(this.previewModalId);
@@ -1179,7 +1181,9 @@ export class FileUploaderComponent implements OnInit, OnDestroy, OnChanges {
         const index = this.currentPreviewIndex();
         if (index > 0) {
             this.currentPreviewIndex.set(index - 1);
-            this.previewFile.set(this.service.files()[index - 1]);
+            const file = this.service.files()[index - 1];
+            this.previewFile.set(file);
+            void this.ensurePreviewReady(file);
         }
     }
 
@@ -1188,7 +1192,9 @@ export class FileUploaderComponent implements OnInit, OnDestroy, OnChanges {
         const files = this.service.files();
         if (index < files.length - 1) {
             this.currentPreviewIndex.set(index + 1);
-            this.previewFile.set(files[index + 1]);
+            const file = files[index + 1];
+            this.previewFile.set(file);
+            void this.ensurePreviewReady(file);
         }
     }
 
@@ -1201,9 +1207,6 @@ export class FileUploaderComponent implements OnInit, OnDestroy, OnChanges {
     }
 
     getPreviewSrc(file: FileItem): string {
-        if (file.fileGuid) {
-            return this.service.getPreviewUrl(file.fileGuid);
-        }
         return file.previewUrl || '';
     }
 
@@ -1234,6 +1237,19 @@ export class FileUploaderComponent implements OnInit, OnDestroy, OnChanges {
 
     isPdf(type: string): boolean {
         return type === 'application/pdf';
+    }
+
+    private async ensurePreviewReady(file: FileItem): Promise<FileItem> {
+        if (file.previewUrl || !file.fileGuid) return file;
+
+        const resolved = await this.service.resolveAuthorizedPreview(file.fileGuid, file.id);
+        if (resolved) {
+            const readyFile = { ...file, previewUrl: resolved };
+            this.previewFile.set(readyFile);
+            return readyFile;
+        }
+
+        return file;
     }
 
     truncateName(name: string, maxLength = 15): string {
